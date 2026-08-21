@@ -124,6 +124,7 @@
   --status-success-fg: var(--green-700);
   --status-error-bg: var(--red-100);
   --status-error-fg: var(--red-700);
+  --status-error-hover: var(--red-600);
   --status-warning-bg: var(--amber-100);
   --status-warning-fg: var(--amber-700);
   --status-info-bg: var(--blue-100);

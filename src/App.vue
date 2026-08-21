@@ -2,6 +2,7 @@
 import { Check, ChevronRight, Component, Layers3 } from '@lucide/vue'
 import { ref } from 'vue'
 import BreadcrumbDocumentation from './components/documentation/BreadcrumbDocumentation.vue'
+import ButtonDocumentation from './components/documentation/ButtonDocumentation.vue'
 import ColorsDocumentation from './components/documentation/ColorsDocumentation.vue'
 import IconsDocumentation from './components/documentation/IconsDocumentation.vue'
 import PreloaderDocumentation from './components/documentation/PreloaderDocumentation.vue'
@@ -19,7 +20,7 @@ import TzSidebar from './components/navigation/TzSidebar.vue'
 const activeSection = ref('Navigation')
 const catalogCollapsed = ref(false)
 const sidebarCollapsed = ref(false)
-const readyItems = ['Colors', 'Variables', 'Navigation', 'Breadcrumbs', 'Toast', 'Select', 'Preloader', 'Toggle', 'Icon', 'Search', 'Table']
+const readyItems = ['Colors', 'Variables', 'Navigation', 'Breadcrumbs', 'Button', 'Toast', 'Select', 'Preloader', 'Toggle', 'Icon', 'Search', 'Table']
 
 const catalog = [
   { group: 'Основы', items: ['Colors', 'Typography', 'Variables'] },
@@ -89,6 +90,7 @@ const breadcrumbItems = [
       <VariablesDocumentation v-else-if="activeSection === 'Variables'" />
       <IconsDocumentation v-else-if="activeSection === 'Icon'" />
       <BreadcrumbDocumentation v-else-if="activeSection === 'Breadcrumbs'" />
+      <ButtonDocumentation v-else-if="activeSection === 'Button'" />
       <ToastDocumentation v-else-if="activeSection === 'Toast'" />
       <PreloaderDocumentation v-else-if="activeSection === 'Preloader'" />
       <SelectDocumentation v-else-if="activeSection === 'Select'" />
