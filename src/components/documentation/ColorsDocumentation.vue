@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Check, Copy } from '@lucide/vue'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
+import tokensCss from '../../styles/tokens.css?raw'
 
 type Swatch = { name: string; value: string }
 type SemanticToken = { name: string; values: Record<string, { value: string; alias?: string }> }
@@ -69,16 +70,7 @@ const decorativeTokens: SemanticToken[] = [
   ['сyan-bg', '#E7F5F5'], ['cyan-fg', '#27848B'],
 ].map(([name, value]) => ({ name, values: { 'Mode 1': { value } } }))
 
-const cssTokenName = (name: string) => `--${name.replace(/[\s/]+/g, '-').toLowerCase()}`
-const cssAliasTokenName = (alias: string) => cssTokenName(alias.replace(/\s+(\d+)%$/, '-$1'))
-const cssTokenValue = (token: { value: string; alias?: string }) => token.alias
-  ? `var(${cssAliasTokenName(token.alias)})`
-  : token.value
-const currentCss = computed(() => [
-  ...brandTokens.map(token => `${cssTokenName(token.name)}: ${cssTokenValue(token.values[brandMode.value])};`),
-  ...appearanceTokens.map(token => `${cssTokenName(token.name)}: ${cssTokenValue(token.values[appearanceMode.value])};`),
-  ...statusTokens.map(token => `${cssTokenName(token.name)}: ${cssTokenValue(token.values.Light)};`),
-].join('\n'))
+const fullCssVariables = tokensCss.trim()
 
 async function copyValue(value: string) {
   await navigator.clipboard?.writeText(value)
@@ -135,10 +127,8 @@ async function copyValue(value: string) {
     </section>
 
     <section class="color-card css-card">
-      <header><div><h2>CSS variables</h2><p>Текущая комбинация выбранных режимов.</p></div><button type="button" @click="copyValue(currentCss)"><Copy :size="14" /> {{ copied === currentCss ? 'Скопировано' : 'Копировать' }}</button></header>
-      <pre><code>:root {
-{{ currentCss }}
-}</code></pre>
+      <header><div><h2>CSS variables</h2><p>Полный источник: color primitives, spacing, radius, semantic aliases, brand и theme modes.</p></div><button type="button" @click="copyValue(fullCssVariables)"><Copy :size="14" /> {{ copied === fullCssVariables ? 'Скопировано' : 'Копировать' }}</button></header>
+      <pre><code>{{ fullCssVariables }}</code></pre>
     </section>
   </div>
 </template>
@@ -186,7 +176,7 @@ async function copyValue(value: string) {
 .architecture small { color: var(--text-muted); font: 400 10px/14px var(--tz-font-family); }
 .architecture b { align-self: center; color: var(--brand-primary); }
 .css-card > header button { display: flex; align-items: center; gap: 6px; padding: 7px 10px; color: var(--brand-primary); border: 1px solid var(--border-default); border-radius: 7px; background: var(--brand-bg-accent); font: 500 11px/16px var(--tz-font-family); cursor: pointer; }
-.css-card pre { max-height: 420px; margin: 0; padding: 20px; overflow: auto; color: var(--green-100); border-radius: 8px; background: var(--gray-900); font: 400 11px/18px ui-monospace, SFMono-Regular, Consolas, monospace; }
+.css-card pre { max-height: 620px; margin: 0; padding: 20px; overflow: auto; color: var(--green-100); border-radius: 8px; background: var(--gray-900); font: 400 11px/18px ui-monospace, SFMono-Regular, Consolas, monospace; }
 @media (max-width: 900px) { .semantic-grid { grid-template-columns: 1fr; } .semantic-grid article { border-right: 0; } .semantic-grid article:nth-last-child(2) { border-bottom: 1px solid var(--border-default); } .architecture > div { flex-direction: column; } .architecture b { transform: rotate(90deg); } }
 @media (max-width: 620px) { .color-hero, .section-header, .css-card > header { align-items: flex-start; flex-direction: column; } .color-card { padding: 16px; } .color-hero { padding: 24px; } .semantic-grid article { grid-template-columns: 36px minmax(0, 1fr); } .semantic-grid article > strong { grid-column: 2; } }
 </style>

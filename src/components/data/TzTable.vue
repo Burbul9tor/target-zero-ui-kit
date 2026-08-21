@@ -181,12 +181,12 @@ const rangeStart = computed(() => total.value ? props.page * props.countPerPage 
 const rangeEnd = computed(() => Math.min((props.page + 1) * props.countPerPage, total.value))
 const pageSizes = computed(() => (props.countPerPageOptions.length ? props.countPerPageOptions : [20]).map(value => ({ label: String(value), value: String(value) })))
 const activeFilterCounts = computed(() => ({ ...Object.fromEntries(Object.entries(filtersValue.value).map(([key, value]) => [key, Array.isArray(value) ? value.length : value == null || value === '' ? 0 : 1])), ...props.activeFilters }))
-const visiblePages = computed<Array<number | 'ellipsis'>>(() => {
-  const count = pagesCount.value; const current = props.page + 1
-  if (count <= 5) return Array.from({ length: count }, (_, index) => index + 1)
-  if (current <= 3) return [1, 2, 3, 'ellipsis', count]
-  if (current >= count - 2) return [1, 'ellipsis', count - 2, count - 1, count]
-  return [1, 'ellipsis', current, 'ellipsis', count]
+const visiblePages = computed<number[]>(() => {
+  const count = pagesCount.value
+  const current = props.page + 1
+  const visibleCount = Math.min(5, count)
+  const start = Math.min(Math.max(1, current - 3), Math.max(1, count - visibleCount + 1))
+  return Array.from({ length: visibleCount }, (_, index) => start + index)
 })
 
 function toggleAll() { emit('update:selectedItems', allSelected.value ? [] : [...displayRows.value]) }
@@ -327,7 +327,7 @@ defineExpose({ resetFilter, exposedLoadData, exposedResetAllFilters, resetSort, 
     <div v-if="settingsOpen && slots['table-settings']" class="settings-panel"><slot name="table-settings" /></div>
     <div v-if="showPagination" class="pagination">
       <div class="pagination-info"><span>Показано {{ rangeStart }}–{{ rangeEnd }} из {{ total }}</span><label><span>Показать</span><TzSelect class="page-size" :model-value="String(countPerPage)" :options="pageSizes" size="medium" :show-label="false" :show-leading-icon="false" :required="false" @update:model-value="updateCountPerPage" /><span>записей</span></label></div>
-      <nav aria-label="Страницы"><button type="button" :disabled="page === 0" @click="changePage(0)"><ChevronsLeft :size="12" /></button><button type="button" :disabled="page === 0" @click="changePage(page - 1)"><ChevronLeft :size="16" /></button><template v-for="(item, index) in visiblePages" :key="`${item}-${index}`"><span v-if="item === 'ellipsis'">…</span><button v-else type="button" :class="{ current: item === page + 1 }" @click="changePage(item - 1)">{{ item }}</button></template><button type="button" :disabled="page >= pagesCount - 1" @click="changePage(page + 1)"><ChevronRight :size="16" /></button><button type="button" :disabled="page >= pagesCount - 1" @click="changePage(pagesCount - 1)"><ChevronsRight :size="12" /></button></nav>
+      <nav aria-label="Страницы"><button type="button" :disabled="page === 0" @click="changePage(0)"><ChevronsLeft :size="12" /></button><button type="button" :disabled="page === 0" @click="changePage(page - 1)"><ChevronLeft :size="16" /></button><button v-for="item in visiblePages" :key="item" type="button" :class="{ current: item === page + 1 }" @click="changePage(item - 1)">{{ item }}</button><button type="button" :disabled="page >= pagesCount - 1" @click="changePage(page + 1)"><ChevronRight :size="16" /></button><button type="button" :disabled="page >= pagesCount - 1" @click="changePage(pagesCount - 1)"><ChevronsRight :size="12" /></button></nav>
     </div>
   </div>
 </template>

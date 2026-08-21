@@ -17,6 +17,7 @@ import TzHeader from './components/navigation/TzHeader.vue'
 import TzSidebar from './components/navigation/TzSidebar.vue'
 
 const activeSection = ref('Navigation')
+
 const sidebarCollapsed = ref(false)
 const readyItems = ['Colors', 'Variables', 'Navigation', 'Breadcrumbs', 'Toast', 'Select', 'Preloader', 'Toggle', 'Icon', 'Search', 'Table']
 
@@ -172,7 +173,7 @@ const breadcrumbItems = [
   position: sticky;
   top: 0;
   height: 100dvh;
-  padding: 20px 12px;
+  padding: var(--padding-spacing-20) var(--padding-spacing-12);
   overflow: auto;
   background: var(--bg-surface);
   border-right: 1px solid var(--showcase-border);
@@ -181,8 +182,8 @@ const breadcrumbItems = [
 .catalog__brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 8px 20px;
+  gap: var(--padding-spacing-12);
+  padding: 0 var(--padding-spacing-8) var(--padding-spacing-20);
   border-bottom: 1px solid var(--showcase-border);
 }
 
@@ -192,9 +193,10 @@ const breadcrumbItems = [
   height: 36px;
   place-items: center;
   color: var(--text-inverse);
-  border-radius: 9px;
+  border-radius: var(--radius-md);
   background: var(--brand-primary);
 }
+
 
 .catalog__brand div {
   display: flex;
@@ -211,12 +213,12 @@ const breadcrumbItems = [
 }
 
 .catalog nav section {
-  margin-top: 20px;
+  margin-top: var(--padding-spacing-20);
 }
 
 .catalog nav section > p,
 .eyebrow {
-  margin: 0 8px 8px;
+  margin: 0 var(--padding-spacing-8) var(--padding-spacing-8);
   color: var(--text-muted);
   font: 500 10px/14px var(--tz-font-family);
   letter-spacing: 0.08em;
@@ -226,13 +228,13 @@ const breadcrumbItems = [
 .catalog nav button {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--padding-spacing-8);
   width: 100%;
   min-height: 36px;
-  padding: 8px;
+  padding: var(--padding-spacing-8);
   color: var(--text-muted);
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: transparent;
   font: 400 12px/16px var(--tz-font-family);
   text-align: left;
@@ -260,7 +262,7 @@ const breadcrumbItems = [
 .showcase__main {
   width: min(100%, 1440px);
   margin-inline: auto;
-  padding: 40px;
+  padding: var(--padding-spacing-40);
 }
 
 .page-header,
@@ -314,7 +316,7 @@ h1 {
 
 .review-card {
   margin-bottom: 24px;
-  padding: 24px;
+  padding: var(--padding-spacing-24);
   border: 1px solid var(--showcase-border);
   border-radius: 12px;
   background: var(--bg-surface);
@@ -381,7 +383,7 @@ h1 {
   flex-direction: column;
   gap: 24px;
   min-width: 0;
-  padding: 24px;
+  padding: var(--padding-spacing-24);
 }
 
 .placeholder {
@@ -432,7 +434,7 @@ h1 {
 .strip {
   overflow: hidden;
   border: 1px solid var(--showcase-border);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 }
 
 @media (max-width: 1000px) {
@@ -446,13 +448,13 @@ h1 {
   }
 
   .showcase__main {
-    padding: 24px;
+    padding: var(--padding-spacing-24);
   }
 }
 
 @media (max-width: 700px) {
   .showcase__main {
-    padding: 16px;
+    padding: var(--padding-spacing-16);
   }
 
   .page-header,
@@ -465,7 +467,7 @@ h1 {
   }
 
   .review-card {
-    padding: 16px;
+    padding: var(--padding-spacing-16);
   }
 }
 </style>
