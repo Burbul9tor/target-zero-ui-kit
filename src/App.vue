@@ -178,6 +178,7 @@ const breadcrumbItems = [
     'catalog main'
     'footer footer';
   min-height: 100dvh;
+  padding-bottom: 30px;
   background: var(--showcase-canvas);
   transition: grid-template-columns 240ms cubic-bezier(.2, 0, 0, 1);
 }
@@ -517,7 +518,11 @@ h1 {
 }
 
 .showcase__footer {
-  z-index: 30;
+  position: fixed;
+  z-index: 50;
+  right: 0;
+  bottom: 0;
+  left: 0;
   grid-area: footer;
 }
 
