@@ -1,37 +1,61 @@
-/** Target Zero text styles extracted from Figma. */
+/** Target Zero Text Styles extracted from Figma page 12:807. */
 :root {
   --tz-font-weight-regular: 400;
   --tz-font-weight-medium: 500;
   --tz-font-weight-semibold: 600;
   --tz-font-weight-bold: 700;
+
+  /* Heading */
+  --tz-text-heading-page: var(--tz-font-weight-bold) 28px/36px var(--tz-font-family);
+  --tz-text-heading-h1: var(--tz-font-weight-bold) 24px/32px var(--tz-font-family);
+  --tz-text-heading-h2: var(--tz-font-weight-bold) 20px/28px var(--tz-font-family);
+  --tz-text-heading-h3: var(--tz-font-weight-bold) 16px/24px var(--tz-font-family);
+
+  /* Body */
+  --tz-text-body-large: var(--tz-font-weight-regular) 16px/24px var(--tz-font-family);
+  --tz-text-body-medium: var(--tz-font-weight-regular) 14px/20px var(--tz-font-family);
+  --tz-text-body-strong: var(--tz-font-weight-semibold) 14px/20px var(--tz-font-family);
+  --tz-text-body-small: var(--tz-font-weight-regular) 12px/16px var(--tz-font-family);
+  --tz-text-body-mini: var(--tz-font-weight-regular) 10px/normal var(--tz-font-family);
+
+  /* Label */
+  --tz-text-label-large: var(--tz-font-weight-medium) 14px/20px var(--tz-font-family);
+  --tz-text-label-medium: var(--tz-font-weight-medium) 12px/16px var(--tz-font-family);
+  --tz-text-label-small: var(--tz-font-weight-medium) 10px/14px var(--tz-font-family);
+
+  /* Button */
+  --tz-text-button-large: var(--tz-font-weight-semibold) 14px/20px var(--tz-font-family);
+  --tz-text-button-medium: var(--tz-font-weight-semibold) 12px/16px var(--tz-font-family);
+  --tz-text-button-small: var(--tz-font-weight-semibold) 10px/14px var(--tz-font-family);
+
+  /* Caption, Table, Sidebar */
+  --tz-text-caption-regular: var(--tz-font-weight-regular) 10px/14px var(--tz-font-family);
+  --tz-text-table-header: var(--tz-font-weight-semibold) 10px/14px var(--tz-font-family);
+  --tz-text-table-cell: var(--tz-font-weight-regular) 12px/16px var(--tz-font-family);
+  --tz-text-sidebar-parent: var(--tz-font-weight-semibold) 12px/15px var(--tz-font-family);
+  --tz-text-sidebar-subitem: var(--tz-font-weight-medium) 11px/15px var(--tz-font-family);
+  --tz-text-sidebar-action: var(--tz-font-weight-medium) 10px/14px var(--tz-font-family);
 }
 
-.tz-heading-h1 {
-  font: var(--tz-font-weight-bold) 24px/32px var(--tz-font-family);
-  letter-spacing: -0.3px;
-}
-
-.tz-heading-h3 {
-  font: var(--tz-font-weight-semibold) 16px/24px var(--tz-font-family);
-}
-
-.tz-body-medium {
-  font: var(--tz-font-weight-regular) 14px/20px var(--tz-font-family);
-}
-
-.tz-body-small {
-  font: var(--tz-font-weight-regular) 12px/16px var(--tz-font-family);
-}
-
-.tz-label-medium {
-  font: var(--tz-font-weight-medium) 12px/16px var(--tz-font-family);
-}
-
-.tz-sidebar-action {
-  font: var(--tz-font-weight-medium) 10px/14px var(--tz-font-family);
-}
-
-.tz-caption {
-  font: var(--tz-font-weight-regular) 10px/14px var(--tz-font-family);
-  letter-spacing: 0.1px;
-}
+.tz-heading-page { font: var(--tz-text-heading-page); }
+.tz-heading-h1 { font: var(--tz-text-heading-h1); }
+.tz-heading-h2 { font: var(--tz-text-heading-h2); }
+.tz-heading-h3 { font: var(--tz-text-heading-h3); }
+.tz-body-large { font: var(--tz-text-body-large); }
+.tz-body-medium { font: var(--tz-text-body-medium); }
+.tz-body-strong { font: var(--tz-text-body-strong); }
+.tz-body-small { font: var(--tz-text-body-small); }
+.tz-body-mini { font: var(--tz-text-body-mini); }
+.tz-label-large { font: var(--tz-text-label-large); }
+.tz-label-medium { font: var(--tz-text-label-medium); }
+.tz-label-small { font: var(--tz-text-label-small); }
+.tz-button-large { font: var(--tz-text-button-large); }
+.tz-button-medium { font: var(--tz-text-button-medium); }
+.tz-button-small { font: var(--tz-text-button-small); }
+.tz-caption-regular,
+.tz-caption { font: var(--tz-text-caption-regular); }
+.tz-table-header { font: var(--tz-text-table-header); }
+.tz-table-cell { font: var(--tz-text-table-cell); }
+.tz-sidebar-parent { font: var(--tz-text-sidebar-parent); }
+.tz-sidebar-subitem { font: var(--tz-text-sidebar-subitem); }
+.tz-sidebar-action { font: var(--tz-text-sidebar-action); }

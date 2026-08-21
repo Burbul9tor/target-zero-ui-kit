@@ -12,6 +12,7 @@ import SelectDocumentation from './components/documentation/SelectDocumentation.
 import TableDocumentation from './components/documentation/TableDocumentationTechnical.vue'
 import ToggleDocumentation from './components/documentation/ToggleDocumentation.vue'
 import ToastDocumentation from './components/documentation/ToastDocumentation.vue'
+import TypographyDocumentation from './components/documentation/TypographyDocumentation.vue'
 import VariablesDocumentation from './components/documentation/VariablesDocumentation.vue'
 import TzBreadcrumbs from './components/navigation/TzBreadcrumbs.vue'
 import TzFooter from './components/navigation/TzFooter.vue'
@@ -22,7 +23,7 @@ const isAuthenticated = ref(sessionStorage.getItem('target-zero-ui-kit-auth') ==
 const activeSection = ref('Navigation')
 const catalogCollapsed = ref(false)
 const sidebarCollapsed = ref(false)
-const readyItems = ['Colors', 'Variables', 'Navigation', 'Breadcrumbs', 'Button', 'Toast', 'Select', 'Preloader', 'Toggle', 'Icon', 'Search', 'Table']
+const readyItems = ['Colors', 'Typography', 'Variables', 'Navigation', 'Breadcrumbs', 'Button', 'Toast', 'Select', 'Preloader', 'Toggle', 'Icon', 'Search', 'Table']
 
 const catalog = [
   { group: 'Основы', items: ['Colors', 'Typography', 'Variables'] },
@@ -103,6 +104,7 @@ const breadcrumbItems = [
 
     <main class="showcase__main">
       <ColorsDocumentation v-if="activeSection === 'Colors'" />
+      <TypographyDocumentation v-else-if="activeSection === 'Typography'" />
       <VariablesDocumentation v-else-if="activeSection === 'Variables'" />
       <IconsDocumentation v-else-if="activeSection === 'Icon'" />
       <BreadcrumbDocumentation v-else-if="activeSection === 'Breadcrumbs'" />
