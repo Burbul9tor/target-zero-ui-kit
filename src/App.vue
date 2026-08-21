@@ -7,7 +7,7 @@ import IconsDocumentation from './components/documentation/IconsDocumentation.vu
 import PreloaderDocumentation from './components/documentation/PreloaderDocumentation.vue'
 import SearchDocumentation from './components/documentation/SearchDocumentation.vue'
 import SelectDocumentation from './components/documentation/SelectDocumentation.vue'
-import TableDocumentation from './components/documentation/TableDocumentation.vue'
+import TableDocumentation from './components/documentation/TableDocumentationTechnical.vue'
 import ToggleDocumentation from './components/documentation/ToggleDocumentation.vue'
 import ToastDocumentation from './components/documentation/ToastDocumentation.vue'
 import VariablesDocumentation from './components/documentation/VariablesDocumentation.vue'
