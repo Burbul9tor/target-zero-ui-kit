@@ -140,6 +140,7 @@ watch(() => props.data, () => { if (props.resetAllCheckedItems && props.selected
 watch([() => props.isServer, () => props.getData], ([server, loader]) => { if (server && loader) exposedLoadData(props.page, props.countPerPage) }, { immediate: true })
 
 const titleOf = (column: TzTableColumn) => column.label ?? column.title ?? column.key
+const alignOf = (column: TzTableColumn) => column.align ?? (column.type === 'index' ? 'center' : 'left')
 const dataColumns = computed(() => props.columns
   .filter(column => column.active !== false && (!column.type || column.type === 'default' || column.type === 'index'))
   .slice(0, Math.max(1, props.columnsPerView)))
@@ -297,7 +298,7 @@ defineExpose({ resetFilter, exposedLoadData, exposedResetAllFilters, resetSort, 
         </colgroup>
         <thead v-if="showHeader"><tr>
           <th v-if="hasSelection" class="selection-cell"><button type="button" class="tz-checkbox" :class="{ checked: allSelected, indeterminate: someSelected }" :aria-pressed="allSelected" aria-label="Выбрать все строки" @click="toggleAll"><span /></button></th>
-          <th v-for="column in dataColumns" :key="column.key" :class="[`is-${column.align ?? 'left'}`, { filterable: column.filter || column.filterable, fixed: column.fixed }]" @click="(column.filter || column.filterable) && openFilter(column)">
+          <th v-for="column in dataColumns" :key="column.key" :class="[`is-${alignOf(column)}`, { filterable: column.filter || column.filterable, fixed: column.fixed }]" @click="(column.filter || column.filterable) && openFilter(column)">
             <div class="heading">
               <button v-if="column.sortable" type="button" class="icon-button" :class="{ active: sortKey === (column.sortFieldName ?? column.key) && sortOrder }" @click.stop="toggleSort(column)"><ArrowUp v-if="sortKey === (column.sortFieldName ?? column.key) && sortOrder === 'ASC'" :size="12" /><ArrowDown v-else-if="sortKey === (column.sortFieldName ?? column.key) && sortOrder === 'DESC'" :size="12" /><ArrowUpDown v-else :size="12" /></button>
               <span class="heading-title">{{ titleOf(column) }}</span>
@@ -316,7 +317,7 @@ defineExpose({ resetFilter, exposedLoadData, exposedResetAllFilters, resetSort, 
         <tbody v-if="displayRows.length" :style="tableBodyStyle">
           <tr v-for="(row, index) in displayRows" :key="String(rowId(row) ?? index)" :class="{ selected: selectedIds.has(rowId(row)), clickable: !disabledRowClick }" @click="clickRow(row)" @dblclick="doubleClickRow(row, $event)">
             <td v-if="hasSelection" class="selection-cell" @click.stop><button type="button" class="tz-checkbox" :class="{ checked: selectedIds.has(rowId(row)) }" :aria-pressed="selectedIds.has(rowId(row))" aria-label="Выбрать строку" @click="toggleRow(row)"><span /></button></td>
-            <td v-for="column in dataColumns" :key="column.key" :class="`is-${column.align ?? 'left'}`"><slot :name="`column-${column.key}`" :item="row" :value="row[column.key]">{{ column.type === 'index' ? page * countPerPage + index + 1 : row[column.key] }}</slot></td>
+            <td v-for="column in dataColumns" :key="column.key" :class="`is-${alignOf(column)}`"><slot :name="`column-${column.key}`" :item="row" :value="row[column.key]">{{ column.type === 'index' ? page * countPerPage + index + 1 : row[column.key] }}</slot></td>
             <td v-if="hasControl" class="action-cell" @click.stop><slot name="context-menu" :item="row"><button v-if="showActions" type="button" class="row-action" @click="emit('row-action', row)"><Trash2 :size="16" /></button></slot></td>
           </tr>
         </tbody>
