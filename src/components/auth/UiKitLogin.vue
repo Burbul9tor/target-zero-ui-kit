@@ -60,6 +60,8 @@ function submit() {
 <style scoped>
 .login-page {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   min-height: 100dvh;
   padding: var(--padding-spacing-24);
   place-items: center;
@@ -72,13 +74,24 @@ function submit() {
 
 .login-card {
   display: grid;
-  width: min(100%, 400px);
+  grid-auto-flow: row;
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+  max-width: 400px;
   gap: var(--padding-spacing-16);
   padding: var(--padding-spacing-32);
+  align-self: center;
+  justify-self: center;
   border: 1px solid var(--border-default);
   border-radius: var(--radius-xl);
   background: var(--bg-surface);
   box-shadow: 0 20px 40px var(--bg-shadow);
+}
+
+.login-card > * {
+  grid-column: 1;
+  width: 100%;
+  min-width: 0;
 }
 
 .login-card header { margin-bottom: var(--padding-spacing-8); text-align: center; }
