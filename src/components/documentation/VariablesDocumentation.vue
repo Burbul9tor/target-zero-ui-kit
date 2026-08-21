@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Check, Copy } from '@lucide/vue'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
+import tokensCss from '../../styles/tokens.css?raw'
 
 type Token = { figma: string; css: string; value: number }
 
@@ -21,12 +22,11 @@ const radius: Token[] = [
 ]
 
 const copied = ref(false)
-const cssVariables = computed(() => [...spacing, ...radius]
-  .map(token => `  ${token.css}: ${token.value}px;`)
-  .join('\n'))
+const cssVariables = tokensCss.trim()
+const cssVariableCount = (tokensCss.match(/--[a-z0-9-]+\s*:/gi) ?? []).length
 
 async function copyVariables() {
-  await navigator.clipboard?.writeText(`:root {\n${cssVariables.value}\n}`)
+  await navigator.clipboard?.writeText(cssVariables)
   copied.value = true
   window.setTimeout(() => { copied.value = false }, 1200)
 }
@@ -37,10 +37,10 @@ async function copyVariables() {
     <header class="variables-hero">
       <div>
         <p>FOUNDATIONS · VARIABLES</p>
-        <h1>Отступы и скругления</h1>
-        <span>Примитивы из коллекции Figma Primitives. Используйте их вместо произвольных числовых значений.</span>
+        <h1>Дизайн-токены</h1>
+        <span>Цветовые примитивы, отступы, скругления, семантические алиасы и режимы из единого файла токенов Target Zero.</span>
       </div>
-      <small><Check :size="14" /> 20 variables · 2 группы</small>
+      <small><Check :size="14" /> {{ cssVariableCount }} CSS declarations · полный export</small>
     </header>
 
     <section class="token-card">
@@ -65,12 +65,10 @@ async function copyVariables() {
 
     <section class="token-card css-card">
       <header>
-        <div><h2>CSS variables</h2><p>Готовый набор для подключения в проекте.</p></div>
+        <div><h2>CSS variables</h2><p>Полный источник: color primitives, spacing, radius, semantic aliases, brand и theme modes.</p></div>
         <button type="button" @click="copyVariables"><Check v-if="copied" :size="14" /><Copy v-else :size="14" /> {{ copied ? 'Скопировано' : 'Копировать' }}</button>
       </header>
-      <pre><code>:root {
-{{ cssVariables }}
-}</code></pre>
+      <pre><code>{{ cssVariables }}</code></pre>
     </section>
   </div>
 </template>
@@ -101,7 +99,7 @@ async function copyVariables() {
 .radius-grid article > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .css-card > header { display: flex; align-items: center; justify-content: space-between; gap: var(--padding-spacing-20); }
 .css-card button { display: flex; align-items: center; gap: var(--padding-spacing-6); padding: 7px 10px; color: var(--brand-primary); border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--brand-bg-accent); font: 500 11px/16px var(--tz-font-family); cursor: pointer; }
-.css-card pre { max-height: 440px; margin: 0; padding: var(--padding-spacing-20); overflow: auto; color: var(--green-100); border-radius: var(--radius-md); background: var(--gray-900); font: 400 11px/18px ui-monospace, SFMono-Regular, Consolas, monospace; }
+.css-card pre { max-height: 620px; margin: 0; padding: var(--padding-spacing-20); overflow: auto; color: var(--green-100); border-radius: var(--radius-md); background: var(--gray-900); font: 400 11px/18px ui-monospace, SFMono-Regular, Consolas, monospace; }
 @media (max-width: 900px) { .radius-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .token-table article { grid-template-columns: 80px 1fr 60px; } .token-table code:nth-of-type(2) { display: none; } }
 @media (max-width: 620px) { .variables-hero, .css-card > header { flex-direction: column; } .variables-hero, .token-card { padding: var(--padding-spacing-16); } .radius-grid { grid-template-columns: 1fr; } .token-table article { grid-template-columns: 48px 1fr 48px; gap: var(--padding-spacing-8); } }
 </style>
