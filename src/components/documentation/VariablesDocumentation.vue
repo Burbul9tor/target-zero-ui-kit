@@ -80,7 +80,7 @@ async function copyVariables() {
 .variables-hero h1 { margin: 0 0 var(--padding-spacing-8); color: var(--text-inverse); font: 700 32px/40px var(--tz-font-family); }
 .variables-hero span { display: block; max-width: 720px; color: color-mix(in srgb, var(--text-inverse) 82%, transparent); font: 400 14px/20px var(--tz-font-family); }
 .variables-hero small { display: flex; align-items: center; gap: var(--padding-spacing-6); padding: 7px 10px; border-radius: var(--radius-md); background: color-mix(in srgb, var(--text-inverse) 12%, transparent); font: 500 11px/16px var(--tz-font-family); white-space: nowrap; }
-.token-card { min-width: 0; padding: var(--padding-spacing-24); border: 1px solid var(--showcase-border); border-radius: var(--radius-lg); background: var(--bg-surface); box-shadow: 0 10px 15px -3px var(--bg-shadow); }
+.token-card { min-width: 0; padding: var(--padding-spacing-24); border: 1px solid var(--border-default); border-radius: var(--radius-lg); background: var(--bg-surface); box-shadow: 0 10px 15px -3px var(--bg-shadow); }
 .token-card > header { margin-bottom: var(--padding-spacing-20); }
 .token-card h2, .token-card p { margin-top: 0; }
 .token-card h2 { margin-bottom: var(--padding-spacing-4); color: var(--text-default); font: 600 18px/24px var(--tz-font-family); }

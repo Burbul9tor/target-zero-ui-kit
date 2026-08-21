@@ -148,7 +148,7 @@ const tokens = [
 .table-docs__header h1 { margin: 0 0 8px; color: var(--text-default); font: 700 32px/40px var(--tz-font-family); }
 .table-docs__header p, .table-card header p { margin: 0; color: var(--text-muted); font: 400 14px/20px var(--tz-font-family); }
 .table-docs__header > span { display: flex; align-items: center; gap: 6px; padding: 7px 10px; color: var(--status-success-fg); border-radius: 8px; background: var(--status-success-bg); font: 500 11px/16px var(--tz-font-family); white-space: nowrap; }
-.table-card { min-width: 0; padding: 24px; border: 1px solid var(--showcase-border); border-radius: 12px; background: var(--bg-surface); box-shadow: 0 10px 15px -3px var(--bg-shadow); }
+.table-card { min-width: 0; padding: 24px; border: 1px solid var(--border-default); border-radius: 12px; background: var(--bg-surface); box-shadow: 0 10px 15px -3px var(--bg-shadow); }
 .table-card > header { margin-bottom: 20px; }
 .interactive-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .example-actions { display: flex; align-items: center; gap: 10px; }
@@ -163,7 +163,7 @@ const tokens = [
 .employee strong { color: var(--text-default); font: 400 14px/20px var(--tz-font-family); }
 .employee small { color: var(--text-muted); font: 400 10px/normal var(--tz-font-family); }
 .requirements { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.requirements article, .tokens article { padding: 16px; border: 1px solid var(--showcase-border); border-radius: 8px; background: var(--showcase-canvas); }
+.requirements article, .tokens article { padding: 16px; border: 1px solid var(--border-default); border-radius: 8px; background: var(--bg-page); }
 .requirements strong, .tokens strong { color: var(--text-default); font: 500 12px/16px var(--tz-font-family); }
 .requirements p { margin: 6px 0 0; color: var(--text-muted); font: 400 12px/18px var(--tz-font-family); }
 code { color: var(--brand-primary); font: 400 11px/16px ui-monospace, SFMono-Regular, Consolas, monospace; }
@@ -171,7 +171,7 @@ code { color: var(--brand-primary); font: 400 11px/16px ui-monospace, SFMono-Reg
 .tokens article { display: flex; flex-direction: column; gap: 3px; padding: 12px; }
 .tokens span { color: var(--text-muted); font: 400 10px/14px var(--tz-font-family); }
 .specs { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-.specs span { padding: 6px 8px; color: var(--text-muted); border-radius: 6px; background: var(--showcase-canvas); font: 400 11px/16px var(--tz-font-family); }
+.specs span { padding: 6px 8px; color: var(--text-muted); border-radius: 6px; background: var(--bg-page); font: 400 11px/16px var(--tz-font-family); }
 .specs strong { color: var(--text-default); font-weight: 500; }
 @media (max-width: 900px) { .requirements, .tokens { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 620px) { .table-docs__header, .interactive-header { align-items: flex-start; flex-direction: column; } .table-card { padding: 16px; } .requirements, .tokens { grid-template-columns: 1fr; } }

@@ -250,7 +250,7 @@ async function downloadIcon(item: IconEntry, event: MouseEvent) {
 .icons-header h1 { margin: 0 0 8px; color: var(--text-default); font: 700 32px/40px var(--tz-font-family); }
 .icons-header span { color: var(--text-muted); font: 400 14px/20px var(--tz-font-family); }
 .icons-header > strong { padding: 7px 10px; color: var(--status-info-fg); border-radius: 8px; background: var(--status-info-bg); font: 500 11px/16px var(--tz-font-family); white-space: nowrap; }
-.icons-card { min-width: 0; padding: 24px; border: 1px solid var(--showcase-border); border-radius: 12px; background: var(--bg-surface); box-shadow: 0 10px 15px -3px var(--bg-shadow); }
+.icons-card { min-width: 0; padding: 24px; border: 1px solid var(--border-default); border-radius: 12px; background: var(--bg-surface); box-shadow: 0 10px 15px -3px var(--bg-shadow); }
 .icons-card > header { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 20px; }
 .icons-card h2 { margin: 0 0 4px; color: var(--text-default); font: 600 18px/24px var(--tz-font-family); }
 .icons-card header p { margin: 0; color: var(--text-muted); font: 400 14px/20px var(--tz-font-family); }
@@ -271,7 +271,7 @@ async function downloadIcon(item: IconEntry, event: MouseEvent) {
 .icons-empty strong { color: var(--text-default); font: 500 14px/20px var(--tz-font-family); }
 .icons-empty span { font: 400 12px/16px var(--tz-font-family); }
 .icon-rules > div { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-.icon-rules article { padding: 16px; border: 1px solid var(--showcase-border); border-radius: 8px; background: var(--showcase-canvas); }
+.icon-rules article { padding: 16px; border: 1px solid var(--border-default); border-radius: 8px; background: var(--bg-page); }
 .icon-rules strong { color: var(--text-default); font: 500 12px/16px var(--tz-font-family); }
 .icon-rules p { margin: 6px 0 0; color: var(--text-muted); font: 400 12px/18px var(--tz-font-family); }
 code { color: var(--brand-primary); font: 400 11px/16px ui-monospace, SFMono-Regular, Consolas, monospace; }

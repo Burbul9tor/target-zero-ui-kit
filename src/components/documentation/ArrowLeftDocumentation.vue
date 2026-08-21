@@ -32,7 +32,7 @@ import TzArrowLeftIcon from '../icons/TzArrowLeftIcon.vue'
 <style scoped>
 .arrow-doc {
   padding: 24px;
-  border: 1px solid var(--showcase-border);
+  border: 1px solid var(--border-default);
   border-radius: 12px;
   background: var(--bg-surface);
   box-shadow: 0 10px 15px -3px var(--bg-shadow);
@@ -73,9 +73,9 @@ import TzArrowLeftIcon from '../icons/TzArrowLeftIcon.vue'
   display: grid;
   place-items: center;
   min-height: 120px;
-  border: 1px solid var(--showcase-border);
+  border: 1px solid var(--border-default);
   border-radius: 8px;
-  background: var(--showcase-canvas);
+  background: var(--bg-page);
 }
 
 .arrow-doc__preview :deep(.tz-arrow-left-icon) {
@@ -89,9 +89,9 @@ import TzArrowLeftIcon from '../icons/TzArrowLeftIcon.vue'
   gap: 1px;
   margin: 0;
   overflow: hidden;
-  border: 1px solid var(--showcase-border);
+  border: 1px solid var(--border-default);
   border-radius: 8px;
-  background: var(--showcase-border);
+  background: var(--border-default);
 }
 
 .arrow-doc dl div {

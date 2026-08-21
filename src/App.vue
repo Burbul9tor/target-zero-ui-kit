@@ -193,7 +193,7 @@ const breadcrumbItems = [
     'footer footer';
   min-height: 100dvh;
   padding-bottom: 30px;
-  background: var(--showcase-canvas);
+  background: var(--bg-page);
   transition: grid-template-columns 240ms cubic-bezier(.2, 0, 0, 1);
 }
 
@@ -217,7 +217,7 @@ const breadcrumbItems = [
   min-width: 0;
   overflow: auto;
   background: var(--bg-surface);
-  border-right: 1px solid var(--showcase-border);
+  border-right: 1px solid var(--border-default);
   transition: padding 240ms cubic-bezier(.2, 0, 0, 1);
 }
 
@@ -408,7 +408,7 @@ h1 {
 .review-card {
   margin-bottom: 24px;
   padding: var(--padding-spacing-24);
-  border: 1px solid var(--showcase-border);
+  border: 1px solid var(--border-default);
   border-radius: 12px;
   background: var(--bg-surface);
   box-shadow: 0 10px 15px -3px var(--bg-shadow);
@@ -430,7 +430,7 @@ h1 {
   padding: 2px;
   border: 1px solid var(--border-default);
   border-radius: 7px;
-  background: var(--showcase-canvas);
+  background: var(--bg-page);
 }
 
 .segmented button,
@@ -460,7 +460,7 @@ h1 {
   overflow: hidden;
   border: 1px solid var(--border-default);
   border-radius: 8px;
-  background: var(--showcase-canvas);
+  background: var(--bg-page);
 }
 
 .app-preview__body {
@@ -504,9 +504,9 @@ h1 {
 .breadcrumb-examples article {
   min-height: 94px;
   padding: 20px;
-  border: 1px solid var(--showcase-border);
+  border: 1px solid var(--border-default);
   border-radius: 8px;
-  background: var(--showcase-canvas);
+  background: var(--bg-page);
 }
 
 .breadcrumb-examples article > span {
@@ -524,7 +524,7 @@ h1 {
 
 .strip {
   overflow: hidden;
-  border: 1px solid var(--showcase-border);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-sm);
 }
 

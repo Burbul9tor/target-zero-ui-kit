@@ -72,14 +72,14 @@ const tokens = [
 .toggle-docs__header h1 { margin: 0 0 8px; color: var(--text-default); font: 700 32px/40px var(--tz-font-family); }
 .toggle-docs__header p, .toggle-card header p { margin: 0; color: var(--text-muted); font: 400 14px/20px var(--tz-font-family); }
 .toggle-docs__header > span { display: flex; align-items: center; gap: 6px; padding: 7px 10px; color: var(--status-success-fg); border-radius: 8px; background: var(--status-success-bg); font: 500 11px/16px var(--tz-font-family); white-space: nowrap; }
-.toggle-card { min-width: 0; padding: 24px; border: 1px solid var(--showcase-border); border-radius: 12px; background: var(--bg-surface); box-shadow: 0 10px 15px -3px var(--bg-shadow); }
+.toggle-card { min-width: 0; padding: 24px; border: 1px solid var(--border-default); border-radius: 12px; background: var(--bg-surface); box-shadow: 0 10px 15px -3px var(--bg-shadow); }
 .toggle-card > header { margin-bottom: 20px; }
 .toggle-card h2 { margin: 0 0 4px; color: var(--text-default); font: 600 18px/24px var(--tz-font-family); }
 .interactive-grid, .variant-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.interactive-grid article, .variant-grid article { display: flex; min-height: 88px; padding: 20px; align-items: center; gap: 24px; border: 1px solid var(--showcase-border); border-radius: 8px; background: var(--showcase-canvas); }
+.interactive-grid article, .variant-grid article { display: flex; min-height: 88px; padding: 20px; align-items: center; gap: 24px; border: 1px solid var(--border-default); border-radius: 8px; background: var(--bg-page); }
 .interactive-grid small, .variant-grid small { min-width: 112px; color: var(--text-muted); font: 500 10px/14px var(--tz-font-family); letter-spacing: .05em; }
 .requirements { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.requirements article, .token-grid article { padding: 16px; border: 1px solid var(--showcase-border); border-radius: 8px; background: var(--showcase-canvas); }
+.requirements article, .token-grid article { padding: 16px; border: 1px solid var(--border-default); border-radius: 8px; background: var(--bg-page); }
 .requirements strong, .token-grid strong { color: var(--text-default); font: 500 12px/16px var(--tz-font-family); }
 .requirements p { margin: 6px 0 0; color: var(--text-muted); font: 400 12px/18px var(--tz-font-family); }
 code { color: var(--brand-primary); font: 400 11px/16px ui-monospace, SFMono-Regular, Consolas, monospace; }

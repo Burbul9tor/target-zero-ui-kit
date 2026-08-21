@@ -140,7 +140,7 @@ async function copyValue(value: string) {
 .color-hero h1 { margin: 0 0 8px; color: var(--text-inverse); font: 700 32px/40px var(--tz-font-family); }
 .color-hero span { display: block; max-width: 760px; color: color-mix(in srgb, var(--text-inverse) 82%, transparent); font: 400 14px/20px var(--tz-font-family); }
 .color-hero small { display: flex; align-items: center; gap: 6px; padding: 7px 10px; border-radius: 8px; background: color-mix(in srgb, var(--text-inverse) 12%, transparent); font: 500 11px/16px var(--tz-font-family); white-space: nowrap; }
-.color-card { min-width: 0; padding: 24px; border: 1px solid var(--showcase-border); border-radius: 12px; background: var(--bg-surface); box-shadow: 0 10px 15px -3px var(--bg-shadow); }
+.color-card { min-width: 0; padding: 24px; border: 1px solid var(--border-default); border-radius: 12px; background: var(--bg-surface); box-shadow: 0 10px 15px -3px var(--bg-shadow); }
 .color-card > header { margin-bottom: 20px; }
 .color-card h2, .color-card h3, .color-card p { margin-top: 0; }
 .color-card h2 { margin-bottom: 4px; color: var(--text-default); font: 600 18px/24px var(--tz-font-family); }
@@ -154,7 +154,7 @@ async function copyValue(value: string) {
 .swatch code { color: var(--text-muted); font: 400 9px/13px ui-monospace, SFMono-Regular, Consolas, monospace; }
 .swatch > span { position: absolute; top: 42px; left: 4px; padding: 2px 4px; color: var(--text-inverse); border-radius: 3px; background: var(--bg-overlay); font: 500 8px/10px var(--tz-font-family); }
 .section-header, .css-card > header { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-.mode-switch { display: flex; padding: 2px; border: 1px solid var(--border-default); border-radius: 8px; background: var(--showcase-canvas); }
+.mode-switch { display: flex; padding: 2px; border: 1px solid var(--border-default); border-radius: 8px; background: var(--bg-page); }
 .mode-switch button { padding: 6px 10px; color: var(--text-muted); border: 0; border-radius: 6px; background: transparent; font: 500 11px/16px var(--tz-font-family); cursor: pointer; }
 .mode-switch button.active { color: var(--brand-primary); background: var(--bg-surface); box-shadow: 0 1px 3px var(--bg-shadow); }
 .semantic-grid { display: grid; overflow: hidden; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid var(--border-default); border-radius: 8px; }
