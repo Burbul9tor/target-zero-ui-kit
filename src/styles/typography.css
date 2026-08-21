@@ -1,0 +1,37 @@
+/** Target Zero text styles extracted from Figma. */
+:root {
+  --tz-font-weight-regular: 400;
+  --tz-font-weight-medium: 500;
+  --tz-font-weight-semibold: 600;
+  --tz-font-weight-bold: 700;
+}
+
+.tz-heading-h1 {
+  font: var(--tz-font-weight-bold) 24px/32px var(--tz-font-family);
+  letter-spacing: -0.3px;
+}
+
+.tz-heading-h3 {
+  font: var(--tz-font-weight-semibold) 16px/24px var(--tz-font-family);
+}
+
+.tz-body-medium {
+  font: var(--tz-font-weight-regular) 14px/20px var(--tz-font-family);
+}
+
+.tz-body-small {
+  font: var(--tz-font-weight-regular) 12px/16px var(--tz-font-family);
+}
+
+.tz-label-medium {
+  font: var(--tz-font-weight-medium) 12px/16px var(--tz-font-family);
+}
+
+.tz-sidebar-action {
+  font: var(--tz-font-weight-medium) 10px/14px var(--tz-font-family);
+}
+
+.tz-caption {
+  font: var(--tz-font-weight-regular) 10px/14px var(--tz-font-family);
+  letter-spacing: 0.1px;
+}

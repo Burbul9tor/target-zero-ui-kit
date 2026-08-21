@@ -1,0 +1,192 @@
+/**
+ * Target Zero design tokens.
+ * Source: Figma variables, file t4dQMr7A8vyvDsVwRyaCWx.
+ * Components must consume semantic tokens; primitives are source values only.
+ */
+:root {
+  color-scheme: light;
+
+  /* Typography */
+  --tz-font-family: 'Roboto', Arial, sans-serif;
+
+  /* Primitives / Padding — Figma: Primitives / Padding */
+  --padding-spacing-2: 2px;
+  --padding-spacing-4: 4px;
+  --padding-spacing-6: 6px;
+  --padding-spacing-8: 8px;
+  --padding-spacing-12: 12px;
+  --padding-spacing-16: 16px;
+  --padding-spacing-20: 20px;
+  --padding-spacing-24: 24px;
+  --padding-spacing-32: 32px;
+  --padding-spacing-40: 40px;
+  --padding-spacing-48: 48px;
+  --padding-spacing-64: 64px;
+  --padding-spacing-80: 80px;
+
+  /* Primitives / Radius — Figma: Primitives / Radius */
+  --radius-none: 0px;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 999px;
+
+  /* Backward-compatible layout aliases */
+  --tz-space-4: var(--padding-spacing-4);
+  --tz-space-6: var(--padding-spacing-6);
+  --tz-space-8: var(--padding-spacing-8);
+  --tz-space-12: var(--padding-spacing-12);
+  --tz-space-16: var(--padding-spacing-16);
+  --tz-space-24: var(--padding-spacing-24);
+  --tz-radius-control: var(--radius-xs);
+
+  /* Primitives / Green */
+  --green-50: #f2f8f5;
+  --green-100: #e2eeea;
+  --green-200: #c2e0d5;
+  --green-300: #9acbb8;
+  --green-400: #72b69c;
+  --green-500: #53a184;
+  --green-600: #407c65;
+  --green-700: #386c58;
+  --green-800: #2a5142;
+  --green-900: #20372e;
+  --green-600-10: #407c6514;
+  --green-600-20: #407c651f;
+  --green-600-30: #407c654d;
+
+  /* Primitives / Blue */
+  --blue-50: #eff6fb;
+  --blue-100: #daecf6;
+  --blue-200: #b1daf2;
+  --blue-300: #7cc1e9;
+  --blue-400: #48a9e0;
+  --blue-500: #2492d1;
+  --blue-600: #2d9cdb;
+  --blue-700: #18628b;
+  --blue-800: #124968;
+  --blue-900: #113345;
+  --blue-600-10: #2d9cdb1a;
+  --blue-600-20: #2d9cdb33;
+  --blue-600-30: #2d9cdb4d;
+
+  /* Primitives / Gray */
+  --gray-0: #ffffff;
+  --gray-50: #f8f9f9;
+  --gray-100: #f2f3f3;
+  --gray-200: #e4e7e6;
+  --gray-300: #cfd3d3;
+  --gray-400: #9aa2a2;
+  --gray-500: #717a7a;
+  --gray-600: #5f5f5f;
+  --gray-700: #404040;
+  --gray-800: #2b2b2b;
+  --gray-900: #161616;
+  --gray-950: #0c0c0c;
+
+  /* Primitives / Feedback */
+  --red-100: #fee2e2;
+  --red-600: #dc2626;
+  --red-700: #b91c1c;
+  --amber-100: #fef3c7;
+  --amber-600: #d97706;
+  --amber-700: #b45309;
+
+  /* Brand / Client A */
+  --brand-primary: var(--green-600);
+  --brand-primary-hover: var(--green-700);
+  --brand-bg-accent: var(--green-600-30);
+  --brand-bg-active: var(--green-600-20);
+  --brand-bg-hover: var(--green-600-10);
+  --effect-shadow: #407c6533;
+
+  /* Appearance / Light */
+  --bg-surface: var(--gray-0);
+  --bg-page: var(--gray-50);
+  --text-default: var(--gray-900);
+  --text-muted: var(--gray-500);
+  --text-inverse: var(--gray-0);
+  --text-disabled: var(--gray-300);
+  --text-button-fill: var(--gray-0);
+  --border-default: var(--gray-200);
+  --icon-default: var(--gray-700);
+  --bg-disabled: var(--gray-100);
+  --bg-track-off: var(--gray-200);
+  --bg-row-hover: var(--gray-50);
+  --bg-overlay: #00000066;
+  --bg-shadow: #0000001a;
+  --bg-background-card: var(--gray-0);
+
+  /* Status */
+  --status-success-bg: var(--green-100);
+  --status-success-fg: var(--green-700);
+  --status-error-bg: var(--red-100);
+  --status-error-fg: var(--red-700);
+  --status-warning-bg: var(--amber-100);
+  --status-warning-fg: var(--amber-700);
+  --status-info-bg: var(--blue-100);
+  --status-info-fg: var(--blue-700);
+  --status-default-bg: var(--gray-0);
+
+  /* Effect */
+  --effect-hover: #407c6533;
+
+  /* Decorative */
+  --blue-bg: #e9f3f8;
+  --blue-fg: #397da3;
+  --violet-bg: #f0eef9;
+  --violet-fg: #7467aa;
+  --amber-bg: #fbf1df;
+  --amber-fg: #a87420;
+  --orange-bg: #fbeee5;
+  --orange-fg: #b56d3a;
+  --rose-bg: #f9e9ec;
+  --rose-fg: #b05d68;
+  --slate-bg: #ebf0f2;
+  --slate-fg: #607781;
+  --cyan-bg: #e7f5f5;
+  --cyan-fg: #27848b;
+
+  /* Backward-compatible semantic aliases */
+  --tz-page-bg: var(--bg-page);
+  --tz-sidebar-bg: var(--bg-surface);
+  --tz-text-primary: var(--text-default);
+  --tz-text-muted: var(--text-muted);
+  --tz-text-subtle: var(--gray-400);
+  --tz-text-brand-strong: var(--brand-primary);
+  --brand-bg-chip: var(--green-600-30);
+  --status-neutral-fg: var(--slate-fg);
+  --showcase-canvas: var(--bg-page);
+  --showcase-border: var(--border-default);
+}
+
+[data-brand='client-b'] {
+  --brand-primary: var(--blue-600);
+  --brand-primary-hover: var(--blue-700);
+  --brand-bg-accent: var(--blue-600-10);
+  --brand-bg-active: var(--blue-600-20);
+  --brand-bg-hover: var(--blue-600-10);
+  --brand-bg-chip: var(--blue-600-30);
+  --effect-shadow: var(--blue-600-20);
+  --effect-hover: var(--blue-600-20);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg-surface: var(--gray-800);
+  --bg-page: var(--gray-900);
+  --text-default: var(--gray-50);
+  --text-muted: var(--gray-400);
+  --text-inverse: var(--gray-900);
+  --text-disabled: var(--gray-600);
+  --border-default: var(--gray-700);
+  --icon-default: var(--gray-300);
+  --bg-disabled: var(--gray-800);
+  --bg-track-off: var(--gray-700);
+  --bg-row-hover: var(--gray-800);
+  --bg-overlay: #00000099;
+  --bg-shadow: #ffffff1a;
+  --bg-background-card: var(--gray-800);
+}

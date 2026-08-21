@@ -1,0 +1,37 @@
+:root {
+  color-scheme: light;
+  --tz-font-family: 'Roboto', Arial, sans-serif;
+  --tz-space-4: 4px;
+  --tz-space-12: 12px;
+  --tz-space-16: 16px;
+  --radius-md: 8px;
+  --bg-background-card: #ffffff;
+  --bg-shadow: rgb(0 0 0 / 10%);
+  --bg-surface: #ffffff;
+  --bg-track-off: #e4e7e6;
+  --text-default: #161616;
+  --text-muted: #717a7a;
+  --gray-700: #404746;
+  --icon-default: var(--gray-700);
+  --border-default: #e4e7e6;
+  --brand-primary: #407c65;
+  --brand-bg-accent: #f2f8f5;
+  --showcase-canvas: #f7f9f8;
+  --showcase-border: #e5e7eb;
+  --slate-bg: #ebf0f2;
+  --slate-fg: #607781;
+  --status-neutral-fg: #53605c;
+  --status-success-bg: #e2eeea;
+  --status-success-fg: #386c58;
+  --status-info-bg: #daecf6;
+  --status-info-fg: #18628b;
+  --status-warning-bg: #fbeee5;
+  --status-warning-fg: #a2680e;
+  --status-error-bg: #fee2e2;
+  --status-error-fg: #b91c1c;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { font-family: var(--tz-font-family); color: var(--text-default); background: var(--showcase-canvas); -webkit-font-smoothing: antialiased; }
+body { min-width: 320px; min-height: 100dvh; margin: 0; }
+button, input { font: inherit; }
