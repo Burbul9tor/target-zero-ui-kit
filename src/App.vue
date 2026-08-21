@@ -74,6 +74,8 @@ const breadcrumbItems = [
             type="button"
             :class="{ 'is-active': item === activeSection }"
             :disabled="!readyItems.includes(item)"
+            :aria-label="catalogCollapsed ? item : undefined"
+            :title="catalogCollapsed ? item : undefined"
             @click="activeSection = item"
           >
             <Component :size="16" :stroke-width="1.5" />
@@ -177,10 +179,11 @@ const breadcrumbItems = [
     'footer footer';
   min-height: 100dvh;
   background: var(--showcase-canvas);
+  transition: grid-template-columns 240ms cubic-bezier(.2, 0, 0, 1);
 }
 
 .showcase--catalog-collapsed {
-  grid-template-columns: 0 minmax(0, 1fr);
+  grid-template-columns: 56px minmax(0, 1fr);
 }
 
 .showcase__header {
@@ -196,15 +199,15 @@ const breadcrumbItems = [
   grid-area: catalog;
   height: calc(100dvh - 84px);
   padding: var(--padding-spacing-20) var(--padding-spacing-12);
+  min-width: 0;
   overflow: auto;
   background: var(--bg-surface);
   border-right: 1px solid var(--showcase-border);
-  transition: opacity 160ms ease, visibility 160ms ease;
+  transition: padding 240ms cubic-bezier(.2, 0, 0, 1);
 }
 
 .showcase--catalog-collapsed .catalog {
-  opacity: 0;
-  visibility: hidden;
+  padding-inline: 10px;
 }
 
 .catalog__brand {
@@ -223,12 +226,18 @@ const breadcrumbItems = [
   color: var(--text-inverse);
   border-radius: var(--radius-md);
   background: var(--brand-primary);
+  flex: 0 0 36px;
 }
 
 
 .catalog__brand div {
   display: flex;
+  max-width: 150px;
+  min-width: 0;
   flex-direction: column;
+  overflow: hidden;
+  opacity: 1;
+  transition: max-width 200ms ease, opacity 140ms ease;
 }
 
 .catalog__brand strong {
@@ -269,7 +278,45 @@ const breadcrumbItems = [
 }
 
 .catalog nav button span {
+  max-width: 150px;
   flex: 1;
+  overflow: hidden;
+  opacity: 1;
+  transition: max-width 200ms ease, opacity 140ms ease;
+}
+
+.catalog nav button > svg:last-child {
+  max-width: 14px;
+  overflow: hidden;
+  opacity: 1;
+  transition: max-width 160ms ease, opacity 120ms ease;
+}
+
+.showcase--catalog-collapsed .catalog__brand {
+  gap: 0;
+  padding-inline: 0;
+  justify-content: center;
+}
+
+.showcase--catalog-collapsed .catalog__brand div,
+.showcase--catalog-collapsed .catalog nav button span,
+.showcase--catalog-collapsed .catalog nav button > svg:last-child {
+  max-width: 0;
+  flex: 0 0 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.showcase--catalog-collapsed .catalog nav section > p {
+  max-height: 0;
+  margin: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.showcase--catalog-collapsed .catalog nav button {
+  gap: 0;
+  justify-content: center;
 }
 
 .catalog nav button:not(:disabled) {
@@ -369,6 +416,7 @@ h1 {
   border: 1px solid var(--border-default);
   border-radius: 7px;
   background: var(--showcase-canvas);
+  transition: grid-template-columns 240ms cubic-bezier(.2, 0, 0, 1);
 }
 
 .segmented button,
@@ -399,6 +447,7 @@ h1 {
   border: 1px solid var(--border-default);
   border-radius: 8px;
   background: var(--showcase-canvas);
+  transition: grid-template-columns 240ms cubic-bezier(.2, 0, 0, 1);
 }
 
 .app-preview__body {
@@ -445,6 +494,7 @@ h1 {
   border: 1px solid var(--showcase-border);
   border-radius: 8px;
   background: var(--showcase-canvas);
+  transition: grid-template-columns 240ms cubic-bezier(.2, 0, 0, 1);
 }
 
 .breadcrumb-examples article > span {
