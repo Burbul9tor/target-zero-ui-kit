@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Bug, Moon, Sun } from '@lucide/vue'
-import { ref } from 'vue'
+import { useUiKitTheme } from '../../composables/useUiKitTheme'
 
-const dark = ref(false)
+const { dark, toggleTheme } = useUiKitTheme()
 </script>
 
 <template>
@@ -19,10 +19,18 @@ const dark = ref(false)
       Сообщить об ошибке
     </button>
 
-    <button class="tz-footer__theme" type="button" :aria-pressed="dark" @click="dark = !dark">
-      <span :class="{ 'is-active': dark }" />
-      <Moon v-if="dark" :size="12" />
-      <Sun v-else :size="12" />
+    <button
+      class="tz-footer__theme"
+      :class="{ 'is-dark': dark }"
+      type="button"
+      role="switch"
+      aria-label="Switch color theme"
+      :aria-checked="dark"
+      @click="toggleTheme"
+    >
+      <span class="tz-footer__theme-thumb" aria-hidden="true" />
+      <Moon class="tz-footer__theme-icon tz-footer__theme-icon--moon" :size="12" aria-hidden="true" />
+      <Sun class="tz-footer__theme-icon tz-footer__theme-icon--sun" :size="12" aria-hidden="true" />
     </button>
   </footer>
 </template>
@@ -77,27 +85,83 @@ const dark = ref(false)
 .tz-footer__theme {
   position: absolute;
   right: 16px;
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  height: 18px;
-  padding: 2px;
-  border: 0;
-  border-radius: 10px;
+  width: 42px;
+  height: 22px;
+  padding: 0;
+  color: var(--icon-default);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
   background: var(--bg-track-off);
   cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
 }
 
-.tz-footer__theme span {
-  width: 12px;
-  height: 12px;
+.tz-footer__theme:hover {
+  border-color: var(--brand-primary);
+  background: var(--brand-bg-hover);
+}
+
+.tz-footer__theme:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+}
+
+.tz-footer__theme-thumb {
+  position: absolute;
+  z-index: 1;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--border-default);
   border-radius: 50%;
   background: var(--bg-surface);
   box-shadow: 0 1px 3px var(--bg-shadow);
+  transition:
+    transform 220ms cubic-bezier(.2, .8, .2, 1),
+    background-color 180ms ease,
+    border-color 180ms ease;
 }
 
-.tz-footer__theme span.is-active {
-  order: 2;
+.tz-footer__theme.is-dark .tz-footer__theme-thumb {
+  transform: translateX(20px);
+}
+
+.tz-footer__theme-icon {
+  position: absolute;
+  top: 4px;
+  transition: opacity 140ms ease, transform 220ms cubic-bezier(.2, .8, .2, 1);
+}
+
+.tz-footer__theme-icon--moon {
+  left: 4px;
+  opacity: 0;
+  transform: scale(.7) rotate(-25deg);
+}
+
+.tz-footer__theme-icon--sun {
+  right: 4px;
+}
+
+.tz-footer__theme.is-dark .tz-footer__theme-icon--moon {
+  opacity: 1;
+  transform: scale(1) rotate(0);
+}
+
+.tz-footer__theme.is-dark .tz-footer__theme-icon--sun {
+  opacity: 0;
+  transform: scale(.7) rotate(25deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tz-footer__theme,
+  .tz-footer__theme-thumb,
+  .tz-footer__theme-icon {
+    transition: none;
+  }
 }
 
 @media (max-width: 760px) {
