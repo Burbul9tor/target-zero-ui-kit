@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Check, ChevronRight, Component, Layers3 } from '@lucide/vue'
+import { Check, ChevronRight, Component, Layers3, LogOut } from '@lucide/vue'
 import { ref } from 'vue'
+import UiKitLogin from './components/auth/UiKitLogin.vue'
 import BreadcrumbDocumentation from './components/documentation/BreadcrumbDocumentation.vue'
 import ButtonDocumentation from './components/documentation/ButtonDocumentation.vue'
 import ColorsDocumentation from './components/documentation/ColorsDocumentation.vue'
@@ -17,6 +18,7 @@ import TzFooter from './components/navigation/TzFooter.vue'
 import TzHeader from './components/navigation/TzHeader.vue'
 import TzSidebar from './components/navigation/TzSidebar.vue'
 
+const isAuthenticated = ref(sessionStorage.getItem('target-zero-ui-kit-auth') === 'authenticated')
 const activeSection = ref('Navigation')
 const catalogCollapsed = ref(false)
 const sidebarCollapsed = ref(false)
@@ -48,6 +50,16 @@ const catalog = [
   },
 ]
 
+function authenticate() {
+  sessionStorage.setItem('target-zero-ui-kit-auth', 'authenticated')
+  isAuthenticated.value = true
+}
+
+function logout() {
+  sessionStorage.removeItem('target-zero-ui-kit-auth')
+  isAuthenticated.value = false
+}
+
 const breadcrumbItems = [
   { label: 'Главная', href: '#home' },
   { label: 'Экология', href: '#ecology' },
@@ -57,7 +69,8 @@ const breadcrumbItems = [
 </script>
 
 <template>
-  <div class="showcase" :class="{ 'showcase--catalog-collapsed': catalogCollapsed }">
+  <UiKitLogin v-if="!isAuthenticated" @authenticated="authenticate" />
+  <div v-else class="showcase" :class="{ 'showcase--catalog-collapsed': catalogCollapsed }">
     <TzHeader class="showcase__header" @toggle-sidebar="catalogCollapsed = !catalogCollapsed" />
     <aside class="catalog">
       <div class="catalog__brand">
@@ -85,6 +98,11 @@ const breadcrumbItems = [
           </button>
         </section>
       </nav>
+
+      <button class="catalog__logout" type="button" title="Log out" @click="logout">
+        <LogOut :size="16" />
+        <span>Logout</span>
+      </button>
     </aside>
 
     <main class="showcase__main">
@@ -335,6 +353,46 @@ const breadcrumbItems = [
   opacity: 0.42;
 }
 
+.catalog__logout {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  width: 100%;
+  min-height: 36px;
+  margin-top: var(--padding-spacing-20);
+  padding: var(--padding-spacing-8);
+  align-items: center;
+  gap: var(--padding-spacing-8);
+  color: var(--text-muted);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  font: 400 12px/16px var(--tz-font-family);
+  cursor: pointer;
+}
+
+.catalog__logout:hover {
+  color: var(--status-error-fg);
+  background: var(--status-error-bg);
+}
+
+.catalog__logout span {
+  max-width: 150px;
+  overflow: hidden;
+  opacity: 1;
+  transition: max-width 200ms ease, opacity 140ms ease;
+}
+
+.showcase--catalog-collapsed .catalog__logout {
+  gap: 0;
+  justify-content: center;
+}
+
+.showcase--catalog-collapsed .catalog__logout span {
+  max-width: 0;
+  opacity: 0;
+}
+
 .showcase__main {
   grid-area: main;
   width: min(100%, 1440px);
@@ -417,7 +475,6 @@ h1 {
   border: 1px solid var(--border-default);
   border-radius: 7px;
   background: var(--showcase-canvas);
-  transition: grid-template-columns 240ms cubic-bezier(.2, 0, 0, 1);
 }
 
 .segmented button,
@@ -448,7 +505,6 @@ h1 {
   border: 1px solid var(--border-default);
   border-radius: 8px;
   background: var(--showcase-canvas);
-  transition: grid-template-columns 240ms cubic-bezier(.2, 0, 0, 1);
 }
 
 .app-preview__body {
@@ -495,7 +551,6 @@ h1 {
   border: 1px solid var(--showcase-border);
   border-radius: 8px;
   background: var(--showcase-canvas);
-  transition: grid-template-columns 240ms cubic-bezier(.2, 0, 0, 1);
 }
 
 .breadcrumb-examples article > span {
