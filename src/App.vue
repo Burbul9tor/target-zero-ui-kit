@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Check, ChevronRight, Component, Layers3, LogOut } from '@lucide/vue'
+import { Check, ChevronRight, Component, LogOut } from '@lucide/vue'
 import { ref } from 'vue'
 import UiKitLogin from './components/auth/UiKitLogin.vue'
 import BreadcrumbDocumentation from './components/documentation/BreadcrumbDocumentation.vue'
@@ -73,10 +73,6 @@ const breadcrumbItems = [
   <div v-else class="showcase" :class="{ 'showcase--catalog-collapsed': catalogCollapsed }">
     <TzHeader class="showcase__header" @toggle-sidebar="catalogCollapsed = !catalogCollapsed" />
     <aside class="catalog">
-      <div class="catalog__brand">
-        <span><Layers3 :size="20" /></span>
-        <div><strong>Target Zero</strong><small>UI Kit · Vue 3</small></div>
-      </div>
 
       <nav aria-label="Каталог компонентов">
         <section v-for="section in catalog" :key="section.group">
@@ -229,47 +225,13 @@ const breadcrumbItems = [
   padding-inline: 10px;
 }
 
-.catalog__brand {
-  display: flex;
-  align-items: center;
-  gap: var(--padding-spacing-12);
-  padding: 0 var(--padding-spacing-8) var(--padding-spacing-20);
-  border-bottom: 1px solid var(--showcase-border);
-}
-
-.catalog__brand > span {
-  display: grid;
-  width: 36px;
-  height: 36px;
-  place-items: center;
-  color: var(--text-inverse);
-  border-radius: var(--radius-md);
-  background: var(--brand-primary);
-  flex: 0 0 36px;
-}
-
-
-.catalog__brand div {
-  display: flex;
-  max-width: 150px;
-  min-width: 0;
-  flex-direction: column;
-  overflow: hidden;
-  opacity: 1;
-  transition: max-width 200ms ease, opacity 140ms ease;
-}
-
-.catalog__brand strong {
-  font: 600 14px/20px var(--tz-font-family);
-}
-
-.catalog__brand small {
-  color: var(--text-muted);
-  font: 400 11px/16px var(--tz-font-family);
-}
 
 .catalog nav section {
   margin-top: var(--padding-spacing-20);
+}
+
+.catalog nav section:first-child {
+  margin-top: 0;
 }
 
 .catalog nav section > p,
@@ -311,13 +273,7 @@ const breadcrumbItems = [
   transition: max-width 160ms ease, opacity 120ms ease;
 }
 
-.showcase--catalog-collapsed .catalog__brand {
-  gap: 0;
-  padding-inline: 0;
-  justify-content: center;
-}
 
-.showcase--catalog-collapsed .catalog__brand div,
 .showcase--catalog-collapsed .catalog nav button span,
 .showcase--catalog-collapsed .catalog nav button > svg:last-child {
   max-width: 0;
