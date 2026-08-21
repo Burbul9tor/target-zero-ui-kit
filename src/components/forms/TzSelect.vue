@@ -230,16 +230,16 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocumentPoin
 </template>
 
 <style scoped>
-.tz-select { position: relative; display: flex; width: 100%; flex-direction: column; gap: 4px; color: var(--text-default); font-family: var(--tz-font-family); }
+.tz-select { position: relative; display: flex; width: 100%; flex-direction: column; gap: var(--padding-spacing-4); color: var(--text-default); font-family: var(--tz-font-family); }
 .tz-select__label { font: 400 12px/16px var(--tz-font-family); }
 .tz-select__label span { margin-left: 2px; color: var(--status-error-fg); }
-.tz-select__control { display: flex; width: 100%; align-items: center; gap: 8px; padding: 0 12px; color: var(--text-default); border: 1px solid var(--border-default); border-radius: 8px; background: var(--bg-surface); text-align: left; cursor: pointer; transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease; }
+.tz-select__control { display: flex; width: 100%; align-items: center; gap: var(--padding-spacing-8); padding: 0 var(--padding-spacing-12); color: var(--text-default); border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--bg-surface); text-align: left; cursor: pointer; transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease; }
 .tz-select--large .tz-select__control { height: 44px; }
 .tz-select--medium .tz-select__control { height: 32px; }
 .tz-select__leading, .tz-select__chevron { flex: 0 0 16px; color: var(--icon-default); }
 .tz-select__chevron { margin-left: auto; transition: transform 160ms ease; }
 .tz-select__chevron.is-open { transform: rotate(180deg); }
-.tz-select__value { min-width: 0; flex: 1; overflow: hidden; font: 400 14px/20px var(--tz-font-family); text-overflow: ellipsis; white-space: nowrap; }
+.tz-select__value { min-width: 0; flex: 1 1 auto; overflow: hidden; font: 400 14px/20px var(--tz-font-family); text-overflow: ellipsis; white-space: nowrap; }
 .tz-select__value.is-placeholder { color: var(--text-muted); }
 .tz-select__trigger-chips { display: flex; min-width: 0; flex: 1; gap: 4px; overflow: hidden; }
 .tz-select__trigger-chips span, .tz-select__chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; color: var(--text-default); border: 0; border-radius: 6px; background: var(--brand-bg-accent); font: 400 12px/16px var(--tz-font-family); white-space: nowrap; }
@@ -252,7 +252,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocumentPoin
 .tz-select--error .tz-select__control { border-color: var(--status-error-fg); }
 .tz-select__error { color: var(--status-error-fg); font: 500 10px/14px var(--tz-font-family); }
 .tz-select__menu { position: absolute; z-index: 30; top: calc(100% + 4px); right: 0; left: 0; display: flex; flex-direction: column; padding: 4px; border: 1px solid var(--border-default); border-radius: 6px; background: var(--bg-surface); box-shadow: 0 10px 15px -3px var(--bg-shadow); }
-.tz-select__option { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 4px; color: var(--text-default); border: 0; border-radius: 6px; background: transparent; text-align: left; cursor: pointer; }
+.tz-select__option { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: var(--padding-spacing-4); color: var(--text-default); border: 0; border-radius: 6px; background: transparent; text-align: left; cursor: pointer; }
 .tz-select--large .tz-select__option { min-height: 44px; padding: 12px 8px; font: 400 14px/20px var(--tz-font-family); }
 .tz-select--medium .tz-select__option { min-height: 32px; padding: 6px 8px; font: 400 12px/16px var(--tz-font-family); }
 .tz-select__option:hover, .tz-select__option.is-active { background: var(--bg-row-hover); }

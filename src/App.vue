@@ -17,7 +17,7 @@ import TzHeader from './components/navigation/TzHeader.vue'
 import TzSidebar from './components/navigation/TzSidebar.vue'
 
 const activeSection = ref('Navigation')
-
+const catalogCollapsed = ref(false)
 const sidebarCollapsed = ref(false)
 const readyItems = ['Colors', 'Variables', 'Navigation', 'Breadcrumbs', 'Toast', 'Select', 'Preloader', 'Toggle', 'Icon', 'Search', 'Table']
 
@@ -56,7 +56,8 @@ const breadcrumbItems = [
 </script>
 
 <template>
-  <div class="showcase">
+  <div class="showcase" :class="{ 'showcase--catalog-collapsed': catalogCollapsed }">
+    <TzHeader class="showcase__header" @toggle-sidebar="catalogCollapsed = !catalogCollapsed" />
     <aside class="catalog">
       <div class="catalog__brand">
         <span><Layers3 :size="20" /></span>
@@ -156,6 +157,8 @@ const breadcrumbItems = [
         </section>
       </template>
     </main>
+
+    <TzFooter class="showcase__footer" />
   </div>
 </template>
 
@@ -165,18 +168,41 @@ const breadcrumbItems = [
 .showcase {
   display: grid;
   grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-rows: 54px minmax(0, 1fr) auto;
+  grid-template-areas:
+    'header header'
+    'catalog main'
+    'footer footer';
   min-height: 100dvh;
   background: var(--showcase-canvas);
 }
 
+.showcase--catalog-collapsed {
+  grid-template-columns: 0 minmax(0, 1fr);
+}
+
+.showcase__header {
+  position: sticky;
+  z-index: 40;
+  top: 0;
+  grid-area: header;
+}
+
 .catalog {
   position: sticky;
-  top: 0;
-  height: 100dvh;
+  top: 54px;
+  grid-area: catalog;
+  height: calc(100dvh - 84px);
   padding: var(--padding-spacing-20) var(--padding-spacing-12);
   overflow: auto;
   background: var(--bg-surface);
   border-right: 1px solid var(--showcase-border);
+  transition: opacity 160ms ease, visibility 160ms ease;
+}
+
+.showcase--catalog-collapsed .catalog {
+  opacity: 0;
+  visibility: hidden;
 }
 
 .catalog__brand {
@@ -260,6 +286,7 @@ const breadcrumbItems = [
 }
 
 .showcase__main {
+  grid-area: main;
   width: min(100%, 1440px);
   margin-inline: auto;
   padding: var(--padding-spacing-40);
@@ -437,9 +464,18 @@ h1 {
   border-radius: var(--radius-sm);
 }
 
+.showcase__footer {
+  z-index: 30;
+  grid-area: footer;
+}
+
 @media (max-width: 1000px) {
   .showcase {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      'header'
+      'main'
+      'footer';
   }
 
   .catalog {
