@@ -11,6 +11,8 @@ const disabled = ref(false)
 const clearable = ref(true)
 const loading = ref(false)
 const isTextarea = ref(false)
+const withLeftIcon = ref(true)
+const withRightIcon = ref(true)
 const errorMessage = ref('')
 const multipleItems = ref<InputMultipleItem[]>([])
 const demoChips: InputChip[] = [{ id: 'chip-1', value: 'Chip', label: 'Chip', icon: ArrowUpRight }]
@@ -77,6 +79,8 @@ function toggleChip() {
           <label><input v-model="clearable" type="checkbox"> Clearable</label>
           <label><input v-model="loading" type="checkbox"> Loading</label>
           <label><input v-model="isTextarea" type="checkbox"> Textarea</label>
+          <label><input v-model="withLeftIcon" type="checkbox"> Иконка слева</label>
+          <label><input v-model="withRightIcon" type="checkbox"> Иконка справа</label>
           <button class="chip-toggle" type="button" @click="toggleChip">{{ multipleItems.length ? 'Убрать chip' : 'Добавить chip' }}</button>
         </div>
         <div class="interactive-stage">
@@ -84,7 +88,7 @@ function toggleChip() {
             id="input-demo" v-model:value="value" v-model:multiple-items="multipleItems"
             label="Name" placeholder="Введите значение" :size="size" :required="required"
             :disabled="disabled" :clearable="clearable" :loading="loading" :is-textarea="isTextarea"
-            :icon-left="Settings" :icon-right="ChevronRight" :error-message="errorMessage"
+            :icon-left="withLeftIcon ? Settings : undefined" :icon-right="withRightIcon ? ChevronRight : undefined" :error-message="errorMessage"
           >
             <template #label-suffix><Info :size="12" /></template>
           </TzInput>
