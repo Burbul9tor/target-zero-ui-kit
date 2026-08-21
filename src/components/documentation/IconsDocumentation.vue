@@ -142,6 +142,7 @@ const icons: IconEntry[] = [
 
 const query = ref('')
 const copied = ref('')
+const downloaded = ref('')
 const filteredIcons = computed(() => {
   const value = query.value.trim().toLocaleLowerCase()
   return value ? icons.filter(icon => icon.name.toLocaleLowerCase().includes(value)) : icons
@@ -151,6 +152,44 @@ async function copyName(name: string) {
   await navigator.clipboard?.writeText(name)
   copied.value = name
   window.setTimeout(() => { if (copied.value === name) copied.value = '' }, 1200)
+}
+
+function fileName(name: string, index?: number) {
+  const slug = name.trim().replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'icon'
+  return `${slug}${index == null ? '' : `-${index + 1}`}.svg`
+}
+
+function triggerDownload(data: Blob | string, name: string) {
+  const blob = typeof data === 'string' ? new Blob([data], { type: 'image/svg+xml;charset=utf-8' }) : data
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = name
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
+
+async function downloadIcon(item: IconEntry, event: MouseEvent) {
+  if (item.asset) {
+    const response = await fetch(item.asset)
+    triggerDownload(await response.blob(), fileName(item.name))
+  } else {
+    const card = (event.currentTarget as HTMLElement).closest('.icon-item')
+    const svgNodes = [...(card?.querySelectorAll('.icon-preview svg') ?? [])]
+    svgNodes.forEach((node, index) => {
+      const svg = node.cloneNode(true) as SVGElement
+      svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
+      svg.setAttribute('width', '24')
+      svg.setAttribute('height', '24')
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>\n${new XMLSerializer().serializeToString(svg)}`.replace(/currentColor/g, '#404040')
+      triggerDownload(xml, fileName(item.name, svgNodes.length > 1 ? index : undefined))
+    })
+  }
+
+  downloaded.value = item.id
+  window.setTimeout(() => { if (downloaded.value === item.id) downloaded.value = '' }, 1200)
 }
 </script>
 
@@ -168,18 +207,24 @@ async function copyName(name: string) {
       </header>
 
       <div v-if="filteredIcons.length" class="icon-grid">
-        <button v-for="item in filteredIcons" :key="item.id" type="button" class="icon-item" @click="copyName(item.name)">
-          <span class="icon-preview">
-            <img v-if="item.asset" :src="item.asset" alt="" width="24" height="24">
-            <template v-else-if="item.icons">
-              <component :is="icon" v-for="(icon, index) in item.icons" :key="index" :size="24" :stroke-width="1.5" />
-            </template>
-            <component :is="item.icon" v-else :size="24" :stroke-width="1.5" />
-          </span>
-          <span>{{ item.name }}</span>
-          <small>{{ item.source ?? 'Lucide' }}</small>
-          <b v-if="copied === item.name">Скопировано</b>
-        </button>
+        <article v-for="item in filteredIcons" :key="item.id" class="icon-item">
+          <button type="button" class="icon-copy" :aria-label="`Copy ${item.name}`" @click="copyName(item.name)">
+            <span class="icon-preview">
+              <img v-if="item.asset" :src="item.asset" alt="" width="24" height="24">
+              <template v-else-if="item.icons">
+                <component :is="icon" v-for="(icon, index) in item.icons" :key="index" :size="24" :stroke-width="1.5" />
+              </template>
+              <component :is="item.icon" v-else :size="24" :stroke-width="1.5" />
+            </span>
+            <span>{{ item.name }}</span>
+            <small>{{ item.source ?? 'Lucide' }}</small>
+          </button>
+          <button type="button" class="icon-download" :aria-label="`Download ${item.name} as SVG`" :title="`Download ${item.name}.svg`" @click="downloadIcon(item, $event)">
+            <Check v-if="downloaded === item.id" :size="14" />
+            <Download v-else :size="14" />
+          </button>
+          <b v-if="copied === item.name">Copied</b>
+        </article>
       </div>
       <div v-else class="icons-empty"><Search :size="24" /><strong>Ничего не найдено</strong><span>Попробуйте изменить запрос.</span></div>
     </section>
@@ -209,14 +254,17 @@ async function copyName(name: string) {
 .icons-card header p { margin: 0; color: var(--text-muted); font: 400 14px/20px var(--tz-font-family); }
 .icons-search { width: min(320px, 100%); }
 .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 8px; }
-.icon-item { position: relative; display: flex; min-width: 0; min-height: 92px; padding: 12px 8px; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--icon-default); border: 1px solid var(--border-default); border-radius: 8px; background: var(--bg-surface); cursor: pointer; transition: border-color 140ms ease, background-color 140ms ease; }
+.icon-item { position: relative; display: grid; min-width: 0; min-height: 100px; color: var(--icon-default); border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--bg-surface); transition: border-color 140ms ease, background-color 140ms ease; }
 .icon-item:hover { border-color: var(--brand-primary); background: var(--brand-bg-hover); }
-.icon-item:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+.icon-copy { display: flex; min-width: 0; min-height: 98px; padding: var(--padding-spacing-12) var(--padding-spacing-8); flex-direction: column; align-items: center; justify-content: center; gap: var(--padding-spacing-4); color: inherit; border: 0; border-radius: inherit; background: transparent; cursor: pointer; }
+.icon-download { position: absolute; top: var(--padding-spacing-6); right: var(--padding-spacing-6); display: grid; width: 26px; height: 26px; padding: 0; place-items: center; color: var(--brand-primary); border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--bg-surface); cursor: pointer; transition: background-color 140ms ease, border-color 140ms ease; }
+.icon-download:hover { border-color: var(--brand-primary); background: var(--brand-bg-active); }
+.icon-copy:focus-visible, .icon-download:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
 .icon-preview { display: flex; min-height: 24px; align-items: center; justify-content: center; gap: 4px; }
 .icon-preview img { display: block; width: 24px; height: 24px; object-fit: contain; }
-.icon-item > span:nth-child(2) { overflow: hidden; max-width: 100%; color: var(--text-default); font: 400 10px/14px var(--tz-font-family); text-overflow: ellipsis; white-space: nowrap; }
+.icon-copy > span:nth-child(2) { overflow: hidden; max-width: 100%; color: var(--text-default); font: 400 10px/14px var(--tz-font-family); text-overflow: ellipsis; white-space: nowrap; }
 .icon-item small { color: var(--text-muted); font: 400 9px/13px var(--tz-font-family); }
-.icon-item b { position: absolute; right: 4px; bottom: 4px; left: 4px; padding: 3px; color: var(--text-button-fill); border-radius: 4px; background: var(--brand-primary); font: 500 9px/12px var(--tz-font-family); }
+.icon-item b { position: absolute; right: 4px; bottom: 4px; left: 4px; padding: 3px; color: var(--text-button-fill); border-radius: 4px; background: var(--brand-primary); font: 500 9px/12px var(--tz-font-family); pointer-events: none; }
 .icons-empty { display: grid; min-height: 220px; place-items: center; align-content: center; gap: 6px; color: var(--text-muted); }
 .icons-empty strong { color: var(--text-default); font: 500 14px/20px var(--tz-font-family); }
 .icons-empty span { font: 400 12px/16px var(--tz-font-family); }
