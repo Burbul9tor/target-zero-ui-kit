@@ -6,6 +6,7 @@ import BreadcrumbDocumentation from './components/documentation/BreadcrumbDocume
 import ButtonDocumentation from './components/documentation/ButtonDocumentation.vue'
 import ColorsDocumentation from './components/documentation/ColorsDocumentation.vue'
 import IconsDocumentation from './components/documentation/IconsDocumentation.vue'
+import InputDocumentation from './components/documentation/InputDocumentation.vue'
 import PreloaderDocumentation from './components/documentation/PreloaderDocumentation.vue'
 import SearchDocumentation from './components/documentation/SearchDocumentation.vue'
 import SelectDocumentation from './components/documentation/SelectDocumentation.vue'
@@ -23,7 +24,7 @@ const isAuthenticated = ref(sessionStorage.getItem('target-zero-ui-kit-auth') ==
 const activeSection = ref('Navigation')
 const catalogCollapsed = ref(false)
 const sidebarCollapsed = ref(false)
-const readyItems = ['Colors', 'Typography', 'Variables', 'Navigation', 'Breadcrumbs', 'Button', 'Toast', 'Select', 'Preloader', 'Toggle', 'Icon', 'Search', 'Table']
+const readyItems = ['Colors', 'Typography', 'Variables', 'Navigation', 'Breadcrumbs', 'Input', 'Button', 'Toast', 'Select', 'Preloader', 'Toggle', 'Icon', 'Search', 'Table']
 
 const catalog = [
   { group: 'Основы', items: ['Colors', 'Typography', 'Variables'] },
@@ -107,6 +108,7 @@ const breadcrumbItems = [
       <TypographyDocumentation v-else-if="activeSection === 'Typography'" />
       <VariablesDocumentation v-else-if="activeSection === 'Variables'" />
       <IconsDocumentation v-else-if="activeSection === 'Icon'" />
+      <InputDocumentation v-else-if="activeSection === 'Input'" />
       <BreadcrumbDocumentation v-else-if="activeSection === 'Breadcrumbs'" />
       <ButtonDocumentation v-else-if="activeSection === 'Button'" />
       <ToastDocumentation v-else-if="activeSection === 'Toast'" />
