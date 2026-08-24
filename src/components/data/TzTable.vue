@@ -3,7 +3,7 @@ import {
   ArrowDown, ArrowUp, ArrowUpDown, ArrowLeftToLine, ArrowRightToLine, ChevronLeft, ChevronRight,
   Filter, Inbox, LoaderCircle, Settings, Trash2, X,
 } from '@lucide/vue'
-import { computed, nextTick, ref, useSlots, watch, type StyleValue } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useSlots, watch, type StyleValue } from 'vue'
 import TzSearch from '../forms/TzSearch.vue'
 import TzSelect, { type SelectValue } from '../forms/TzSelect.vue'
 
@@ -117,6 +117,7 @@ const emit = defineEmits<{
 }>()
 
 const slots = useSlots()
+const root = ref<HTMLElement | null>(null)
 const scroll = ref<HTMLElement | null>(null)
 const searchValue = ref(props.startSearchValue)
 const sortKey = ref(props.startSortKey)
@@ -218,6 +219,13 @@ function updateSearch(value: string) {
   searchValue.value = value; emit('search', value); emit('update:page', 0)
   if (props.isServer) exposedLoadData(0, props.countPerPage)
 }
+function closeFilter() { openFilterKey.value = '' }
+function handleDocumentPointerDown(event: PointerEvent) {
+  const target = event.target as HTMLElement | null
+  const interactiveTarget = target?.closest('.filter-popover, .filter-button')
+  if (!interactiveTarget || !root.value?.contains(interactiveTarget)) closeFilter()
+}
+function handleDocumentKeydown(event: KeyboardEvent) { if (event.key === 'Escape') closeFilter() }
 async function openFilter(column: TzTableColumn) {
   emit('filter', { key: column.key })
   if (!column.filter) return
@@ -277,11 +285,20 @@ function clickRow(row: TableRow) { if (!props.disabledRowClick) { props.onRowCli
 async function doubleClickRow(row: TableRow, event: Event) { await props.onRowDoubleClick?.(row, event); emit('row-double-click', row, event) }
 async function focusTable() { await nextTick(); scroll.value?.focus() }
 
+onMounted(() => {
+  document.addEventListener('pointerdown', handleDocumentPointerDown, true)
+  document.addEventListener('keydown', handleDocumentKeydown)
+})
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', handleDocumentPointerDown, true)
+  document.removeEventListener('keydown', handleDocumentKeydown)
+})
+
 defineExpose({ resetFilter, exposedLoadData, exposedResetAllFilters, resetSort, scrollToTop, focusTable })
 </script>
 
 <template>
-  <div class="tz-table-new" :class="{ 'is-loading': loading }">
+  <div ref="root" class="tz-table-new" :class="{ 'is-loading': loading }">
     <div v-if="hasBar" class="tz-table-new__bar">
       <div class="tz-table-new__bar-left"><slot name="bar-left" /></div>
       <TzSearch v-if="searchable" class="tz-table-new__search" :model-value="searchValue" :placeholder="searchPlaceholder || 'Поиск'" @update:model-value="updateSearch" />
@@ -306,7 +323,7 @@ defineExpose({ resetFilter, exposedLoadData, exposedResetAllFilters, resetSort, 
               <i v-if="resizable" class="resize-handle" @pointerdown.stop.prevent="startResize($event, column)" />
             </div>
             <div v-if="openFilterKey === column.key && column.filter" class="filter-popover" @click.stop>
-              <header><slot :name="`filter-title-${column.key}`" :title="column.filter.title ?? titleOf(column)">{{ column.filter.title ?? titleOf(column) }}</slot></header>
+              <header><span><slot :name="`filter-title-${column.key}`" :title="column.filter.title ?? titleOf(column)">{{ column.filter.title ?? titleOf(column) }}</slot></span><button type="button" class="close-filter-popover" aria-label="Закрыть фильтр" title="Закрыть" @click="closeFilter"><X :size="16" /></button></header>
               <span v-if="filterLoading === column.key" class="filter-status">Загрузка…</span>
               <label v-for="option in filterOptions[column.key] ?? []" :key="String(option.id)"><input :type="column.filter.type === 'RADIO' ? 'radio' : 'checkbox'" :checked="optionChecked(column, option)" @change="setOption(column, option)"><slot :name="`filter-column-${column.key}`" :option="option" :search-value="searchValue">{{ option.name ?? option.value }}</slot></label>
               <button v-if="activeFilterCounts[column.filter.filterKey]" type="button" class="reset-filter" @click="resetFilter(column.filter.filterKey)">Сбросить фильтр</button>
@@ -345,7 +362,7 @@ td { height: 56px; padding: var(--padding-spacing-12) var(--padding-spacing-8); 
 .heading { display:flex;align-items:center;gap:var(--padding-spacing-4);min-width:0;height:100% }.heading-title{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.icon-button,.clear-filter,.row-action{position:relative;display:inline-grid;flex:0 0 auto;width:20px;height:20px;padding:2px;place-items:center;color:var(--icon-default);border:0;border-radius:var(--radius-xs);background:transparent;cursor:pointer}.heading>.icon-button,.filter-wrap>.icon-button{color:var(--brand-primary)}.icon-button:hover,.icon-button.active{color:var(--brand-primary);background:var(--brand-bg-active)}.filter-wrap{display:inline-flex;align-items:center;gap:2px}.filter-button.active{display:inline-flex;width:auto;min-width:20px;padding:2px;align-items:center;gap:var(--padding-spacing-2);border-radius:var(--radius-xs);background:var(--brand-bg-active)}.filter-button b{position:static;min-width:0;height:16px;padding:0;color:var(--brand-primary);border-radius:0;background:transparent;font:400 12px/16px var(--tz-font-family)}.clear-filter:hover,.row-action:hover{color:var(--status-error-fg);background:var(--status-error-bg)}
 .selection-cell,.settings-cell,.action-cell{width:36px;min-width:36px;padding:0!important;text-align:center!important}.selection-cell .tz-checkbox,.action-cell .row-action{margin-inline:auto}.settings-cell{position:relative;overflow:hidden}.settings-cell__inner{position:absolute;inset:0;display:grid;place-items:center}.settings-cell .icon-button{position:static;box-sizing:border-box;width:24px;height:24px;margin:0;padding:4px;color:var(--brand-primary);line-height:0;transform:none}.settings-cell .icon-button:focus-visible{outline:0;box-shadow:inset 0 0 0 2px var(--brand-primary)}.settings-cell .icon-button svg{display:block;width:16px;height:16px}.row-action{color:var(--status-error-fg)}
 .tz-checkbox{display:grid;width:20px;height:20px;padding:0;place-items:center;border:1px solid var(--border-default);border-radius:var(--radius-xs);background:var(--bg-surface);cursor:pointer}.tz-checkbox:hover{border-color:var(--brand-primary)}.tz-checkbox.checked,.tz-checkbox.indeterminate{border-color:var(--brand-primary);background:var(--brand-primary)}.tz-checkbox.checked span{width:9px;height:5px;border-bottom:1.5px solid var(--text-button-fill);border-left:1.5px solid var(--text-button-fill);transform:translateY(-1px) rotate(-45deg)}.tz-checkbox.indeterminate span{width:10px;height:1.5px;background:var(--text-button-fill)}
-.resize-handle{position:absolute;top:0;right:-5px;width:10px;height:100%;cursor:col-resize}.filter-popover{position:absolute;z-index:12;top:calc(100% + 4px);right:4px;display:grid;min-width:220px;max-height:280px;padding:var(--padding-spacing-12);overflow:auto;color:var(--text-default);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-surface);box-shadow:0 10px 24px var(--bg-shadow);cursor:default}.filter-popover header{margin-bottom:var(--padding-spacing-8);font:500 12px/16px var(--tz-font-family)}.filter-popover label{display:flex;align-items:center;gap:var(--padding-spacing-8);padding:var(--padding-spacing-6) 0;font:400 12px/16px var(--tz-font-family)}.filter-status{color:var(--text-muted)}.reset-filter{margin-top:var(--padding-spacing-8);padding:var(--padding-spacing-6) var(--padding-spacing-8);color:var(--brand-primary);border:0;border-radius:var(--radius-sm);background:var(--brand-bg-hover);cursor:pointer}
+.resize-handle{position:absolute;top:0;right:-5px;width:10px;height:100%;cursor:col-resize}.filter-popover{position:absolute;z-index:12;top:calc(100% + 4px);right:4px;display:grid;min-width:220px;max-height:280px;padding:var(--padding-spacing-12);overflow:auto;color:var(--text-default);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-surface);box-shadow:0 10px 24px var(--bg-shadow);cursor:default}.filter-popover header{display:flex;align-items:center;justify-content:space-between;gap:var(--padding-spacing-8);margin-bottom:var(--padding-spacing-8);font:500 12px/16px var(--tz-font-family)}.close-filter-popover{display:grid;width:24px;height:24px;padding:0;place-items:center;color:var(--icon-default);border:0;border-radius:var(--radius-xs);background:transparent;cursor:pointer}.close-filter-popover:hover{color:var(--brand-primary);background:var(--brand-bg-hover)}.close-filter-popover:focus-visible{outline:2px solid var(--brand-primary);outline-offset:1px}.filter-popover label{display:flex;align-items:center;gap:var(--padding-spacing-8);padding:var(--padding-spacing-6) 0;font:400 12px/16px var(--tz-font-family)}.filter-status{color:var(--text-muted)}.reset-filter{margin-top:var(--padding-spacing-8);padding:var(--padding-spacing-6) var(--padding-spacing-8);color:var(--brand-primary);border:0;border-radius:var(--radius-sm);background:var(--brand-bg-hover);cursor:pointer}
 .empty{display:grid;min-height:190px;padding:var(--padding-spacing-32);place-items:center;align-content:center;text-align:center}.empty-icon{display:grid;width:44px;height:44px;margin-bottom:var(--padding-spacing-12);place-items:center;color:var(--text-inverse);border-radius:var(--radius-lg);background:var(--blue-400)}.empty strong{font:500 14px/20px var(--tz-font-family)}.empty p{margin:var(--padding-spacing-4) 0 0;color:var(--text-muted);font:400 12px/16px var(--tz-font-family)}
 .settings-panel{padding:var(--padding-spacing-16);border:1px solid var(--border-default);border-top:0;background:var(--bg-surface)}.pagination{display:flex;align-items:center;justify-content:space-between;gap:var(--padding-spacing-16);min-height:64px;padding:var(--padding-spacing-12);border:1px solid var(--border-default);border-top:0;border-radius:0 0 var(--radius-md) var(--radius-md);background:var(--bg-surface)}.pagination-info,.pagination-info label,.pagination nav{display:flex;align-items:center;gap:var(--padding-spacing-10,10px)}.pagination-info{font:400 12px/16px var(--tz-font-family)}.page-size{width:76px;min-width:76px;flex:0 0 76px}.pagination nav{gap:5px}.pagination nav button{display:grid;min-width:30px;height:30px;padding:0 var(--padding-spacing-8);place-items:center;color:var(--text-default);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-surface);font:500 14px/20px var(--tz-font-family);cursor:pointer}.pagination nav button:hover:not(:disabled){color:var(--brand-primary);background:var(--brand-bg-hover)}.pagination nav button.current{color:var(--text-inverse);border-color:var(--brand-primary);background:var(--brand-primary)}.pagination nav button:disabled{opacity:.35;cursor:default}.pagination nav span{min-width:20px;color:var(--text-muted);text-align:center}
 @keyframes spin{to{transform:rotate(360deg)}}@media(max-width:700px){.tz-table-new__bar,.pagination{align-items:flex-start;flex-direction:column}.tz-table-new__search{max-width:none}.radius-grid{grid-template-columns:1fr}}
