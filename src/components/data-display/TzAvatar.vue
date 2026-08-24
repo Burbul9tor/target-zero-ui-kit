@@ -108,11 +108,12 @@ onBeforeUnmount(releasePreview)
   right: 2px;
   bottom: 2px;
   display: grid;
-  width: 24px;
-  height: 24px;
-  padding: 0;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  padding: 4px;
   place-items: center;
-  border: 2px solid var(--avatar-background);
+  border: 0;
   border-radius: var(--avatar-edit-radius);
   background: var(--avatar-edit-background);
   cursor: pointer;
@@ -121,9 +122,9 @@ onBeforeUnmount(releasePreview)
 .tz-avatar__edit:hover:not(:disabled) { background: var(--brand-primary-hover); }
 .tz-avatar__edit:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
 .tz-avatar__edit:disabled { cursor: not-allowed; opacity: .5; }
-.tz-avatar__edit span { width: 16px; height: 16px; background: var(--avatar-edit-icon-color); -webkit-mask: var(--avatar-camera-url) center / contain no-repeat; mask: var(--avatar-camera-url) center / contain no-repeat; }
-.tz-avatar--40 .tz-avatar__edit { width: 20px; height: 20px; }
-.tz-avatar--40 .tz-avatar__edit span, .tz-avatar--32 .tz-avatar__edit span { width: 12px; height: 12px; }
-.tz-avatar--32 .tz-avatar__edit { width: 18px; height: 18px; }
+.tz-avatar__edit span { width: 12px; height: 12px; background: var(--avatar-edit-icon-color); -webkit-mask: var(--avatar-camera-url) center / contain no-repeat; mask: var(--avatar-camera-url) center / contain no-repeat; }
+
+
+
 .tz-avatar.is-disabled { opacity: .5; }
 </style>
