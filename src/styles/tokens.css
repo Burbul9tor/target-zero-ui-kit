@@ -9,6 +9,9 @@
   /* Typography */
   --tz-font-family: 'Roboto', Arial, sans-serif;
 
+  /* Icon sizing */
+  --icon-size-default: 16px;
+
   /* Primitives / Padding — Figma: Primitives / Padding */
   --padding-spacing-2: 2px;
   --padding-spacing-4: 4px;

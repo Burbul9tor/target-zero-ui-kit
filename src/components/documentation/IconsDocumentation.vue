@@ -281,7 +281,7 @@ async function downloadIcon(item: IconEntry) {
 
     <section class="icons-card">
       <header>
-        <div><h2>Icon pack</h2><p>Размер в макете — 24×24px. Нажмите на карточку, чтобы скопировать имя.</p></div>
+        <div><h2>Icon pack</h2><p>Базовый размер отображения — 16×16px. Исходный SVG сохраняет viewBox 24×24. Нажмите на карточку, чтобы скопировать имя.</p></div>
         <TzSearch v-model="query" class="icons-search" placeholder="Найти иконку" label="Поиск иконки" />
       </header>
 
@@ -307,7 +307,7 @@ async function downloadIcon(item: IconEntry) {
     <section class="icons-card icon-rules">
       <header><div><h2>Использование</h2><p>Общие параметры icon pack.</p></div></header>
       <div>
-        <article><strong>Размер</strong><p>Базовый размер — 24×24px. В компонентах допускаются 16px и 20px.</p></article>
+        <article><strong>Размер</strong><p>Базовый размер — 16×16px через токен <code>--icon-size-default</code>. Для отдельных сценариев допускаются 20px и 24px.</p></article>
         <article><strong>Цвет</strong><p>По умолчанию используется <code>--icon-default</code>, состояния используют семантические токены Colors.</p></article>
         <article><strong>Path</strong><p>Контуры преобразованы через Outline Stroke и Flatten. Каждая иконка хранится как SVG ровно с одним составным path и без stroke.</p></article>
         <article><strong>Источник</strong><p>Target Zero Design System, Figma node 1:2326. Локальные SVG совпадают с компонентами в макете.</p></article>
@@ -335,8 +335,8 @@ async function downloadIcon(item: IconEntry) {
 .icon-download { position: absolute; top: var(--padding-spacing-6); right: var(--padding-spacing-6); display: grid; width: 26px; height: 26px; padding: 0; place-items: center; color: var(--brand-primary); border: 1px solid var(--border-default); border-radius: var(--radius-sm); background: var(--bg-surface); cursor: pointer; transition: background-color 140ms ease, border-color 140ms ease; }
 .icon-download:hover { border-color: var(--brand-primary); background: var(--brand-bg-active); }
 .icon-copy:focus-visible, .icon-download:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
-.icon-preview { display: flex; min-height: 24px; align-items: center; justify-content: center; gap: 4px; }
-.path-icon { display: block; width: 24px; height: 24px; color: inherit; background: currentColor; -webkit-mask: var(--icon-url) center / contain no-repeat; mask: var(--icon-url) center / contain no-repeat; }
+.icon-preview { display: flex; min-height: var(--icon-size-default); align-items: center; justify-content: center; gap: 4px; }
+.path-icon { display: block; width: var(--icon-size-default); height: var(--icon-size-default); color: inherit; background: currentColor; -webkit-mask: var(--icon-url) center / contain no-repeat; mask: var(--icon-url) center / contain no-repeat; }
 .icon-copy > span:nth-child(2) { overflow: hidden; max-width: 100%; color: var(--text-default); font: 400 10px/14px var(--tz-font-family); text-overflow: ellipsis; white-space: nowrap; }
 .icon-item small { color: var(--text-muted); font: 400 9px/13px var(--tz-font-family); }
 .icon-item b { position: absolute; right: 4px; bottom: 4px; left: 4px; padding: 3px; color: var(--text-button-fill); border-radius: 4px; background: var(--brand-primary); font: 500 9px/12px var(--tz-font-family); pointer-events: none; }
