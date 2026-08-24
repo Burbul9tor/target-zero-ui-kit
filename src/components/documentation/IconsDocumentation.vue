@@ -1,145 +1,235 @@
 <script setup lang="ts">
-import {
-  Activity, ArrowDownUp, ArrowDownWideNarrow, ArrowLeft, ArrowLeftToLine, ArrowRight, ArrowRightToLine,
-  ArrowUpRight, ArrowUpToLine, ArrowUpWideNarrow, Award, BarChart3, Bold, Book, BookOpen, BookOpenCheck,
-  BriefcaseBusiness, Calculator, CalendarCheck2, CalendarClock, CalendarDays, Camera, ChartPie, Check,
-  ChevronDown, ChevronLeft, ChevronRight, ChevronUp, CircleCheck, CircleHelp, CircleX, ClipboardCheck,
-  ClipboardList, CloudUpload, Coins, Container, Download, EllipsisVertical, ExternalLink, Factory, FileSpreadsheet,
-  FileText, FileUser, FileWarning, Filter, FolderCheck, FolderCog, Glasses, GripVertical, Handshake, HardHat,
-  Inbox, Info, Italic, KeyRound, LayoutDashboard, LayoutGrid, Leaf, List, ListChecks, ListOrdered, Loader,
-  Mail, MapPin, MessageSquareShare, Minus, Moon, Network, Newspaper, PackageCheck, PackageX, Palette,
-  PanelLeftClose, PanelLeftOpen, Pencil, Pin, PlugZap, Plus, RadioTower, Recycle, Scale, Search, Send,
-  Settings, Shield, ShieldCheck, Siren, SlidersHorizontal, Smartphone, Stethoscope, Sun, Tags, TicketCheck,
-  Trash2, Truck, Underline, User, UserCog, Users, Waves, Wind, Wrench, X, Zap,
-} from '@lucide/vue'
+import { Check, Download, Search } from '@lucide/vue'
 import { computed, ref } from 'vue'
-import type { Component } from 'vue'
-import fillIcon from '../../assets/icons/figma/fill.svg'
-import frameIcon from '../../assets/icons/figma/frame.svg'
-import pekIcon from '../../assets/icons/figma/pek.svg'
-import stoneIcon from '../../assets/icons/figma/stone.svg'
+import icon000 from '../../assets/icons/path/activity--1-2331.svg'
+import icon001 from '../../assets/icons/path/award--1-2335.svg'
+import icon002 from '../../assets/icons/path/barchart3--1-2340.svg'
+import icon003 from '../../assets/icons/path/bookopen--1-2347.svg'
+import icon004 from '../../assets/icons/path/bookopencheck--1-2352.svg'
+import icon005 from '../../assets/icons/path/briefcasebusiness--1-2358.svg'
+import icon006 from '../../assets/icons/path/calculator--1-2365.svg'
+import icon007 from '../../assets/icons/path/calendarcheck2--1-2378.svg'
+import icon008 from '../../assets/icons/path/calendarclock--1-2386.svg'
+import icon009 from '../../assets/icons/path/calendardays--1-2395.svg'
+import icon010 from '../../assets/icons/path/chevrondown--1-2408.svg'
+import icon011 from '../../assets/icons/path/chevronleft--474-24096.svg'
+import icon012 from '../../assets/icons/path/chevronright--1-2412.svg'
+import icon013 from '../../assets/icons/path/chevronup--1-2416.svg'
+import icon014 from '../../assets/icons/path/circlehelp--1-2424.svg'
+import icon015 from '../../assets/icons/path/clipboardcheck--1-2430.svg'
+import icon016 from '../../assets/icons/path/clipboardlist--1-2436.svg'
+import icon017 from '../../assets/icons/path/coins--1-2445.svg'
+import icon018 from '../../assets/icons/path/factory--1-2452.svg'
+import icon019 from '../../assets/icons/path/filespreadsheet--1-2459.svg'
+import icon020 from '../../assets/icons/path/filetext--1-2468.svg'
+import icon021 from '../../assets/icons/path/filewarning--1-2476.svg'
+import icon022 from '../../assets/icons/path/foldercheck--1-2482.svg'
+import icon023 from '../../assets/icons/path/foldercog--1-2487.svg'
+import icon024 from '../../assets/icons/path/glasses--1-2500.svg'
+import icon025 from '../../assets/icons/path/handshake--1-2508.svg'
+import icon026 from '../../assets/icons/path/hardhat--1-2516.svg'
+import icon027 from '../../assets/icons/path/keyround--1-2523.svg'
+import icon028 from '../../assets/icons/path/layoutdashboard--1-2529.svg'
+import icon029 from '../../assets/icons/path/layoutgrid--1-2536.svg'
+import icon030 from '../../assets/icons/path/leaf--1-2543.svg'
+import icon031 from '../../assets/icons/path/listchecks--1-2548.svg'
+import icon032 from '../../assets/icons/path/mail--1-2556.svg'
+import icon033 from '../../assets/icons/path/mappin--1-2561.svg'
+import icon034 from '../../assets/icons/path/network--1-2566.svg'
+import icon035 from '../../assets/icons/path/newspaper--1-2574.svg'
+import icon036 from '../../assets/icons/path/packagecheck--1-2581.svg'
+import icon037 from '../../assets/icons/path/packagex--1-2589.svg'
+import icon038 from '../../assets/icons/path/palette--1-2598.svg'
+import icon039 from '../../assets/icons/path/pin--1-2610.svg'
+import icon040 from '../../assets/icons/path/plugzap--1-2615.svg'
+import icon041 from '../../assets/icons/path/radiotower--1-2623.svg'
+import icon042 from '../../assets/icons/path/recycle--1-2633.svg'
+import icon043 from '../../assets/icons/path/scale--1-2642.svg'
+import icon044 from '../../assets/icons/path/send--1-2650.svg'
+import icon045 from '../../assets/icons/path/settings--1-2655.svg'
+import icon046 from '../../assets/icons/path/shield--1-2660.svg'
+import icon047 from '../../assets/icons/path/shieldcheck--1-2664.svg'
+import icon048 from '../../assets/icons/path/siren--1-2669.svg'
+import icon049 from '../../assets/icons/path/slidershorizontal--1-2680.svg'
+import icon050 from '../../assets/icons/path/smartphone--1-2692.svg'
+import icon051 from '../../assets/icons/path/stethoscope--1-2697.svg'
+import icon052 from '../../assets/icons/path/tags--1-2705.svg'
+import icon053 from '../../assets/icons/path/ticketcheck--1-2712.svg'
+import icon054 from '../../assets/icons/path/truck--1-2717.svg'
+import icon055 from '../../assets/icons/path/usercog--1-2725.svg'
+import icon056 from '../../assets/icons/path/users--1-2739.svg'
+import icon057 from '../../assets/icons/path/wrench--1-2746.svg'
+import icon058 from '../../assets/icons/path/zap--1-2750.svg'
+import icon059 from '../../assets/icons/path/book--1-2754.svg'
+import icon060 from '../../assets/icons/path/user--1-2758.svg'
+import icon061 from '../../assets/icons/path/messagesquareshare--1-2762.svg'
+import icon062 from '../../assets/icons/path/pek--1-2766.svg'
+import icon063 from '../../assets/icons/path/container--1-2773.svg'
+import icon064 from '../../assets/icons/path/chartpie--1-2777.svg'
+import icon065 from '../../assets/icons/path/pencil--1-2781.svg'
+import icon066 from '../../assets/icons/path/close--1-2785.svg'
+import icon067 from '../../assets/icons/path/wind--1-2789.svg'
+import icon068 from '../../assets/icons/path/waveshorizontal--1-2793.svg'
+import icon069 from '../../assets/icons/path/camera--1-2797.svg'
+import icon070 from '../../assets/icons/path/arrowupright--1-2801.svg'
+import icon071 from '../../assets/icons/path/gripvertical--1-2805.svg'
+import icon072 from '../../assets/icons/path/cloudupload--1-2809.svg'
+import icon073 from '../../assets/icons/path/fileuser--1-2813.svg'
+import icon074 from '../../assets/icons/path/arrowleft--1-2817.svg'
+import icon075 from '../../assets/icons/path/search--1-2821.svg'
+import icon076 from '../../assets/icons/path/menu--1-2825.svg'
+import icon077 from '../../assets/icons/path/circlecheck--1-2829.svg'
+import icon078 from '../../assets/icons/path/camera--1-2833.svg'
+import icon079 from '../../assets/icons/path/arrowuptoline--62-23116.svg'
+import icon080 from '../../assets/icons/path/check--62-23117.svg'
+import icon081 from '../../assets/icons/path/frame--62-23126.svg'
+import icon082 from '../../assets/icons/path/circlex--89-4303.svg'
+import icon083 from '../../assets/icons/path/sun--182-3183.svg'
+import icon084 from '../../assets/icons/path/moon--182-3181.svg'
+import icon085 from '../../assets/icons/path/panel-left-close--182-3998.svg'
+import icon086 from '../../assets/icons/path/panel-left-open--182-4004.svg'
+import icon087 from '../../assets/icons/path/minus--240-3890.svg'
+import icon088 from '../../assets/icons/path/plus--455-79.svg'
+import icon089 from '../../assets/icons/path/download--374-7947.svg'
+import icon090 from '../../assets/icons/path/fill--396-7839.svg'
+import icon091 from '../../assets/icons/path/italic--396-7884.svg'
+import icon092 from '../../assets/icons/path/underline--396-7828.svg'
+import icon093 from '../../assets/icons/path/bold--396-7843.svg'
+import icon094 from '../../assets/icons/path/bullet-list--396-7852.svg'
+import icon095 from '../../assets/icons/path/bullet-nimber--396-7867.svg'
+import icon096 from '../../assets/icons/path/frame--424-30253.svg'
+import icon097 from '../../assets/icons/path/info--435-226.svg'
+import icon098 from '../../assets/icons/path/filter--444-23856.svg'
+import icon099 from '../../assets/icons/path/loader--463-562.svg'
+import icon100 from '../../assets/icons/path/external-link--468-23878.svg'
+import icon101 from '../../assets/icons/path/arrow-down-up--470-23932.svg'
+import icon102 from '../../assets/icons/path/arrow-down-wide-narrow--470-23931.svg'
+import icon103 from '../../assets/icons/path/arrow-up-wide-narrow--470-23930.svg'
+import icon104 from '../../assets/icons/path/arrow-left--474-25975.svg'
+import icon105 from '../../assets/icons/path/arrow-right--474-25976.svg'
+import icon106 from '../../assets/icons/path/arrow-right-to-line--474-25978.svg'
+import icon107 from '../../assets/icons/path/arrow-left-to-line--474-25977.svg'
+import icon108 from '../../assets/icons/path/trash--493-24768.svg'
+import icon109 from '../../assets/icons/path/inbox--505-24793.svg'
 import TzSearch from '../forms/TzSearch.vue'
 
 type IconEntry = {
   id: string
   name: string
-  icon?: Component
-  icons?: Component[]
-  asset?: string
-  source?: 'Lucide' | 'Target Zero'
+  asset: string
 }
 
 const icons: IconEntry[] = [
-  { id: '1:2330', name: 'Activity', icon: Activity },
-  { id: '1:2334', name: 'Award', icon: Award },
-  { id: '1:2339', name: 'BarChart3', icon: BarChart3 },
-  { id: '1:2346', name: 'BookOpen', icon: BookOpen },
-  { id: '1:2351', name: 'BookOpenCheck', icon: BookOpenCheck },
-  { id: '1:2357', name: 'BriefcaseBusiness', icon: BriefcaseBusiness },
-  { id: '1:2364', name: 'Calculator', icon: Calculator },
-  { id: '1:2377', name: 'CalendarCheck2', icon: CalendarCheck2 },
-  { id: '1:2385', name: 'CalendarClock', icon: CalendarClock },
-  { id: '1:2394', name: 'CalendarDays', icon: CalendarDays },
-  { id: '1:2407', name: 'ChevronDown', icon: ChevronDown },
-  { id: '1:2411', name: 'ChevronRight', icons: [ChevronLeft, ChevronRight] },
-  { id: '1:2415', name: 'ChevronUp', icon: ChevronUp },
-  { id: '1:2423', name: 'CircleHelp', icon: CircleHelp },
-  { id: '1:2429', name: 'ClipboardCheck', icon: ClipboardCheck },
-  { id: '1:2435', name: 'ClipboardList', icon: ClipboardList },
-  { id: '1:2444', name: 'Coins', icon: Coins },
-  { id: '1:2451', name: 'Factory', icon: Factory },
-  { id: '1:2458', name: 'FileSpreadsheet', icon: FileSpreadsheet },
-  { id: '1:2467', name: 'FileText', icon: FileText },
-  { id: '1:2475', name: 'FileWarning', icon: FileWarning },
-  { id: '1:2481', name: 'FolderCheck', icon: FolderCheck },
-  { id: '1:2486', name: 'FolderCog', icon: FolderCog },
-  { id: '1:2499', name: 'Glasses', icon: Glasses },
-  { id: '1:2507', name: 'Handshake', icon: Handshake },
-  { id: '1:2515', name: 'HardHat', icon: HardHat },
-  { id: '1:2522', name: 'KeyRound', icon: KeyRound },
-  { id: '1:2528', name: 'LayoutDashboard', icon: LayoutDashboard },
-  { id: '1:2535', name: 'LayoutGrid', icon: LayoutGrid },
-  { id: '1:2542', name: 'Leaf', icon: Leaf },
-  { id: '1:2547', name: 'ListChecks', icon: ListChecks },
-  { id: '1:2555', name: 'Mail', icon: Mail },
-  { id: '1:2560', name: 'MapPin', icon: MapPin },
-  { id: '1:2565', name: 'Network', icon: Network },
-  { id: '1:2573', name: 'Newspaper', icon: Newspaper },
-  { id: '1:2580', name: 'PackageCheck', icon: PackageCheck },
-  { id: '1:2588', name: 'PackageX', icon: PackageX },
-  { id: '1:2597', name: 'Palette', icon: Palette },
-  { id: '1:2609', name: 'Pin', icon: Pin },
-  { id: '1:2614', name: 'PlugZap', icon: PlugZap },
-  { id: '1:2622', name: 'RadioTower', icon: RadioTower },
-  { id: '1:2632', name: 'Recycle', icon: Recycle },
-  { id: '1:2641', name: 'Scale', icon: Scale },
-  { id: '1:2649', name: 'Send', icon: Send },
-  { id: '1:2654', name: 'Settings', icon: Settings },
-  { id: '1:2659', name: 'Shield', icon: Shield },
-  { id: '1:2663', name: 'ShieldCheck', icon: ShieldCheck },
-  { id: '1:2668', name: 'Siren', icon: Siren },
-  { id: '1:2679', name: 'SlidersHorizontal', icon: SlidersHorizontal },
-  { id: '1:2691', name: 'Smartphone', icon: Smartphone },
-  { id: '1:2696', name: 'Stethoscope', icon: Stethoscope },
-  { id: '1:2704', name: 'Tags', icon: Tags },
-  { id: '1:2711', name: 'TicketCheck', icon: TicketCheck },
-  { id: '1:2716', name: 'Truck', icon: Truck },
-  { id: '1:2724', name: 'UserCog', icon: UserCog },
-  { id: '1:2738', name: 'Users', icon: Users },
-  { id: '1:2745', name: 'Wrench', icon: Wrench },
-  { id: '1:2749', name: 'Zap', icon: Zap },
-  { id: '1:2753', name: 'Book', icon: Book },
-  { id: '1:2757', name: 'User', icon: User },
-  { id: '1:2761', name: 'MessageSquareShare', icon: MessageSquareShare },
-  { id: '1:2765', name: 'PEK', asset: pekIcon, source: 'Target Zero' },
-  { id: '1:2772', name: 'Container', icon: Container },
-  { id: '1:2776', name: 'ChartPie', icon: ChartPie },
-  { id: '1:2780', name: 'Pencil', icon: Pencil },
-  { id: '1:2784', name: 'Close', icon: X },
-  { id: '1:2788', name: 'Wind', icon: Wind },
-  { id: '1:2792', name: 'WavesHorizontal', icon: Waves },
-  { id: '1:2796', name: 'Camera', icon: Camera },
-  { id: '1:2800', name: 'ArrowUpRight', icon: ArrowUpRight },
-  { id: '1:2804', name: 'GripVertical', icon: GripVertical },
-  { id: '1:2808', name: 'CloudUpload', icon: CloudUpload },
-  { id: '1:2812', name: 'FileUser', icon: FileUser },
-  { id: '1:2816', name: 'Arrow-left', icon: ArrowLeft },
-  { id: '1:2820', name: 'Search', icon: Search },
-  { id: '1:2824', name: 'Menu', icon: EllipsisVertical },
-  { id: '1:2828', name: 'Check · Circle', icon: CircleCheck },
-  { id: '1:2832', name: 'Check · Camera', icon: Camera },
-  { id: '19:1951', name: 'Upload', icon: ArrowUpToLine },
-  { id: '26:24886', name: 'Check', icon: Check },
-  { id: '62:23118', name: 'Frame', asset: frameIcon, source: 'Target Zero' },
-  { id: '89:4197', name: 'CloseFill', icon: CircleX },
-  { id: '182:3172', name: 'Sun', icon: Sun },
-  { id: '182:3177', name: 'Moon', icon: Moon },
-  { id: '182:3993', name: 'panel-left-close', icon: PanelLeftClose },
-  { id: '182:3999', name: 'panel-left-open', icon: PanelLeftOpen },
-  { id: '240:3883', name: 'Minus', icon: Minus },
-  { id: '455:68', name: 'Plus', icon: Plus },
-  { id: '374:7942', name: 'Download', icon: Download },
-  { id: '394:7797', name: 'Fill', asset: fillIcon, source: 'Target Zero' },
-  { id: '394:7787', name: 'Italic', icon: Italic },
-  { id: '394:7792', name: 'Underline', icon: Underline },
-  { id: '394:7802', name: 'Bold', icon: Bold },
-  { id: '394:7807', name: 'Bullet list', icon: List },
-  { id: '394:7812', name: 'Bullet number', icon: ListOrdered },
-  { id: '424:30235', name: 'Stone', asset: stoneIcon, source: 'Target Zero' },
-  { id: '435:211', name: 'Info', icon: Info },
-  { id: '444:23847', name: 'Filter', icon: Filter },
-  { id: '463:129', name: 'Loader', icon: Loader },
-  { id: '468:23873', name: 'external-link', icon: ExternalLink },
-  { id: '470:23924-1', name: 'ArrowDownUp', icon: ArrowDownUp },
-  { id: '470:23924-2', name: 'ArrowDownWideNarrow', icon: ArrowDownWideNarrow },
-  { id: '470:23924-3', name: 'ArrowUpWideNarrow', icon: ArrowUpWideNarrow },
-  { id: '474:25979', name: 'arrow-left', icon: ArrowLeft },
-  { id: '474:25989', name: 'arrow-right', icon: ArrowRight },
-  { id: '474:25994', name: 'arrow-right-to-line', icon: ArrowRightToLine },
-  { id: '474:25999', name: 'arrow-left-to-line', icon: ArrowLeftToLine },
-  { id: '493:1447', name: 'arrow-left-to-line · instance', icon: ArrowLeftToLine },
-  { id: '493:24754', name: 'Delete', icon: Trash2 },
-  { id: '502:24785', name: 'inbox', icon: Inbox },
+  { id: "1:2331", name: "Activity", asset: icon000 },
+  { id: "1:2335", name: "Award", asset: icon001 },
+  { id: "1:2340", name: "BarChart3", asset: icon002 },
+  { id: "1:2347", name: "BookOpen", asset: icon003 },
+  { id: "1:2352", name: "BookOpenCheck", asset: icon004 },
+  { id: "1:2358", name: "BriefcaseBusiness", asset: icon005 },
+  { id: "1:2365", name: "Calculator", asset: icon006 },
+  { id: "1:2378", name: "CalendarCheck2", asset: icon007 },
+  { id: "1:2386", name: "CalendarClock", asset: icon008 },
+  { id: "1:2395", name: "CalendarDays", asset: icon009 },
+  { id: "1:2408", name: "ChevronDown", asset: icon010 },
+  { id: "474:24096", name: "Property 1=ChevronLeft", asset: icon011 },
+  { id: "1:2412", name: "Property 1=ChevronRight", asset: icon012 },
+  { id: "1:2416", name: "ChevronUp", asset: icon013 },
+  { id: "1:2424", name: "CircleHelp", asset: icon014 },
+  { id: "1:2430", name: "ClipboardCheck", asset: icon015 },
+  { id: "1:2436", name: "ClipboardList", asset: icon016 },
+  { id: "1:2445", name: "Coins", asset: icon017 },
+  { id: "1:2452", name: "Factory", asset: icon018 },
+  { id: "1:2459", name: "FileSpreadsheet", asset: icon019 },
+  { id: "1:2468", name: "FileText", asset: icon020 },
+  { id: "1:2476", name: "FileWarning", asset: icon021 },
+  { id: "1:2482", name: "FolderCheck", asset: icon022 },
+  { id: "1:2487", name: "FolderCog", asset: icon023 },
+  { id: "1:2500", name: "Glasses", asset: icon024 },
+  { id: "1:2508", name: "Handshake", asset: icon025 },
+  { id: "1:2516", name: "HardHat", asset: icon026 },
+  { id: "1:2523", name: "KeyRound", asset: icon027 },
+  { id: "1:2529", name: "LayoutDashboard", asset: icon028 },
+  { id: "1:2536", name: "LayoutGrid", asset: icon029 },
+  { id: "1:2543", name: "Leaf", asset: icon030 },
+  { id: "1:2548", name: "ListChecks", asset: icon031 },
+  { id: "1:2556", name: "Mail", asset: icon032 },
+  { id: "1:2561", name: "MapPin", asset: icon033 },
+  { id: "1:2566", name: "Network", asset: icon034 },
+  { id: "1:2574", name: "Newspaper", asset: icon035 },
+  { id: "1:2581", name: "PackageCheck", asset: icon036 },
+  { id: "1:2589", name: "PackageX", asset: icon037 },
+  { id: "1:2598", name: "Palette", asset: icon038 },
+  { id: "1:2610", name: "Pin", asset: icon039 },
+  { id: "1:2615", name: "PlugZap", asset: icon040 },
+  { id: "1:2623", name: "RadioTower", asset: icon041 },
+  { id: "1:2633", name: "Recycle", asset: icon042 },
+  { id: "1:2642", name: "Scale", asset: icon043 },
+  { id: "1:2650", name: "Send", asset: icon044 },
+  { id: "1:2655", name: "Settings", asset: icon045 },
+  { id: "1:2660", name: "Shield", asset: icon046 },
+  { id: "1:2664", name: "ShieldCheck", asset: icon047 },
+  { id: "1:2669", name: "Siren", asset: icon048 },
+  { id: "1:2680", name: "SlidersHorizontal", asset: icon049 },
+  { id: "1:2692", name: "Smartphone", asset: icon050 },
+  { id: "1:2697", name: "Stethoscope", asset: icon051 },
+  { id: "1:2705", name: "Tags", asset: icon052 },
+  { id: "1:2712", name: "TicketCheck", asset: icon053 },
+  { id: "1:2717", name: "Truck", asset: icon054 },
+  { id: "1:2725", name: "UserCog", asset: icon055 },
+  { id: "1:2739", name: "Users", asset: icon056 },
+  { id: "1:2746", name: "Wrench", asset: icon057 },
+  { id: "1:2750", name: "Zap", asset: icon058 },
+  { id: "1:2754", name: "Book", asset: icon059 },
+  { id: "1:2758", name: "User", asset: icon060 },
+  { id: "1:2762", name: "MessageSquareShare", asset: icon061 },
+  { id: "1:2766", name: "PEK", asset: icon062 },
+  { id: "1:2773", name: "Container", asset: icon063 },
+  { id: "1:2777", name: "ChartPie", asset: icon064 },
+  { id: "1:2781", name: "Pencil", asset: icon065 },
+  { id: "1:2785", name: "Close", asset: icon066 },
+  { id: "1:2789", name: "Wind", asset: icon067 },
+  { id: "1:2793", name: "WavesHorizontal", asset: icon068 },
+  { id: "1:2797", name: "Camera", asset: icon069 },
+  { id: "1:2801", name: "ArrowUpRight", asset: icon070 },
+  { id: "1:2805", name: "GripVertical", asset: icon071 },
+  { id: "1:2809", name: "CloudUpload", asset: icon072 },
+  { id: "1:2813", name: "FileUser", asset: icon073 },
+  { id: "1:2817", name: "ArrowLeft", asset: icon074 },
+  { id: "1:2821", name: "Search", asset: icon075 },
+  { id: "1:2825", name: "Menu", asset: icon076 },
+  { id: "1:2829", name: "CircleCheck", asset: icon077 },
+  { id: "1:2833", name: "Camera", asset: icon078 },
+  { id: "62:23116", name: "ArrowUpToLine", asset: icon079 },
+  { id: "62:23117", name: "Check", asset: icon080 },
+  { id: "62:23126", name: "Frame", asset: icon081 },
+  { id: "89:4303", name: "CircleX", asset: icon082 },
+  { id: "182:3183", name: "sun", asset: icon083 },
+  { id: "182:3181", name: "moon", asset: icon084 },
+  { id: "182:3998", name: "panel-left-close", asset: icon085 },
+  { id: "182:4004", name: "panel-left-open", asset: icon086 },
+  { id: "240:3890", name: "minus", asset: icon087 },
+  { id: "455:79", name: "Plus", asset: icon088 },
+  { id: "374:7947", name: "download", asset: icon089 },
+  { id: "396:7839", name: "Fill", asset: icon090 },
+  { id: "396:7884", name: "Italic", asset: icon091 },
+  { id: "396:7828", name: "Underline", asset: icon092 },
+  { id: "396:7843", name: "Bold", asset: icon093 },
+  { id: "396:7852", name: "Bullet List", asset: icon094 },
+  { id: "396:7867", name: "Bullet nimber", asset: icon095 },
+  { id: "424:30253", name: "Frame", asset: icon096 },
+  { id: "435:226", name: "Info", asset: icon097 },
+  { id: "444:23856", name: "filter", asset: icon098 },
+  { id: "463:562", name: "Loader", asset: icon099 },
+  { id: "468:23878", name: "external-link", asset: icon100 },
+  { id: "470:23932", name: "Property 1=arrow-down-up", asset: icon101 },
+  { id: "470:23931", name: "Property 1=arrow-down-wide-narrow", asset: icon102 },
+  { id: "470:23930", name: "Property 1=arrow-up-wide-narrow", asset: icon103 },
+  { id: "474:25975", name: "arrow-left", asset: icon104 },
+  { id: "474:25976", name: "arrow-right", asset: icon105 },
+  { id: "474:25978", name: "arrow-right-to-line", asset: icon106 },
+  { id: "474:25977", name: "arrow-left-to-line", asset: icon107 },
+  { id: "493:24768", name: "trash", asset: icon108 },
+  { id: "505:24793", name: "inbox", asset: icon109 },
 ]
 
 const query = ref('')
@@ -156,14 +246,13 @@ async function copyName(name: string) {
   window.setTimeout(() => { if (copied.value === name) copied.value = '' }, 1200)
 }
 
-function fileName(name: string, index?: number) {
+function fileName(name: string) {
   const slug = name.trim().replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase() || 'icon'
-  return `${slug}${index == null ? '' : `-${index + 1}`}.svg`
+  return `${slug}.svg`
 }
 
-function triggerDownload(data: Blob | string, name: string) {
-  const blob = typeof data === 'string' ? new Blob([data], { type: 'image/svg+xml;charset=utf-8' }) : data
-  const url = URL.createObjectURL(blob)
+function triggerDownload(data: Blob, name: string) {
+  const url = URL.createObjectURL(data)
   const link = document.createElement('a')
   link.href = url
   link.download = name
@@ -173,23 +262,9 @@ function triggerDownload(data: Blob | string, name: string) {
   window.setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
-async function downloadIcon(item: IconEntry, event: MouseEvent) {
-  if (item.asset) {
-    const response = await fetch(item.asset)
-    triggerDownload(await response.blob(), fileName(item.name))
-  } else {
-    const card = (event.currentTarget as HTMLElement).closest('.icon-item')
-    const svgNodes = [...(card?.querySelectorAll('.icon-preview svg') ?? [])]
-    svgNodes.forEach((node, index) => {
-      const svg = node.cloneNode(true) as SVGElement
-      svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
-      svg.setAttribute('width', '24')
-      svg.setAttribute('height', '24')
-      const xml = `<?xml version="1.0" encoding="UTF-8"?>\n${new XMLSerializer().serializeToString(svg)}`.replace(/currentColor/g, '#404040')
-      triggerDownload(xml, fileName(item.name, svgNodes.length > 1 ? index : undefined))
-    })
-  }
-
+async function downloadIcon(item: IconEntry) {
+  const response = await fetch(item.asset)
+  triggerDownload(await response.blob(), fileName(item.name))
   downloaded.value = item.id
   window.setTimeout(() => { if (downloaded.value === item.id) downloaded.value = '' }, 1200)
 }
@@ -198,7 +273,7 @@ async function downloadIcon(item: IconEntry, event: MouseEvent) {
 <template>
   <div class="icons-docs">
     <header class="icons-header">
-      <div><p>FOUNDATIONS · ICONS</p><h1>Icons</h1><span>Полный набор из Figma node 1:2211. Стандартные glyph подключены из Lucide, уникальные — сохранены локальными SVG.</span></div>
+      <div><p>FOUNDATIONS · ICONS</p><h1>Icons</h1><span>Полный набор из Figma node 1:2326. Все иконки экспортированы как локальные SVG path после Outline Stroke и Flatten.</span></div>
       <strong>{{ icons.length }} иконок</strong>
     </header>
 
@@ -212,16 +287,12 @@ async function downloadIcon(item: IconEntry, event: MouseEvent) {
         <article v-for="item in filteredIcons" :key="item.id" class="icon-item">
           <button type="button" class="icon-copy" :aria-label="`Copy ${item.name}`" @click="copyName(item.name)">
             <span class="icon-preview">
-              <img v-if="item.asset" :src="item.asset" alt="" width="24" height="24">
-              <template v-else-if="item.icons">
-                <component :is="icon" v-for="(icon, index) in item.icons" :key="index" :size="24" :stroke-width="1.5" />
-              </template>
-              <component :is="item.icon" v-else :size="24" :stroke-width="1.5" />
+              <span class="path-icon" :style="{ '--icon-url': `url(${item.asset})` }" aria-hidden="true" />
             </span>
             <span>{{ item.name }}</span>
-            <small>{{ item.source ?? 'Lucide' }}</small>
+            <small>Path · Target Zero</small>
           </button>
-          <button type="button" class="icon-download" :aria-label="`Download ${item.name} as SVG`" :title="`Download ${item.name}.svg`" @click="downloadIcon(item, $event)">
+          <button type="button" class="icon-download" :aria-label="`Download ${item.name} as SVG`" :title="`Download ${item.name}.svg`" @click="downloadIcon(item)">
             <Check v-if="downloaded === item.id" :size="14" />
             <Download v-else :size="14" />
           </button>
@@ -236,8 +307,8 @@ async function downloadIcon(item: IconEntry, event: MouseEvent) {
       <div>
         <article><strong>Размер</strong><p>Базовый размер — 24×24px. В компонентах допускаются 16px и 20px.</p></article>
         <article><strong>Цвет</strong><p>По умолчанию используется <code>--icon-default</code>, состояния используют семантические токены Colors.</p></article>
-        <article><strong>Stroke</strong><p>Базовая толщина линии в стенде — 1.5px.</p></article>
-        <article><strong>Источник</strong><p>Lucide Vue плюс четыре уникальных SVG Target Zero: PEK, Fill, Frame и Stone.</p></article>
+        <article><strong>Path</strong><p>Контуры преобразованы через Outline Stroke и Flatten. Каждая иконка хранится как SVG с заливкой path, без stroke.</p></article>
+        <article><strong>Источник</strong><p>Target Zero Design System, Figma node 1:2326. Локальные SVG совпадают с компонентами в макете.</p></article>
       </div>
     </section>
   </div>
@@ -263,7 +334,7 @@ async function downloadIcon(item: IconEntry, event: MouseEvent) {
 .icon-download:hover { border-color: var(--brand-primary); background: var(--brand-bg-active); }
 .icon-copy:focus-visible, .icon-download:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
 .icon-preview { display: flex; min-height: 24px; align-items: center; justify-content: center; gap: 4px; }
-.icon-preview img { display: block; width: 24px; height: 24px; object-fit: contain; }
+.path-icon { display: block; width: 24px; height: 24px; color: inherit; background: currentColor; -webkit-mask: var(--icon-url) center / contain no-repeat; mask: var(--icon-url) center / contain no-repeat; }
 .icon-copy > span:nth-child(2) { overflow: hidden; max-width: 100%; color: var(--text-default); font: 400 10px/14px var(--tz-font-family); text-overflow: ellipsis; white-space: nowrap; }
 .icon-item small { color: var(--text-muted); font: 400 9px/13px var(--tz-font-family); }
 .icon-item b { position: absolute; right: 4px; bottom: 4px; left: 4px; padding: 3px; color: var(--text-button-fill); border-radius: 4px; background: var(--brand-primary); font: 500 9px/12px var(--tz-font-family); pointer-events: none; }
