@@ -11,6 +11,16 @@
 
   /* Icon sizing */
   --icon-size-default: 16px;
+  /* Avatar */
+  --avatar-background: var(--bg-surface);
+  --avatar-border-color: var(--border-default);
+  --avatar-icon-color: var(--brand-primary);
+  --avatar-text-color: var(--text-default);
+  --avatar-radius: var(--radius-md);
+  --avatar-radius-small: var(--radius-sm);
+  --avatar-edit-background: var(--brand-primary);
+  --avatar-edit-icon-color: var(--text-button-fill);
+  --avatar-edit-radius: var(--radius-md);
 
   /* Primitives / Padding — Figma: Primitives / Padding */
   --padding-spacing-2: 2px;

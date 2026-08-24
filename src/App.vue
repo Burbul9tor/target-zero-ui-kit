@@ -2,6 +2,7 @@
 import { Check, ChevronRight, Component, LogOut } from '@lucide/vue'
 import { onMounted, ref } from 'vue'
 import UiKitLogin from './components/auth/UiKitLogin.vue'
+import AvatarDocumentation from './components/documentation/AvatarDocumentation.vue'
 import BreadcrumbDocumentation from './components/documentation/BreadcrumbDocumentation.vue'
 import ButtonDocumentation from './components/documentation/ButtonDocumentation.vue'
 import ColorsDocumentation from './components/documentation/ColorsDocumentation.vue'
@@ -26,7 +27,7 @@ const isAppLoading = ref(true)
 const activeSection = ref('Navigation')
 const catalogCollapsed = ref(false)
 const sidebarCollapsed = ref(false)
-const readyItems = ['Colors', 'Typography', 'Variables', 'Navigation', 'Breadcrumbs', 'Input', 'Button', 'Toast', 'Select', 'Preloader', 'Toggle', 'Icon', 'Search', 'Table']
+const readyItems = ['Colors', 'Typography', 'Variables', 'Navigation', 'Breadcrumbs', 'Input', 'Button', 'Toast', 'Select', 'Preloader', 'Toggle', 'Icon', 'Search', 'Avatar', 'Table']
 
 const catalog = [
   { group: 'Основы', items: ['Colors', 'Typography', 'Variables'] },
@@ -125,6 +126,7 @@ const breadcrumbItems = [
       <PreloaderDocumentation v-else-if="activeSection === 'Preloader'" />
       <SelectDocumentation v-else-if="activeSection === 'Select'" />
       <SearchDocumentation v-else-if="activeSection === 'Search'" />
+      <AvatarDocumentation v-else-if="activeSection === 'Avatar'" />
       <TableDocumentation v-else-if="activeSection === 'Table'" />
       <ToggleDocumentation v-else-if="activeSection === 'Toggle'" />
 
