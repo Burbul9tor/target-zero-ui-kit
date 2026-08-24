@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Building2, Check, ChevronRight, Columns3, Plus, User, Users, X } from '@lucide/vue'
+import { Building2, Check, ChevronRight, Columns3, Plus, SlidersHorizontal, User, X } from '@lucide/vue'
 import { computed, ref } from 'vue'
 import TzTable, {
   type TableColumnFilter,
@@ -46,6 +46,10 @@ const objectTree = [
   ] },
 ]
 const objects = ['Карьер Северный', 'Павлодарская база', 'Станция Алматы-1', 'Полевая лаборатория', 'Главный офис', 'Производственная база № 1', 'Производственная база № 2', 'Промысловая площадка', 'Завод Семей', 'Завод Павлодар', 'Завод КТЛ', 'Завод Астана', 'Производственный участок', 'Test21']
+const years = ['2026', '2025', '2024']
+const placeTypes = ['Производственный объект', 'Офис', 'Лаборатория', 'Склад']
+const places = ['Костанай', 'Павлодар', 'Алматы', 'Атырау', 'Актау']
+const statuses = ['Активно', 'На согласовании', 'Приостановлено', 'Архив']
 
 const optionLoader = (items: string[]) => async () => items.map((value, index) => ({ id: index + 1, name: value, value }))
 const departmentFilter: TableColumnFilter = { filterKey: 'department', type: 'CHECKBOX', getFilters: optionLoader(departments), title: 'Подразделение', searchable: true }
@@ -66,6 +70,10 @@ const rows = ref<TableRow[]>(Array.from({ length: 100 }, (_, index) => ({
   role: roles[index % roles.length],
   department: departments[index % departments.length],
   object: objects[(index * 3) % objects.length],
+  year: years[index % years.length],
+  placeType: placeTypes[index % placeTypes.length],
+  place: places[index % places.length],
+  status: statuses[index % statuses.length],
 })))
 
 const page = ref(0)
@@ -99,49 +107,97 @@ function removeRow(row: TableRow) {
 
 const filterPanelOpen = ref(true)
 const filterPanelPage = ref(0)
-const departmentPopoverOpen = ref(false)
+type SimplePanelFilterKey = 'year' | 'placeType' | 'place' | 'status'
+const simpleFilterOpen = ref<SimplePanelFilterKey | null>(null)
 const objectModalOpen = ref(false)
-const draftDepartments = ref<string[]>([])
 const draftObjects = ref<string[]>([])
-const appliedDepartments = ref<string[]>([])
+const draftYears = ref<string[]>([])
+const draftPlaceTypes = ref<string[]>([])
+const draftPlaces = ref<string[]>([])
+const draftStatuses = ref<string[]>([])
 const appliedObjects = ref<string[]>([])
-const panelColumns = computed<TzTableColumn[]>(() => columns.value.slice(0, 4).map(column => ({ ...column, filter: undefined, filterable: false })))
-const panelActiveCount = computed(() => appliedDepartments.value.length + appliedObjects.value.length)
-const panelDirty = computed(() => {
-  const normalize = (value: string[]) => [...value].sort().join('|')
-  return normalize(draftDepartments.value) !== normalize(appliedDepartments.value)
-    || normalize(draftObjects.value) !== normalize(appliedObjects.value)
-})
-const panelRows = computed(() => rows.value.filter(row => {
-  const departmentMatches = !appliedDepartments.value.length || appliedDepartments.value.includes(String(row.department))
-  const objectMatches = !appliedObjects.value.length || appliedObjects.value.includes(String(row.object))
-  return departmentMatches && objectMatches
+const appliedYears = ref<string[]>([])
+const appliedPlaceTypes = ref<string[]>([])
+const appliedPlaces = ref<string[]>([])
+const appliedStatuses = ref<string[]>([])
+const simplePanelFilters: Array<{ key: SimplePanelFilterKey; label: string; description: string; options: string[] }> = [
+  { key: 'year', label: 'Год', description: 'Выбор одного или нескольких годов', options: years },
+  { key: 'placeType', label: 'Тип места', description: 'Категория места', options: placeTypes },
+  { key: 'place', label: 'Место', description: 'Город или площадка', options: places },
+  { key: 'status', label: 'Статус', description: 'Текущее состояние записи', options: statuses },
+]
+const draftSimpleFilters = computed<Record<SimplePanelFilterKey, string[]>>(() => ({
+  year: draftYears.value,
+  placeType: draftPlaceTypes.value,
+  place: draftPlaces.value,
+  status: draftStatuses.value,
 }))
-function toggleDraftDepartment(value: string) {
-  draftDepartments.value = draftDepartments.value.includes(value)
-    ? draftDepartments.value.filter(item => item !== value)
-    : [...draftDepartments.value, value]
+const panelColumns = computed<TzTableColumn[]>(() => columns.value.slice(0, 4).map(column => ({ ...column, filter: undefined, filterable: false })))
+const panelActiveCount = computed(() => appliedObjects.value.length + appliedYears.value.length + appliedPlaceTypes.value.length + appliedPlaces.value.length + appliedStatuses.value.length)
+const normalizeFilter = (value: string[]) => [...value].sort().join('|')
+const panelDirty = computed(() => normalizeFilter(draftObjects.value) !== normalizeFilter(appliedObjects.value)
+  || normalizeFilter(draftYears.value) !== normalizeFilter(appliedYears.value)
+  || normalizeFilter(draftPlaceTypes.value) !== normalizeFilter(appliedPlaceTypes.value)
+  || normalizeFilter(draftPlaces.value) !== normalizeFilter(appliedPlaces.value)
+  || normalizeFilter(draftStatuses.value) !== normalizeFilter(appliedStatuses.value))
+const panelRows = computed(() => rows.value.filter(row => {
+  const objectMatches = !appliedObjects.value.length || appliedObjects.value.includes(String(row.object))
+  const yearMatches = !appliedYears.value.length || appliedYears.value.includes(String(row.year))
+  const placeTypeMatches = !appliedPlaceTypes.value.length || appliedPlaceTypes.value.includes(String(row.placeType))
+  const placeMatches = !appliedPlaces.value.length || appliedPlaces.value.includes(String(row.place))
+  const statusMatches = !appliedStatuses.value.length || appliedStatuses.value.includes(String(row.status))
+  return objectMatches && yearMatches && placeTypeMatches && placeMatches && statusMatches
+}))
+const appliedFilterChips = computed(() => [
+  ...appliedObjects.value,
+  ...appliedYears.value,
+  ...appliedPlaceTypes.value,
+  ...appliedPlaces.value,
+  ...appliedStatuses.value,
+])
+function getDraftSimpleRef(key: SimplePanelFilterKey) {
+  if (key === 'year') return draftYears
+  if (key === 'placeType') return draftPlaceTypes
+  if (key === 'place') return draftPlaces
+  return draftStatuses
 }
+function toggleSimplePopover(key: SimplePanelFilterKey) {
+  simpleFilterOpen.value = simpleFilterOpen.value === key ? null : key
+}
+function toggleDraftSimpleValue(key: SimplePanelFilterKey, value: string) {
+  const target = getDraftSimpleRef(key)
+  target.value = target.value.includes(value) ? target.value.filter(item => item !== value) : [...target.value, value]
+}
+function resetDraftSimpleFilter(key: SimplePanelFilterKey) { getDraftSimpleRef(key).value = [] }
 function applyDraftObjects(values: string[]) {
   draftObjects.value = [...values]
   objectModalOpen.value = false
 }
 function applyFilterPanel() {
-  appliedDepartments.value = [...draftDepartments.value]
   appliedObjects.value = [...draftObjects.value]
+  appliedYears.value = [...draftYears.value]
+  appliedPlaceTypes.value = [...draftPlaceTypes.value]
+  appliedPlaces.value = [...draftPlaces.value]
+  appliedStatuses.value = [...draftStatuses.value]
   filterPanelPage.value = 0
   filterPanelOpen.value = false
-  departmentPopoverOpen.value = false
+  simpleFilterOpen.value = null
   objectModalOpen.value = false
 }
 function resetFilterPanel() {
-  draftDepartments.value = []
   draftObjects.value = []
-  appliedDepartments.value = []
+  draftYears.value = []
+  draftPlaceTypes.value = []
+  draftPlaces.value = []
+  draftStatuses.value = []
   appliedObjects.value = []
+  appliedYears.value = []
+  appliedPlaceTypes.value = []
+  appliedPlaces.value = []
+  appliedStatuses.value = []
+  simpleFilterOpen.value = null
   filterPanelPage.value = 0
 }
-
 type TechnicalVariant = 'default' | 'stripped' | 'fixed' | 'resizable' | 'utility' | 'client-pagination' | 'server-data' | 'server-search' | 'server-pagination' | 'server-sort' | 'server-filter' | 'methods'
 const technicalVariants: Array<{ key: TechnicalVariant; label: string }> = [
   ['default','Default'], ['stripped','Stripped'], ['fixed','Fixed columns'], ['resizable','Resizable'],
@@ -278,7 +334,7 @@ const methodsApi = ['resetFilter(key)', 'exposedLoadData(page?, countPerPage?)',
         title="Фильтры таблицы"
         :active-count="panelActiveCount"
         :dirty="panelDirty"
-        :reset-disabled="!draftDepartments.length && !draftObjects.length && !panelActiveCount"
+        :reset-disabled="!draftObjects.length && !draftYears.length && !draftPlaceTypes.length && !draftPlaces.length && !draftStatuses.length && !panelActiveCount"
         @apply="applyFilterPanel"
         @reset="resetFilterPanel"
       >
@@ -287,45 +343,44 @@ const methodsApi = ['resetFilter(key)', 'exposedLoadData(page?, countPerPage?)',
         </template>
 
         <div class="filter-launcher-list">
-          <div class="filter-launcher-wrap">
-            <button
-              type="button"
-              class="filter-launcher"
-              :class="{ active: draftDepartments.length }"
-              :aria-expanded="departmentPopoverOpen"
-              @click="departmentPopoverOpen = !departmentPopoverOpen"
-            >
-              <i><Users :size="16" /></i>
-              <span><strong>Подразделение</strong><small>Выбор нескольких значений · Popover</small></span>
-              <b v-if="draftDepartments.length">{{ draftDepartments.length }}</b>
-              <ChevronRight :size="16" />
-            </button>
-            <button v-if="departmentPopoverOpen" type="button" class="filter-popover-dismiss" aria-label="Закрыть выбор подразделения" @click="departmentPopoverOpen = false" />
-            <section v-if="departmentPopoverOpen" class="department-popover" aria-label="Фильтр по подразделению">
-              <header><strong>Подразделение</strong><button type="button" aria-label="Закрыть" @click="departmentPopoverOpen = false"><X :size="16" /></button></header>
-              <button
-                v-for="department in departments"
-                :key="department"
-                type="button"
-                class="filter-option"
-                :class="{ selected: draftDepartments.includes(department) }"
-                @click="toggleDraftDepartment(department)"
-              >
-                <span class="filter-option__check" aria-hidden="true" />
-                <span>{{ department }}</span>
-              </button>
-              <footer><button type="button" :disabled="!draftDepartments.length" @click="draftDepartments = []">Сбросить</button><button type="button" @click="departmentPopoverOpen = false">Готово</button></footer>
-            </section>
-          </div>
-
-          <button type="button" class="filter-launcher" :class="{ active: draftObjects.length }" @click="objectModalOpen = true">
+          <button type="button" class="filter-launcher" :class="{ active: draftObjects.length }" @click="simpleFilterOpen = null; objectModalOpen = true">
             <i><Building2 :size="16" /></i>
             <span><strong>Объект</strong><small>Поиск и выбор по иерархии · Модальное окно</small></span>
             <b v-if="draftObjects.length">{{ draftObjects.length }}</b>
             <ChevronRight :size="16" />
           </button>
-        </div>
-        <template #hint>Выбранные значения не влияют на таблицу до нажатия «Применить»</template>
+
+          <div v-for="filter in simplePanelFilters" :key="filter.key" class="filter-launcher-wrap">
+            <button
+              type="button"
+              class="filter-launcher"
+              :class="{ active: draftSimpleFilters[filter.key].length }"
+              :aria-expanded="simpleFilterOpen === filter.key"
+              @click="toggleSimplePopover(filter.key)"
+            >
+              <i><SlidersHorizontal :size="16" /></i>
+              <span><strong>{{ filter.label }}</strong><small>{{ filter.description }} · Popover</small></span>
+              <b v-if="draftSimpleFilters[filter.key].length">{{ draftSimpleFilters[filter.key].length }}</b>
+              <ChevronRight :size="16" />
+            </button>
+            <button v-if="simpleFilterOpen === filter.key" type="button" class="filter-popover-dismiss" :aria-label="`Закрыть фильтр ${filter.label}`" @click="simpleFilterOpen = null" />
+            <section v-if="simpleFilterOpen === filter.key" class="simple-filter-popover" :aria-label="`Фильтр ${filter.label}`">
+              <header><strong>{{ filter.label }}</strong><button type="button" aria-label="Закрыть" @click="simpleFilterOpen = null"><X :size="16" /></button></header>
+              <button
+                v-for="option in filter.options"
+                :key="option"
+                type="button"
+                class="filter-option"
+                :class="{ selected: draftSimpleFilters[filter.key].includes(option) }"
+                @click="toggleDraftSimpleValue(filter.key, option)"
+              >
+                <span class="filter-option__check" aria-hidden="true" />
+                <span>{{ option }}</span>
+              </button>
+              <footer><button type="button" :disabled="!draftSimpleFilters[filter.key].length" @click="resetDraftSimpleFilter(filter.key)">Сбросить</button><button type="button" @click="simpleFilterOpen = null">Готово</button></footer>
+            </section>
+          </div>
+        </div>        <template #hint>Выбранные значения не влияют на таблицу до нажатия «Применить»</template>
       </TzTableFilterPanel>
 
       <TzTreeFilterModal
@@ -338,8 +393,7 @@ const methodsApi = ['resetFilter(key)', 'exposedLoadData(page?, countPerPage?)',
       />
 
       <div v-if="panelActiveCount" class="applied-filter-chips" aria-label="Применённые фильтры">
-        <span v-for="department in appliedDepartments" :key="`department-${department}`" class="panel-chip" :title="department">{{ department }}</span>
-        <span v-for="object in appliedObjects" :key="`object-${object}`" class="panel-chip" :title="object">{{ object }}</span>
+        <span v-for="(value, index) in appliedFilterChips" :key="`${value}-${index}`" class="panel-chip" :title="value">{{ value }}</span>
       </div>
 
       <TzTable
@@ -413,9 +467,9 @@ const methodsApi = ['resetFilter(key)', 'exposedLoadData(page?, countPerPage?)',
 .filter-launcher{display:grid;width:100%;min-height:64px;padding:var(--padding-spacing-10) var(--padding-spacing-12);grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:var(--padding-spacing-10);color:var(--text-default);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-surface);font-family:var(--tz-font-family);text-align:left;cursor:pointer;transition:border-color 160ms ease,background-color 160ms ease,box-shadow 160ms ease}
 .filter-launcher:hover{border-color:var(--brand-primary);background:var(--brand-bg-hover)}.filter-launcher:focus-visible{outline:2px solid var(--brand-primary);outline-offset:2px}.filter-launcher.active{border-color:var(--brand-primary);box-shadow:inset 0 0 0 1px var(--brand-primary)}
 .filter-launcher>i{display:grid;width:32px;height:32px;place-items:center;color:var(--brand-primary);border-radius:var(--radius-sm);background:var(--brand-bg-active)}.filter-launcher>span{display:flex;min-width:0;flex-direction:column;gap:var(--padding-spacing-2)}.filter-launcher strong{color:var(--text-default);font:var(--tz-text-body-strong)}.filter-launcher small{overflow:hidden;color:var(--text-muted);font:var(--tz-text-caption-regular);text-overflow:ellipsis;white-space:nowrap}.filter-launcher>b{display:grid;min-width:24px;height:24px;padding:0 var(--padding-spacing-6);place-items:center;color:var(--brand-primary);border-radius:var(--radius-full);background:var(--brand-bg-active);font:var(--tz-text-label-small)}
-.filter-popover-dismiss{position:fixed;z-index:20;inset:0;width:100%;height:100%;padding:0;border:0;background:transparent;cursor:default}.department-popover{position:absolute;z-index:21;top:calc(100% + var(--padding-spacing-8));left:0;display:grid;width:min(360px,calc(100vw - 64px));padding:var(--padding-spacing-12);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-surface);box-shadow:0 12px 32px var(--bg-shadow)}.department-popover>header{display:flex;min-height:32px;align-items:center;justify-content:space-between;gap:var(--padding-spacing-8);margin-bottom:var(--padding-spacing-6);color:var(--text-default);font:var(--tz-text-body-strong)}.department-popover>header button{display:grid;width:28px;height:28px;padding:0;place-items:center;color:var(--icon-default);border:0;border-radius:var(--radius-xs);background:transparent;cursor:pointer}.department-popover>header button:hover{color:var(--brand-primary);background:var(--brand-bg-hover)}
+.filter-popover-dismiss{position:fixed;z-index:20;inset:0;width:100%;height:100%;padding:0;border:0;background:transparent;cursor:default}.simple-filter-popover{position:absolute;z-index:21;top:calc(100% + var(--padding-spacing-8));left:0;display:grid;width:min(360px,calc(100vw - 64px));padding:var(--padding-spacing-12);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-surface);box-shadow:0 12px 32px var(--bg-shadow)}.simple-filter-popover>header{display:flex;min-height:32px;align-items:center;justify-content:space-between;gap:var(--padding-spacing-8);margin-bottom:var(--padding-spacing-6);color:var(--text-default);font:var(--tz-text-body-strong)}.simple-filter-popover>header button{display:grid;width:28px;height:28px;padding:0;place-items:center;color:var(--icon-default);border:0;border-radius:var(--radius-xs);background:transparent;cursor:pointer}.simple-filter-popover>header button:hover{color:var(--brand-primary);background:var(--brand-bg-hover)}
 .filter-option{display:flex;width:100%;min-height:36px;padding:var(--padding-spacing-6) var(--padding-spacing-8);align-items:center;gap:var(--padding-spacing-8);color:var(--text-default);border:0;border-radius:var(--radius-sm);background:transparent;font:var(--tz-text-body-small);text-align:left;cursor:pointer}.filter-option:hover{background:var(--brand-bg-hover)}.filter-option__check{display:grid;box-sizing:border-box;flex:0 0 20px;width:20px;height:20px;place-items:center;border:1px solid var(--border-default);border-radius:var(--radius-xs);background:var(--bg-surface)}.filter-option.selected .filter-option__check{border-color:var(--brand-primary);background:var(--brand-primary)}.filter-option.selected .filter-option__check:after{width:9px;height:5px;border-bottom:1.5px solid var(--text-button-fill);border-left:1.5px solid var(--text-button-fill);content:"";transform:translateY(-1px) rotate(-45deg)}
-.department-popover>footer{display:flex;margin-top:var(--padding-spacing-8);padding-top:var(--padding-spacing-8);justify-content:flex-end;gap:var(--padding-spacing-8);border-top:1px solid var(--border-default)}.department-popover>footer button{min-height:32px;padding:0 var(--padding-spacing-10);color:var(--brand-primary);border:1px solid var(--border-default);border-radius:var(--radius-sm);background:var(--bg-surface);font:var(--tz-text-label-small);cursor:pointer}.department-popover>footer button:last-child{color:var(--text-button-fill);border-color:var(--brand-primary);background:var(--brand-primary)}.department-popover>footer button:disabled{color:var(--text-disabled);background:var(--bg-disabled);cursor:not-allowed}
+.simple-filter-popover>footer{display:flex;margin-top:var(--padding-spacing-8);padding-top:var(--padding-spacing-8);justify-content:flex-end;gap:var(--padding-spacing-8);border-top:1px solid var(--border-default)}.simple-filter-popover>footer button{min-height:32px;padding:0 var(--padding-spacing-10);color:var(--brand-primary);border:1px solid var(--border-default);border-radius:var(--radius-sm);background:var(--bg-surface);font:var(--tz-text-label-small);cursor:pointer}.simple-filter-popover>footer button:last-child{color:var(--text-button-fill);border-color:var(--brand-primary);background:var(--brand-primary)}.simple-filter-popover>footer button:disabled{color:var(--text-disabled);background:var(--bg-disabled);cursor:not-allowed}
 .applied-filter-chips{display:flex;flex-wrap:wrap;align-items:center;gap:var(--padding-spacing-8);margin:0 0 var(--padding-spacing-12)}.panel-chip{max-width:280px;padding:var(--padding-spacing-4) var(--padding-spacing-8);overflow:hidden;color:var(--brand-primary);text-overflow:ellipsis;white-space:nowrap;border-radius:var(--radius-full);background:var(--brand-bg-active);font:var(--tz-text-label-small)}.panel-empty-summary{color:var(--text-muted);font:var(--tz-text-caption-regular)}.implementation-note{margin:var(--padding-spacing-12) 0 0;color:var(--text-muted);font:var(--tz-text-body-small)}.variant-switcher{display:flex;flex-wrap:wrap;gap:var(--padding-spacing-8);margin-bottom:var(--padding-spacing-12)}.variant-switcher button,.method-actions button{min-height:32px;padding:0 var(--padding-spacing-12);color:var(--brand-primary);border:1px solid var(--border-default);border-radius:var(--radius-sm);background:var(--bg-surface);font:500 12px/16px var(--tz-font-family);cursor:pointer}.variant-switcher button:hover,.method-actions button:hover{background:var(--brand-bg-hover)}.variant-switcher button.active{color:var(--text-button-fill);border-color:var(--brand-primary);background:var(--brand-primary)}.variant-description{margin:0 0 var(--padding-spacing-16);color:var(--text-muted);font:400 13px/18px var(--tz-font-family)}.method-actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--padding-spacing-8);margin-bottom:var(--padding-spacing-12)}.method-actions span{color:var(--text-muted);font:400 12px/16px var(--tz-font-family)}.bar-status{color:var(--text-muted);font:400 12px/16px var(--tz-font-family);white-space:nowrap}.bar-actions,.column-creator{display:flex;align-items:center;gap:var(--padding-spacing-8)}.column-creator input{width:160px;height:32px;padding:0 var(--padding-spacing-8);color:var(--text-default);border:1px solid var(--border-default);border-radius:var(--radius-sm);outline:0;background:var(--bg-surface);font:400 12px/16px var(--tz-font-family)}.column-creator input:focus{border-color:var(--brand-primary);box-shadow:0 0 0 2px var(--effect-shadow)}.secondary-button{display:inline-flex;height:32px;padding:0 var(--padding-spacing-12);align-items:center;gap:var(--padding-spacing-6);color:var(--brand-primary);border:1px solid var(--border-default);border-radius:var(--radius-sm);background:var(--brand-bg-hover);font:500 12px/16px var(--tz-font-family);white-space:nowrap;cursor:pointer}.primary-button{display:inline-flex;height:32px;padding:0 var(--padding-spacing-12);align-items:center;gap:var(--padding-spacing-6);color:var(--text-button-fill);border:0;border-radius:var(--radius-sm);background:var(--brand-primary);font:500 12px/16px var(--tz-font-family);cursor:pointer}.primary-button:hover{background:var(--brand-primary-hover)}
 .employee{display:flex;min-width:0;align-items:center;gap:var(--padding-spacing-6)}.employee>i{display:grid;flex:0 0 32px;width:32px;height:32px;place-items:center;color:var(--brand-primary);border:1px solid var(--border-default);border-radius:var(--radius-sm);background:var(--bg-surface)}.employee>span{display:flex;min-width:0;flex-direction:column}.employee strong,.employee small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.employee strong{font:400 14px/20px var(--tz-font-family)}.employee small{color:var(--text-muted);font:400 10px/14px var(--tz-font-family)}
 .settings-demo{display:flex;align-items:center;gap:var(--padding-spacing-12)}.settings-demo strong{font:500 12px/16px var(--tz-font-family)}.settings-demo span{color:var(--text-muted);font:400 12px/16px var(--tz-font-family)}code{color:var(--brand-primary);font:400 11px/16px ui-monospace,SFMono-Regular,Consolas,monospace}
