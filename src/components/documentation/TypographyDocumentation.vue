@@ -11,7 +11,7 @@ type TextStyle = {
 }
 
 const textStyles: TextStyle[] = [
-  { group: 'Heading', name: 'Page', token: '--tz-text-heading-page', weight: 700, size: 28, lineHeight: 36 },
+  { group: 'Heading', name: 'Display', token: '--tz-text-heading-display', weight: 700, size: 28, lineHeight: 36 },
   { group: 'Heading', name: 'H1', token: '--tz-text-heading-h1', weight: 700, size: 24, lineHeight: 32 },
   { group: 'Heading', name: 'H2', token: '--tz-text-heading-h2', weight: 700, size: 20, lineHeight: 28 },
   { group: 'Heading', name: 'H3', token: '--tz-text-heading-h3', weight: 700, size: 16, lineHeight: 24 },
@@ -81,8 +81,8 @@ const groups = [...new Set(textStyles.map(style => style.group))].map(name => ({
 
     <section class="typography-card usage-card">
       <header><div><h2>Использование</h2><p>Компоненты используют готовый Text Style через CSS token.</p></div></header>
-      <pre><code>.page-title {
-  font: var(--tz-text-heading-page);
+      <pre><code>.display-title {
+  font: var(--tz-text-heading-display);
 }
 
 .table-cell {
@@ -96,7 +96,7 @@ const groups = [...new Set(textStyles.map(style => style.group))].map(name => ({
 .typography-docs { display: grid; gap: var(--padding-spacing-24); }
 .typography-hero { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--padding-spacing-32); }
 .typography-hero p { margin: 0 0 var(--padding-spacing-8); color: var(--brand-primary); font: var(--tz-text-label-small); letter-spacing: .08em; }
-.typography-hero h1 { margin: 0 0 var(--padding-spacing-8); color: var(--text-default); font: var(--tz-text-heading-page); }
+.typography-hero h1 { margin: 0 0 var(--padding-spacing-8); color: var(--text-default); font: var(--tz-text-heading-display); }
 .typography-hero span, .typography-card header p { color: var(--text-muted); font: var(--tz-text-body-medium); }
 .typography-hero > strong { display: flex; align-items: center; gap: var(--padding-spacing-6); padding: 7px 10px; color: var(--status-success-fg); border-radius: var(--radius-md); background: var(--status-success-bg); font: var(--tz-text-label-small); white-space: nowrap; }
 .typography-card { min-width: 0; padding: var(--padding-spacing-24); border: 1px solid var(--border-default); border-radius: var(--radius-lg); background: var(--bg-surface); box-shadow: 0 10px 15px -3px var(--bg-shadow); }

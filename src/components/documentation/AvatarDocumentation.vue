@@ -103,7 +103,7 @@ const tokens = [
 .avatar-docs { display: grid; gap: var(--padding-spacing-24); }
 .avatar-docs__header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--padding-spacing-32); }
 .avatar-docs__eyebrow { margin: 0 0 var(--padding-spacing-8); color: var(--brand-primary); font: var(--tz-text-label-small); letter-spacing: .08em; }
-.avatar-docs__header h1 { margin: 0 0 var(--padding-spacing-8); color: var(--text-default); font: var(--tz-text-heading-page); }
+.avatar-docs__header h1 { margin: 0 0 var(--padding-spacing-8); color: var(--text-default); font: var(--tz-text-heading-display); }
 .avatar-docs__header p, .avatar-card header p { margin: 0; color: var(--text-muted); font: var(--tz-text-body-medium); }
 .avatar-docs__header > span { display: flex; align-items: center; gap: var(--padding-spacing-6); padding: 7px 10px; color: var(--status-success-fg); border-radius: var(--radius-md); background: var(--status-success-bg); font: var(--tz-text-label-small); white-space: nowrap; }
 .avatar-card { padding: var(--padding-spacing-24); border: 1px solid var(--border-default); border-radius: var(--radius-lg); background: var(--bg-surface); box-shadow: 0 10px 15px -3px var(--bg-shadow); }

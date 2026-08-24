@@ -6,7 +6,7 @@
   --tz-font-weight-bold: 700;
 
   /* Heading */
-  --tz-text-heading-page: var(--tz-font-weight-bold) 28px/36px var(--tz-font-family);
+  --tz-text-heading-display: var(--tz-font-weight-bold) 28px/36px var(--tz-font-family);
   --tz-text-heading-h1: var(--tz-font-weight-bold) 24px/32px var(--tz-font-family);
   --tz-text-heading-h2: var(--tz-font-weight-bold) 20px/28px var(--tz-font-family);
   --tz-text-heading-h3: var(--tz-font-weight-bold) 16px/24px var(--tz-font-family);
@@ -37,7 +37,7 @@
   --tz-text-sidebar-action: var(--tz-font-weight-medium) 10px/14px var(--tz-font-family);
 }
 
-.tz-heading-page { font: var(--tz-text-heading-page); }
+.tz-heading-display { font: var(--tz-text-heading-display); }
 .tz-heading-h1 { font: var(--tz-text-heading-h1); }
 .tz-heading-h2 { font: var(--tz-text-heading-h2); }
 .tz-heading-h3 { font: var(--tz-text-heading-h3); }
