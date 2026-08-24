@@ -9,11 +9,45 @@ import TzTable, {
 } from '../data/TzTable.vue'
 
 const departments = ['Экологический контроль', 'Охрана окружающей среды', 'Управление отходами', 'Экологическая экспертиза']
-const objects = ['Производственная база № 1', 'Производственная база № 2', 'Главный офис', 'Полевая лаборатория']
+const objectTree = [
+  { id: 'kostanay', name: 'Карьер Костанай', value: 'Карьер Костанай', children: [
+    { id: 'kostanay-north', name: 'Карьер Северный', value: 'Карьер Северный' },
+    { id: 'kostanay-crushing', name: 'Дробильный комплекс', value: 'Дробильный комплекс' },
+  ] },
+  { id: 'pavlodar-service', name: 'Нефтесервисная компания (Павлодар)', value: 'Нефтесервисная компания (Павлодар)', children: [
+    { id: 'pavlodar-base', name: 'Павлодарская база', value: 'Павлодарская база' },
+    { id: 'pavlodar-warehouse', name: 'Центральный склад', value: 'Центральный склад' },
+  ] },
+  { id: 'almaty-station', name: 'Станция Алматы-1', value: 'Станция Алматы-1', children: [
+    { id: 'almaty-lab', name: 'Полевая лаборатория', value: 'Полевая лаборатория' },
+  ] },
+  { id: 'target-office', name: 'Офис Target Zero', value: 'Офис Target Zero', children: [
+    { id: 'main-office', name: 'Главный офис', value: 'Главный офис' },
+    { id: 'office-base-1', name: 'Производственная база № 1', value: 'Производственная база № 1' },
+    { id: 'office-base-2', name: 'Производственная база № 2', value: 'Производственная база № 2' },
+  ] },
+  { id: 'new-root', name: 'Новый корневой объект дев 1', value: 'Новый корневой объект дев 1' },
+  { id: 'atyrau', name: 'НГДУ Атырау', value: 'НГДУ Атырау', children: [
+    { id: 'atyrau-field', name: 'Промысловая площадка', value: 'Промысловая площадка' },
+  ] },
+  { id: 'semey', name: 'Завод Семей', value: 'Завод Семей' },
+  { id: 'pavlodar', name: 'Завод Павлодар', value: 'Завод Павлодар' },
+  { id: 'ktl', name: 'Завод КТЛ', value: 'Завод КТЛ' },
+  { id: 'astana', name: 'Завод Астана', value: 'Завод Астана' },
+  { id: 'aktau', name: 'Завод Актау', value: 'Завод Актау', children: [
+    { id: 'aktau-unset', name: 'Не задано', value: 'Не задано', children: [
+      { id: 'aktau-production', name: 'Производственный участок', value: 'Производственный участок' },
+    ] },
+    { id: 'aktau-test', name: 'Test', value: 'Test', children: [
+      { id: 'aktau-test-21', name: 'Test21', value: 'Test21' },
+    ] },
+  ] },
+]
+const objects = ['Карьер Северный', 'Павлодарская база', 'Станция Алматы-1', 'Полевая лаборатория', 'Главный офис', 'Производственная база № 1', 'Производственная база № 2', 'Промысловая площадка', 'Завод Семей', 'Завод Павлодар', 'Завод КТЛ', 'Завод Астана', 'Производственный участок', 'Test21']
 
 const optionLoader = (items: string[]) => async () => items.map((value, index) => ({ id: index + 1, name: value, value }))
 const departmentFilter: TableColumnFilter = { filterKey: 'department', type: 'CHECKBOX', getFilters: optionLoader(departments), title: 'Подразделение', searchable: true }
-const objectFilter: TableColumnFilter = { filterKey: 'object', type: 'CHECKBOX', getFilters: optionLoader(objects), title: 'Объект' }
+const objectFilter: TableColumnFilter = { filterKey: 'object', type: 'CHECKBOX_SELECT', getFilters: async () => objectTree, title: 'Объект', searchable: true }
 
 const columns = ref<TzTableColumn[]>([
   { key: 'index', label: '№', type: 'index', width: 56, active: true },

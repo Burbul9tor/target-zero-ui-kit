@@ -6,6 +6,7 @@ import {
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, useSlots, watch, type StyleValue } from 'vue'
 import TzSearch from '../forms/TzSearch.vue'
 import TzSelect, { type SelectValue } from '../forms/TzSelect.vue'
+import TzTreeFilterModal from './TzTreeFilterModal.vue'
 
 export type TableRow = Record<string, unknown>
 export type TableSortOrder = 'ASC' | 'DESC' | null
@@ -13,7 +14,7 @@ export type TableColumnType = 'default' | 'index' | 'selection' | 'settings'
 export type TableFixedType = 'left' | 'right'
 export type TableFilterType = 'CHECKBOX' | 'RANGE_MAX' | 'RANGE' | 'RADIO' | 'SELECT_MULTIPLE' | 'DATE' | 'TIME_RANGE' | 'CHECKBOX_SELECT'
 
-export interface TableFilterOption { id: string | number; name?: string; value: string; [key: string]: unknown }
+export interface TableFilterOption { id: string | number; name?: string; value: string; children?: TableFilterOption[]; [key: string]: unknown }
 export interface TableColumnFilter {
   filterKey: string
   type: TableFilterType
@@ -145,6 +146,7 @@ const alignOf = (column: TzTableColumn) => column.align ?? (column.type === 'ind
 const dataColumns = computed(() => props.columns
   .filter(column => column.active !== false && (!column.type || column.type === 'default' || column.type === 'index'))
   .slice(0, Math.max(1, props.columnsPerView)))
+const modalFilterColumn = computed(() => dataColumns.value.find(column => column.key === openFilterKey.value && column.filter?.type === 'CHECKBOX_SELECT'))
 const hasSelection = computed(() => !props.disabledSelection && (props.columns.some(column => column.type === 'selection') || !props.columns.some(column => column.type)))
 const tableMinWidth = computed(() => Math.max(760, dataColumns.value.reduce((sum, column) => sum + (typeof column.width === 'number' ? column.width : 180), 0) + (hasSelection.value ? 36 : 0) + (hasControl.value ? 36 : 0)))
 const hasControl = computed(() => props.showActions || props.showSettings || props.columns.some(column => column.type === 'settings'))
@@ -219,9 +221,24 @@ function updateSearch(value: string) {
   searchValue.value = value; emit('search', value); emit('update:page', 0)
   if (props.isServer) exposedLoadData(0, props.countPerPage)
 }
+const isTreeFilter = (column: TzTableColumn) => column.filter?.type === 'CHECKBOX_SELECT'
+function filterSelectedValues(column: TzTableColumn) {
+  const value = filtersValue.value[column.filter?.filterKey ?? column.key]
+  return Array.isArray(value) ? value.map(String) : []
+}
+function normalizeFilterOptions(options: unknown[], path = 'root'): TableFilterOption[] {
+  return options.map((option, index) => {
+    if (typeof option !== 'object' || option === null) return { id: `${path}-${index}`, value: String(option), name: String(option) }
+    const source = option as Record<string, unknown>
+    const value = String(source.value ?? source.id ?? `${path}-${index}`)
+    const children = Array.isArray(source.children) ? normalizeFilterOptions(source.children, value) : undefined
+    return { ...source, id: (source.id as string | number | undefined) ?? `${path}-${index}`, value, name: String(source.name ?? value), children } as TableFilterOption
+  })
+}
 function closeFilter() { openFilterKey.value = '' }
 function handleDocumentPointerDown(event: PointerEvent) {
   const target = event.target as HTMLElement | null
+  if (target?.closest('.tree-filter-modal')) return
   const interactiveTarget = target?.closest('.filter-popover, .filter-button')
   if (!interactiveTarget || !root.value?.contains(interactiveTarget)) closeFilter()
 }
@@ -235,9 +252,7 @@ async function openFilter(column: TzTableColumn) {
   try {
     const result = await column.filter.getFilters({ page: column.filter.page ?? 0, pageSize: column.filter.pageSize ?? 20 })
     const options = Array.isArray(result) ? result : (result && typeof result === 'object' && Array.isArray((result as { data?: unknown[] }).data) ? (result as { data: unknown[] }).data : [])
-    filterOptions.value[column.key] = options.map((option, index) => typeof option === 'object' && option !== null
-      ? ({ id: index, value: String((option as Record<string, unknown>).value ?? (option as Record<string, unknown>).id ?? index), ...(option as Record<string, unknown>) } as TableFilterOption)
-      : { id: index, value: String(option), name: String(option) })
+    filterOptions.value[column.key] = normalizeFilterOptions(options)
   } finally { filterLoading.value = '' }
 }
 function optionChecked(column: TzTableColumn, option: TableFilterOption) {
@@ -255,6 +270,23 @@ function setOption(column: TzTableColumn, option: TableFilterOption) {
   emit('update:filter-full-info', [...filtersFullInfo.value])
   emit('update:page', 0)
   if (!multiple) openFilterKey.value = ''
+  if (props.isServer) exposedLoadData(0, props.countPerPage)
+}
+function applyTreeFilter(values: string[]) {
+  const column = modalFilterColumn.value
+  if (!column?.filter) return
+  const key = column.filter.filterKey
+  const next = { ...filtersValue.value }
+  if (values.length) next[key] = values
+  else delete next[key]
+  filtersValue.value = next
+  filtersFullInfo.value = values.length
+    ? [...filtersFullInfo.value.filter(item => item.key !== key), { key, value: values, title: column.filter.title ?? titleOf(column), type: column.filter.type }]
+    : filtersFullInfo.value.filter(item => item.key !== key)
+  emit('update:filter-full-info', [...filtersFullInfo.value])
+  if (!values.length) emit('clear-filter', key)
+  emit('update:page', 0)
+  closeFilter()
   if (props.isServer) exposedLoadData(0, props.countPerPage)
 }
 function resetFilter(key: string) {
@@ -322,7 +354,7 @@ defineExpose({ resetFilter, exposedLoadData, exposedResetAllFilters, resetSort, 
               <span v-if="column.filter || column.filterable" class="filter-wrap"><button type="button" class="icon-button filter-button" :class="{ active: activeFilterCounts[column.filter?.filterKey ?? column.key] }" @click.stop="openFilter(column)"><Filter :size="12" /><b v-if="activeFilterCounts[column.filter?.filterKey ?? column.key]">{{ activeFilterCounts[column.filter?.filterKey ?? column.key] > 99 ? '99+' : activeFilterCounts[column.filter?.filterKey ?? column.key] }}</b></button><button v-if="activeFilterCounts[column.filter?.filterKey ?? column.key]" class="clear-filter" type="button" @click.stop="resetFilter(column.filter?.filterKey ?? column.key)"><X :size="16" /></button></span>
               <i v-if="resizable" class="resize-handle" @pointerdown.stop.prevent="startResize($event, column)" />
             </div>
-            <div v-if="openFilterKey === column.key && column.filter" class="filter-popover" @click.stop>
+            <div v-if="openFilterKey === column.key && column.filter && !isTreeFilter(column)" class="filter-popover" @click.stop>
               <header><span><slot :name="`filter-title-${column.key}`" :title="column.filter.title ?? titleOf(column)">{{ column.filter.title ?? titleOf(column) }}</slot></span><button type="button" class="close-filter-popover" aria-label="Закрыть фильтр" title="Закрыть" @click="closeFilter"><X :size="16" /></button></header>
               <span v-if="filterLoading === column.key" class="filter-status">Загрузка…</span>
               <label v-for="option in filterOptions[column.key] ?? []" :key="String(option.id)"><input :type="column.filter.type === 'RADIO' ? 'radio' : 'checkbox'" :checked="optionChecked(column, option)" @change="setOption(column, option)"><slot :name="`filter-column-${column.key}`" :option="option" :search-value="searchValue">{{ option.name ?? option.value }}</slot></label>
@@ -342,6 +374,15 @@ defineExpose({ resetFilter, exposedLoadData, exposedResetAllFilters, resetSort, 
       <div v-if="!displayRows.length" class="empty"><slot v-if="showNoSearch" name="no-search-result"><span class="empty-icon"><Inbox :size="24" /></span><strong>Ничего не найдено</strong><p>Измените поисковый запрос или сбросьте фильтры</p></slot><slot v-else name="no-data"><span class="empty-icon"><Inbox :size="24" /></span><strong>{{ emptyTitle }}</strong><p>{{ emptyDescription }}</p></slot></div>
     </div>
     <div v-if="settingsOpen && slots['table-settings']" class="settings-panel"><slot name="table-settings" /></div>
+    <TzTreeFilterModal
+      v-if="modalFilterColumn?.filter"
+      :title="`Выберите ${(modalFilterColumn.filter.title ?? titleOf(modalFilterColumn)).toLocaleLowerCase()}`"
+      :options="filterOptions[modalFilterColumn.key] ?? []"
+      :model-value="filterSelectedValues(modalFilterColumn)"
+      :loading="filterLoading === modalFilterColumn.key"
+      @close="closeFilter"
+      @apply="applyTreeFilter"
+    />
     <div v-if="showPagination" class="pagination">
       <div class="pagination-info"><span>Показано {{ rangeStart }}–{{ rangeEnd }} из {{ total }}</span><label><span>Показать</span><TzSelect class="page-size" :model-value="String(countPerPage)" :options="pageSizes" size="medium" :show-label="false" :show-leading-icon="false" :required="false" @update:model-value="updateCountPerPage" /><span>записей</span></label></div>
       <nav aria-label="Страницы"><button type="button" :disabled="page === 0" @click="changePage(0)"><ArrowLeftToLine :size="12" /></button><button type="button" :disabled="page === 0" @click="changePage(page - 1)"><ChevronLeft :size="12" /></button><button v-for="item in visiblePages" :key="item" type="button" :class="{ current: item === page + 1 }" @click="changePage(item - 1)">{{ item }}</button><button type="button" :disabled="page >= pagesCount - 1" @click="changePage(page + 1)"><ChevronRight :size="12" /></button><button type="button" :disabled="page >= pagesCount - 1" @click="changePage(pagesCount - 1)"><ArrowRightToLine :size="12" /></button></nav>
