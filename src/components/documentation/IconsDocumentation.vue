@@ -112,6 +112,7 @@ import icon107 from '../../assets/icons/path/arrow-left-to-line--474-25977.svg?n
 import icon108 from '../../assets/icons/path/trash--493-24768.svg?no-inline'
 import icon109 from '../../assets/icons/path/inbox--505-24793.svg?no-inline'
 import icon110 from '../../assets/icons/path/lock--533-272.svg?no-inline'
+import icon111 from '../../assets/icons/path/bell-ring--556-24397.svg?no-inline'
 import TzSearch from '../forms/TzSearch.vue'
 
 type IconEntry = {
@@ -232,6 +233,7 @@ const icons: IconEntry[] = [
   { id: "493:24768", name: "trash", asset: icon108 },
   { id: "505:24793", name: "inbox", asset: icon109 },
   { id: "533:272", name: "Lock", asset: icon110 },
+  { id: "556:24397", name: "BellRing", asset: icon111 },
 ]
 
 const query = ref('')
