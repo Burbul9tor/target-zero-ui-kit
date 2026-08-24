@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Check, ChevronRight, Component, LogOut } from '@lucide/vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import UiKitLogin from './components/auth/UiKitLogin.vue'
 import BreadcrumbDocumentation from './components/documentation/BreadcrumbDocumentation.vue'
 import ButtonDocumentation from './components/documentation/ButtonDocumentation.vue'
@@ -19,8 +19,10 @@ import TzBreadcrumbs from './components/navigation/TzBreadcrumbs.vue'
 import TzFooter from './components/navigation/TzFooter.vue'
 import TzHeader from './components/navigation/TzHeader.vue'
 import TzSidebar from './components/navigation/TzSidebar.vue'
+import TzPreloader from './components/feedback/TzPreloader.vue'
 
 const isAuthenticated = ref(sessionStorage.getItem('target-zero-ui-kit-auth') === 'authenticated')
+const isAppLoading = ref(true)
 const activeSection = ref('Navigation')
 const catalogCollapsed = ref(false)
 const sidebarCollapsed = ref(false)
@@ -62,6 +64,10 @@ function logout() {
   isAuthenticated.value = false
 }
 
+onMounted(() => {
+  window.setTimeout(() => { isAppLoading.value = false }, 800)
+})
+
 const breadcrumbItems = [
   { label: 'Главная', href: '#home' },
   { label: 'Экология', href: '#ecology' },
@@ -71,7 +77,11 @@ const breadcrumbItems = [
 </script>
 
 <template>
-  <UiKitLogin v-if="!isAuthenticated" @authenticated="authenticate" />
+  <div v-if="isAppLoading" class="app-loading">
+    <TzPreloader variant="brand" :size="112" :speed="1.5" label="Загрузка UI Kit" />
+    <span>Загрузка UI Kit…</span>
+  </div>
+  <UiKitLogin v-else-if="!isAuthenticated" @authenticated="authenticate" />
   <div v-else class="showcase" :class="{ 'showcase--catalog-collapsed': catalogCollapsed }">
     <TzHeader class="showcase__header" @toggle-sidebar="catalogCollapsed = !catalogCollapsed" />
     <aside class="catalog">
@@ -187,6 +197,9 @@ const breadcrumbItems = [
 <style src="./styles/navigation.css"></style>
 
 <style scoped>
+.app-loading{position:fixed;z-index:2000;inset:0;display:grid;place-items:center;align-content:center;gap:var(--padding-spacing-16);color:var(--text-muted);background:var(--bg-page);font:400 13px/20px var(--tz-font-family)}
+.app-loading span{animation:app-loading-pulse 1.2s ease-in-out infinite}
+@keyframes app-loading-pulse{50%{opacity:.5}}
 .showcase {
   display: grid;
   grid-template-columns: 240px minmax(0, 1fr);

@@ -2,6 +2,7 @@
 import { AlertCircle, LockKeyhole, UserRound } from '@lucide/vue'
 import { ref } from 'vue'
 import TzButton from '../actions/TzButton.vue'
+import TzPreloader from '../feedback/TzPreloader.vue'
 
 const emit = defineEmits<{ authenticated: [] }>()
 const login = ref('')
@@ -20,12 +21,16 @@ function submit() {
       return
     }
     error.value = 'Неверный логин или пароль'
-  }, 300)
+  }, 650)
 }
 </script>
 
 <template>
   <main class="login-page">
+    <div v-if="submitting" class="login-loading">
+      <TzPreloader variant="brand" :size="112" :speed="1.5" label="Выполняется вход" />
+      <span>Выполняется вход…</span>
+    </div>
     <form class="login-card" @submit.prevent="submit">
       <header>
         <img src="../../assets/figma/target-zero-logo.png" alt="Target Zero" />
@@ -58,6 +63,9 @@ function submit() {
 </template>
 
 <style scoped>
+.login-loading{position:fixed;z-index:10;inset:0;display:grid;place-items:center;align-content:center;gap:var(--padding-spacing-16);color:var(--text-muted);background:var(--bg-page);font:400 13px/20px var(--tz-font-family)}
+.login-loading span{animation:login-loading-pulse 1.2s ease-in-out infinite}
+@keyframes login-loading-pulse{50%{opacity:.5}}
 .login-page {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
