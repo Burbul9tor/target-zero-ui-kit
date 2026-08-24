@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Check, Columns3, Plus, User } from '@lucide/vue'
+import { Building2, Check, ChevronRight, Columns3, Plus, User, Users, X } from '@lucide/vue'
 import { computed, ref } from 'vue'
 import TzTable, {
   type TableColumnFilter,
@@ -8,8 +8,7 @@ import TzTable, {
   type TzTableColumn,
 } from '../data/TzTable.vue'
 import TzTableFilterPanel from '../data/TzTableFilterPanel.vue'
-import TzTreeFilterNode, { type TreeFilterOption } from '../data/TzTreeFilterNode.vue'
-import TzSearch from '../forms/TzSearch.vue'
+import TzTreeFilterModal from '../data/TzTreeFilterModal.vue'
 
 const departments = ['Экологический контроль', 'Охрана окружающей среды', 'Управление отходами', 'Экологическая экспертиза']
 const objectTree = [
@@ -100,8 +99,8 @@ function removeRow(row: TableRow) {
 
 const filterPanelOpen = ref(true)
 const filterPanelPage = ref(0)
-const panelObjectQuery = ref('')
-const panelExpanded = ref<string[]>([])
+const departmentPopoverOpen = ref(false)
+const objectModalOpen = ref(false)
 const draftDepartments = ref<string[]>([])
 const draftObjects = ref<string[]>([])
 const appliedDepartments = ref<string[]>([])
@@ -118,44 +117,28 @@ const panelRows = computed(() => rows.value.filter(row => {
   const objectMatches = !appliedObjects.value.length || appliedObjects.value.includes(String(row.object))
   return departmentMatches && objectMatches
 }))
-const filteredPanelObjects = computed<TreeFilterOption[]>(() => {
-  const query = panelObjectQuery.value.trim().toLocaleLowerCase()
-  if (!query) return objectTree
-  const filterTree = (items: TreeFilterOption[]): TreeFilterOption[] => items.flatMap(item => {
-    const children = filterTree(item.children ?? [])
-    return (item.name ?? item.value).toLocaleLowerCase().includes(query) || children.length
-      ? [{ ...item, children }]
-      : []
-  })
-  return filterTree(objectTree)
-})
 function toggleDraftDepartment(value: string) {
   draftDepartments.value = draftDepartments.value.includes(value)
     ? draftDepartments.value.filter(item => item !== value)
     : [...draftDepartments.value, value]
 }
-function togglePanelExpanded(value: string) {
-  panelExpanded.value = panelExpanded.value.includes(value)
-    ? panelExpanded.value.filter(item => item !== value)
-    : [...panelExpanded.value, value]
-}
-function toggleDraftObjects(payload: { values: string[]; checked: boolean }) {
-  const next = new Set(draftObjects.value)
-  payload.values.forEach(value => payload.checked ? next.add(value) : next.delete(value))
-  draftObjects.value = [...next]
+function applyDraftObjects(values: string[]) {
+  draftObjects.value = [...values]
+  objectModalOpen.value = false
 }
 function applyFilterPanel() {
   appliedDepartments.value = [...draftDepartments.value]
   appliedObjects.value = [...draftObjects.value]
   filterPanelPage.value = 0
   filterPanelOpen.value = false
+  departmentPopoverOpen.value = false
+  objectModalOpen.value = false
 }
 function resetFilterPanel() {
   draftDepartments.value = []
   draftObjects.value = []
   appliedDepartments.value = []
   appliedObjects.value = []
-  panelObjectQuery.value = ''
   filterPanelPage.value = 0
 }
 
@@ -289,7 +272,7 @@ const methodsApi = ['resetFilter(key)', 'exposedLoadData(page?, countPerPage?)',
     </section>
 
     <section class="card wide">
-      <header><div><h2>Панель сложных фильтров</h2><p>Альтернатива модальному окну: фильтры находятся над таблицей, имеют черновое состояние и применяются одной кнопкой.</p></div></header>
+      <header><div><h2>Панель сложных фильтров</h2><p>Компактная панель показывает доступные фильтры. Простые значения открываются в popover, большое дерево объектов — в модальном окне.</p></div></header>
       <TzTableFilterPanel
         v-model:open="filterPanelOpen"
         title="Фильтры таблицы"
@@ -305,44 +288,56 @@ const methodsApi = ['resetFilter(key)', 'exposedLoadData(page?, countPerPage?)',
           <span v-if="!panelActiveCount" class="panel-empty-summary">Фильтры не применены</span>
         </template>
 
-        <div class="complex-filter-grid">
-          <fieldset class="complex-filter-field">
-            <legend>Подразделение</legend>
-            <p>Можно выбрать несколько значений</p>
+        <div class="filter-launcher-list">
+          <div class="filter-launcher-wrap">
             <button
-              v-for="department in departments"
-              :key="department"
               type="button"
-              class="filter-option"
-              :class="{ selected: draftDepartments.includes(department) }"
-              @click="toggleDraftDepartment(department)"
+              class="filter-launcher"
+              :class="{ active: draftDepartments.length }"
+              :aria-expanded="departmentPopoverOpen"
+              @click="departmentPopoverOpen = !departmentPopoverOpen"
             >
-              <span class="filter-option__check" aria-hidden="true" />
-              <span>{{ department }}</span>
+              <i><Users :size="16" /></i>
+              <span><strong>Подразделение</strong><small>Выбор нескольких значений · Popover</small></span>
+              <b v-if="draftDepartments.length">{{ draftDepartments.length }}</b>
+              <ChevronRight :size="16" />
             </button>
-          </fieldset>
+            <button v-if="departmentPopoverOpen" type="button" class="filter-popover-dismiss" aria-label="Закрыть выбор подразделения" @click="departmentPopoverOpen = false" />
+            <section v-if="departmentPopoverOpen" class="department-popover" aria-label="Фильтр по подразделению">
+              <header><strong>Подразделение</strong><button type="button" aria-label="Закрыть" @click="departmentPopoverOpen = false"><X :size="16" /></button></header>
+              <button
+                v-for="department in departments"
+                :key="department"
+                type="button"
+                class="filter-option"
+                :class="{ selected: draftDepartments.includes(department) }"
+                @click="toggleDraftDepartment(department)"
+              >
+                <span class="filter-option__check" aria-hidden="true" />
+                <span>{{ department }}</span>
+              </button>
+              <footer><button type="button" :disabled="!draftDepartments.length" @click="draftDepartments = []">Сбросить</button><button type="button" @click="departmentPopoverOpen = false">Готово</button></footer>
+            </section>
+          </div>
 
-          <fieldset class="complex-filter-field complex-filter-field--tree">
-            <legend>Объект</legend>
-            <p>Поиск и выбор по иерархии</p>
-            <TzSearch v-model="panelObjectQuery" placeholder="Поиск по объектам" label="Поиск объектов" />
-            <div class="inline-tree">
-              <TzTreeFilterNode
-                v-for="option in filteredPanelObjects"
-                :key="String(option.id)"
-                :node="option"
-                :selected="draftObjects"
-                :expanded="panelExpanded"
-                :force-expanded="Boolean(panelObjectQuery)"
-                @toggle-expanded="togglePanelExpanded"
-                @toggle-selected="toggleDraftObjects"
-              />
-              <span v-if="!filteredPanelObjects.length" class="inline-tree__empty">Объекты не найдены</span>
-            </div>
-          </fieldset>
+          <button type="button" class="filter-launcher" :class="{ active: draftObjects.length }" @click="objectModalOpen = true">
+            <i><Building2 :size="16" /></i>
+            <span><strong>Объект</strong><small>Поиск и выбор по иерархии · Модальное окно</small></span>
+            <b v-if="draftObjects.length">{{ draftObjects.length }}</b>
+            <ChevronRight :size="16" />
+          </button>
         </div>
         <template #hint>Выбранные значения не влияют на таблицу до нажатия «Применить»</template>
       </TzTableFilterPanel>
+
+      <TzTreeFilterModal
+        v-if="objectModalOpen"
+        title="Выберите объект"
+        :options="objectTree"
+        :model-value="draftObjects"
+        @close="objectModalOpen = false"
+        @apply="applyDraftObjects"
+      />
 
       <TzTable
         :data="panelRows"
@@ -409,9 +404,18 @@ const methodsApi = ['resetFilter(key)', 'exposedLoadData(page?, countPerPage?)',
 <style scoped>
 .table-docs{display:grid;gap:var(--padding-spacing-24)}.page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--padding-spacing-32)}.eyebrow{margin:0 0 var(--padding-spacing-8);color:var(--brand-primary);font:500 10px/14px var(--tz-font-family);letter-spacing:.08em}.page-header h1{margin:0 0 var(--padding-spacing-8);color:var(--text-default);font:700 32px/40px var(--tz-font-family)}.page-header p,.card header p{margin:0;color:var(--text-muted);font:400 14px/20px var(--tz-font-family)}.ready{display:flex;align-items:center;gap:var(--padding-spacing-6);padding:7px 10px;color:var(--status-success-fg);border-radius:var(--radius-md);background:var(--status-success-bg);font:500 11px/16px var(--tz-font-family);white-space:nowrap}
 .card{min-width:0;padding:var(--padding-spacing-24);border:1px solid var(--border-default);border-radius:var(--radius-lg);background:var(--bg-surface);box-shadow:0 10px 15px -3px var(--bg-shadow)}.card>header{margin-bottom:var(--padding-spacing-20)}.card h2{margin:0 0 var(--padding-spacing-4);color:var(--text-default);font:600 18px/24px var(--tz-font-family)}
-.card>.tz-filter-panel{margin-bottom:var(--padding-spacing-12)}.complex-filter-grid{display:grid;grid-template-columns:minmax(240px,.75fr) minmax(320px,1.25fr);gap:var(--padding-spacing-16)}.complex-filter-field{min-width:0;margin:0;padding:var(--padding-spacing-16);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-surface)}.complex-filter-field legend{padding:0 var(--padding-spacing-4);color:var(--text-default);font:var(--tz-text-body-strong)}.complex-filter-field>p{margin:0 0 var(--padding-spacing-12);color:var(--text-muted);font:var(--tz-text-caption-regular)}.filter-option{display:flex;width:100%;min-height:36px;padding:var(--padding-spacing-6) var(--padding-spacing-8);align-items:center;gap:var(--padding-spacing-8);color:var(--text-default);border:0;border-radius:var(--radius-sm);background:transparent;font:var(--tz-text-body-small);text-align:left;cursor:pointer}.filter-option:hover{background:var(--brand-bg-hover)}.filter-option__check{display:grid;box-sizing:border-box;flex:0 0 20px;width:20px;height:20px;place-items:center;border:1px solid var(--border-default);border-radius:var(--radius-xs);background:var(--bg-surface)}.filter-option.selected .filter-option__check{border-color:var(--brand-primary);background:var(--brand-primary)}.filter-option.selected .filter-option__check:after{width:9px;height:5px;border-bottom:1.5px solid var(--text-button-fill);border-left:1.5px solid var(--text-button-fill);content:"";transform:translateY(-1px) rotate(-45deg)}.inline-tree{max-height:280px;margin-top:var(--padding-spacing-8);padding:var(--padding-spacing-4);overflow:auto;border:1px solid var(--border-default);border-radius:var(--radius-sm);background:var(--bg-surface)}.inline-tree__empty{display:grid;min-height:120px;place-items:center;color:var(--text-muted);font:var(--tz-text-body-small)}.panel-chip{padding:var(--padding-spacing-4) var(--padding-spacing-8);color:var(--brand-primary);border-radius:var(--radius-full);background:var(--brand-bg-active);font:var(--tz-text-label-small)}.panel-empty-summary{color:var(--text-muted);font:var(--tz-text-caption-regular)}.implementation-note{margin:var(--padding-spacing-12) 0 0;color:var(--text-muted);font:var(--tz-text-body-small)}.variant-switcher{display:flex;flex-wrap:wrap;gap:var(--padding-spacing-8);margin-bottom:var(--padding-spacing-12)}.variant-switcher button,.method-actions button{min-height:32px;padding:0 var(--padding-spacing-12);color:var(--brand-primary);border:1px solid var(--border-default);border-radius:var(--radius-sm);background:var(--bg-surface);font:500 12px/16px var(--tz-font-family);cursor:pointer}.variant-switcher button:hover,.method-actions button:hover{background:var(--brand-bg-hover)}.variant-switcher button.active{color:var(--text-button-fill);border-color:var(--brand-primary);background:var(--brand-primary)}.variant-description{margin:0 0 var(--padding-spacing-16);color:var(--text-muted);font:400 13px/18px var(--tz-font-family)}.method-actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--padding-spacing-8);margin-bottom:var(--padding-spacing-12)}.method-actions span{color:var(--text-muted);font:400 12px/16px var(--tz-font-family)}.bar-status{color:var(--text-muted);font:400 12px/16px var(--tz-font-family);white-space:nowrap}.bar-actions,.column-creator{display:flex;align-items:center;gap:var(--padding-spacing-8)}.column-creator input{width:160px;height:32px;padding:0 var(--padding-spacing-8);color:var(--text-default);border:1px solid var(--border-default);border-radius:var(--radius-sm);outline:0;background:var(--bg-surface);font:400 12px/16px var(--tz-font-family)}.column-creator input:focus{border-color:var(--brand-primary);box-shadow:0 0 0 2px var(--effect-shadow)}.secondary-button{display:inline-flex;height:32px;padding:0 var(--padding-spacing-12);align-items:center;gap:var(--padding-spacing-6);color:var(--brand-primary);border:1px solid var(--border-default);border-radius:var(--radius-sm);background:var(--brand-bg-hover);font:500 12px/16px var(--tz-font-family);white-space:nowrap;cursor:pointer}.primary-button{display:inline-flex;height:32px;padding:0 var(--padding-spacing-12);align-items:center;gap:var(--padding-spacing-6);color:var(--text-button-fill);border:0;border-radius:var(--radius-sm);background:var(--brand-primary);font:500 12px/16px var(--tz-font-family);cursor:pointer}.primary-button:hover{background:var(--brand-primary-hover)}
+.card>.tz-filter-panel{margin-bottom:var(--padding-spacing-12)}
+.filter-launcher-list{display:grid;grid-template-columns:repeat(2,minmax(240px,1fr));gap:var(--padding-spacing-12)}
+.filter-launcher-wrap{position:relative;min-width:0}
+.filter-launcher{display:grid;width:100%;min-height:64px;padding:var(--padding-spacing-10) var(--padding-spacing-12);grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:var(--padding-spacing-10);color:var(--text-default);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-surface);font-family:var(--tz-font-family);text-align:left;cursor:pointer;transition:border-color 160ms ease,background-color 160ms ease,box-shadow 160ms ease}
+.filter-launcher:hover{border-color:var(--brand-primary);background:var(--brand-bg-hover)}.filter-launcher:focus-visible{outline:2px solid var(--brand-primary);outline-offset:2px}.filter-launcher.active{border-color:var(--brand-primary);box-shadow:inset 0 0 0 1px var(--brand-primary)}
+.filter-launcher>i{display:grid;width:32px;height:32px;place-items:center;color:var(--brand-primary);border-radius:var(--radius-sm);background:var(--brand-bg-active)}.filter-launcher>span{display:flex;min-width:0;flex-direction:column;gap:var(--padding-spacing-2)}.filter-launcher strong{color:var(--text-default);font:var(--tz-text-body-strong)}.filter-launcher small{overflow:hidden;color:var(--text-muted);font:var(--tz-text-caption-regular);text-overflow:ellipsis;white-space:nowrap}.filter-launcher>b{display:grid;min-width:24px;height:24px;padding:0 var(--padding-spacing-6);place-items:center;color:var(--brand-primary);border-radius:var(--radius-full);background:var(--brand-bg-active);font:var(--tz-text-label-small)}
+.filter-popover-dismiss{position:fixed;z-index:20;inset:0;width:100%;height:100%;padding:0;border:0;background:transparent;cursor:default}.department-popover{position:absolute;z-index:21;top:calc(100% + var(--padding-spacing-8));left:0;display:grid;width:min(360px,calc(100vw - 64px));padding:var(--padding-spacing-12);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-surface);box-shadow:0 12px 32px var(--bg-shadow)}.department-popover>header{display:flex;min-height:32px;align-items:center;justify-content:space-between;gap:var(--padding-spacing-8);margin-bottom:var(--padding-spacing-6);color:var(--text-default);font:var(--tz-text-body-strong)}.department-popover>header button{display:grid;width:28px;height:28px;padding:0;place-items:center;color:var(--icon-default);border:0;border-radius:var(--radius-xs);background:transparent;cursor:pointer}.department-popover>header button:hover{color:var(--brand-primary);background:var(--brand-bg-hover)}
+.filter-option{display:flex;width:100%;min-height:36px;padding:var(--padding-spacing-6) var(--padding-spacing-8);align-items:center;gap:var(--padding-spacing-8);color:var(--text-default);border:0;border-radius:var(--radius-sm);background:transparent;font:var(--tz-text-body-small);text-align:left;cursor:pointer}.filter-option:hover{background:var(--brand-bg-hover)}.filter-option__check{display:grid;box-sizing:border-box;flex:0 0 20px;width:20px;height:20px;place-items:center;border:1px solid var(--border-default);border-radius:var(--radius-xs);background:var(--bg-surface)}.filter-option.selected .filter-option__check{border-color:var(--brand-primary);background:var(--brand-primary)}.filter-option.selected .filter-option__check:after{width:9px;height:5px;border-bottom:1.5px solid var(--text-button-fill);border-left:1.5px solid var(--text-button-fill);content:"";transform:translateY(-1px) rotate(-45deg)}
+.department-popover>footer{display:flex;margin-top:var(--padding-spacing-8);padding-top:var(--padding-spacing-8);justify-content:flex-end;gap:var(--padding-spacing-8);border-top:1px solid var(--border-default)}.department-popover>footer button{min-height:32px;padding:0 var(--padding-spacing-10);color:var(--brand-primary);border:1px solid var(--border-default);border-radius:var(--radius-sm);background:var(--bg-surface);font:var(--tz-text-label-small);cursor:pointer}.department-popover>footer button:last-child{color:var(--text-button-fill);border-color:var(--brand-primary);background:var(--brand-primary)}.department-popover>footer button:disabled{color:var(--text-disabled);background:var(--bg-disabled);cursor:not-allowed}
+.panel-chip{padding:var(--padding-spacing-4) var(--padding-spacing-8);color:var(--brand-primary);border-radius:var(--radius-full);background:var(--brand-bg-active);font:var(--tz-text-label-small)}.panel-empty-summary{color:var(--text-muted);font:var(--tz-text-caption-regular)}.implementation-note{margin:var(--padding-spacing-12) 0 0;color:var(--text-muted);font:var(--tz-text-body-small)}.variant-switcher{display:flex;flex-wrap:wrap;gap:var(--padding-spacing-8);margin-bottom:var(--padding-spacing-12)}.variant-switcher button,.method-actions button{min-height:32px;padding:0 var(--padding-spacing-12);color:var(--brand-primary);border:1px solid var(--border-default);border-radius:var(--radius-sm);background:var(--bg-surface);font:500 12px/16px var(--tz-font-family);cursor:pointer}.variant-switcher button:hover,.method-actions button:hover{background:var(--brand-bg-hover)}.variant-switcher button.active{color:var(--text-button-fill);border-color:var(--brand-primary);background:var(--brand-primary)}.variant-description{margin:0 0 var(--padding-spacing-16);color:var(--text-muted);font:400 13px/18px var(--tz-font-family)}.method-actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--padding-spacing-8);margin-bottom:var(--padding-spacing-12)}.method-actions span{color:var(--text-muted);font:400 12px/16px var(--tz-font-family)}.bar-status{color:var(--text-muted);font:400 12px/16px var(--tz-font-family);white-space:nowrap}.bar-actions,.column-creator{display:flex;align-items:center;gap:var(--padding-spacing-8)}.column-creator input{width:160px;height:32px;padding:0 var(--padding-spacing-8);color:var(--text-default);border:1px solid var(--border-default);border-radius:var(--radius-sm);outline:0;background:var(--bg-surface);font:400 12px/16px var(--tz-font-family)}.column-creator input:focus{border-color:var(--brand-primary);box-shadow:0 0 0 2px var(--effect-shadow)}.secondary-button{display:inline-flex;height:32px;padding:0 var(--padding-spacing-12);align-items:center;gap:var(--padding-spacing-6);color:var(--brand-primary);border:1px solid var(--border-default);border-radius:var(--radius-sm);background:var(--brand-bg-hover);font:500 12px/16px var(--tz-font-family);white-space:nowrap;cursor:pointer}.primary-button{display:inline-flex;height:32px;padding:0 var(--padding-spacing-12);align-items:center;gap:var(--padding-spacing-6);color:var(--text-button-fill);border:0;border-radius:var(--radius-sm);background:var(--brand-primary);font:500 12px/16px var(--tz-font-family);cursor:pointer}.primary-button:hover{background:var(--brand-primary-hover)}
 .employee{display:flex;min-width:0;align-items:center;gap:var(--padding-spacing-6)}.employee>i{display:grid;flex:0 0 32px;width:32px;height:32px;place-items:center;color:var(--brand-primary);border:1px solid var(--border-default);border-radius:var(--radius-sm);background:var(--bg-surface)}.employee>span{display:flex;min-width:0;flex-direction:column}.employee strong,.employee small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.employee strong{font:400 14px/20px var(--tz-font-family)}.employee small{color:var(--text-muted);font:400 10px/14px var(--tz-font-family)}
 .settings-demo{display:flex;align-items:center;gap:var(--padding-spacing-12)}.settings-demo strong{font:500 12px/16px var(--tz-font-family)}.settings-demo span{color:var(--text-muted);font:400 12px/16px var(--tz-font-family)}code{color:var(--brand-primary);font:400 11px/16px ui-monospace,SFMono-Regular,Consolas,monospace}
 .api-table{overflow:auto;border:1px solid var(--border-default);border-radius:var(--radius-md)}.api-row{display:grid;grid-template-columns:180px 260px 100px minmax(220px,1fr);min-width:820px;min-height:44px;align-items:center;border-bottom:1px solid var(--border-default)}.api-row:last-child{border-bottom:0}.api-row>*{padding:var(--padding-spacing-8) var(--padding-spacing-12)}.api-row span{color:var(--text-muted);font:400 12px/16px var(--tz-font-family)}.api-head{background:var(--bg-row-hover)}.api-head span{color:var(--text-default);font-weight:500}.api-columns{display:grid;grid-template-columns:1fr 1fr;gap:var(--padding-spacing-24)}.chips{display:flex;flex-wrap:wrap;gap:var(--padding-spacing-8)}.chips code,.method-list code{padding:var(--padding-spacing-6) var(--padding-spacing-8);border-radius:var(--radius-sm);background:var(--brand-bg-hover)}.method-list{display:grid;gap:var(--padding-spacing-8)}
-@media(max-width:800px){.card>.tz-filter-panel{margin-bottom:var(--padding-spacing-12)}.complex-filter-grid{grid-template-columns:1fr}.page-header{flex-direction:column}.api-columns{grid-template-columns:1fr}.card{padding:var(--padding-spacing-16)}}
+@media(max-width:800px){.card>.tz-filter-panel{margin-bottom:var(--padding-spacing-12)}.filter-launcher-list{grid-template-columns:1fr}.page-header{flex-direction:column}.api-columns{grid-template-columns:1fr}.card{padding:var(--padding-spacing-16)}}
 </style>
