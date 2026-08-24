@@ -95,7 +95,7 @@ const tokens = [
           <div class="toast-example__preview">
             <TzToast :type="variant.type" :show-description="showSubtitle" :auto-close="false" />
           </div>
-          <TzButton color="secondary" size="medium" label="Воспроизвести" @click="playToast(variant.type)" />
+          <TzButton class="toast-example__play" color="secondary" size="medium" label="Воспроизвести" @click="playToast(variant.type)" />
         </div>
       </div>
     </section>
@@ -159,6 +159,7 @@ const tokens = [
 .toast-stage { display: grid; gap: 16px; padding: 24px; border-radius: 8px; background: var(--bg-disabled); }
 .toast-example { display: grid; grid-template-columns: 72px minmax(0, 360px) auto; align-items: center; gap: 16px; }
 .toast-example__preview { display: flex; min-height: 64px; align-items: center; }
+.toast-example__play { width: fit-content; justify-self: start; }
 .toast-example small { color: var(--text-muted); font: 500 10px/14px var(--tz-font-family); letter-spacing: .06em; text-transform: uppercase; }
 .toast-viewport { position: fixed; z-index: 2000; top: 24px; right: 24px; display: flex; width: min(360px, calc(100vw - 32px)); flex-direction: column; align-items: flex-end; gap: 12px; pointer-events: none; }
 .toast-viewport :deep(.tz-toast) { pointer-events: auto; }
