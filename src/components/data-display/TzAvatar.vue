@@ -105,8 +105,8 @@ onBeforeUnmount(releasePreview)
 .tz-avatar__input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 .tz-avatar__edit {
   position: absolute;
-  right: -4px;
-  bottom: -4px;
+  right: 2px;
+  bottom: 2px;
   display: grid;
   width: 24px;
   height: 24px;
@@ -122,8 +122,8 @@ onBeforeUnmount(releasePreview)
 .tz-avatar__edit:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
 .tz-avatar__edit:disabled { cursor: not-allowed; opacity: .5; }
 .tz-avatar__edit span { width: 16px; height: 16px; background: var(--avatar-edit-icon-color); -webkit-mask: var(--avatar-camera-url) center / contain no-repeat; mask: var(--avatar-camera-url) center / contain no-repeat; }
-.tz-avatar--40 .tz-avatar__edit { right: -5px; bottom: -5px; width: 20px; height: 20px; }
+.tz-avatar--40 .tz-avatar__edit { width: 20px; height: 20px; }
 .tz-avatar--40 .tz-avatar__edit span, .tz-avatar--32 .tz-avatar__edit span { width: 12px; height: 12px; }
-.tz-avatar--32 .tz-avatar__edit { right: -5px; bottom: -5px; width: 18px; height: 18px; }
+.tz-avatar--32 .tz-avatar__edit { width: 18px; height: 18px; }
 .tz-avatar.is-disabled { opacity: .5; }
 </style>
