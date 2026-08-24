@@ -18,7 +18,6 @@ const api = [
   ['size', '32 | 40 | 64', '64'],
   ['src', 'string', "''"],
   ['alt', 'string', "''"],
-  ['initials', 'string', "''"],
   ['editable', 'boolean', 'false'],
   ['disabled', 'boolean', 'false'],
   ['accept', 'string', 'image/png,image/jpeg,image/webp'],
@@ -30,7 +29,6 @@ const tokens = [
   ['--avatar-background', '--bg-surface', 'Фон пустого аватара'],
   ['--avatar-border-color', '--border-default', 'Цвет границы'],
   ['--avatar-icon-color', '--brand-primary', 'Цвет иконки User'],
-  ['--avatar-text-color', '--text-default', 'Цвет инициалов'],
   ['--avatar-radius', '--radius-md', 'Скругление 8px'],
   ['--avatar-radius-small', '--radius-sm', 'Скругление малого пустого аватара'],
   ['--avatar-edit-background', '--brand-primary', 'Фон кнопки смены'],
@@ -45,7 +43,7 @@ const tokens = [
       <div>
         <p class="avatar-docs__eyebrow">COMPONENT · DATA DISPLAY</p>
         <h1>Avatar</h1>
-        <p>Аватар пользователя из Target Zero Design System. Поддерживает пустое состояние, инициалы, изображение и смену фотографии.</p>
+        <p>Аватар пользователя из Target Zero Design System. Поддерживает пустое состояние, изображение и смену фотографии.</p>
       </div>
       <span><Check :size="14" /> Реализовано</span>
     </header>
@@ -56,11 +54,10 @@ const tokens = [
         <p>Три размера из Figma: 64×64, 40×40 и 32×32px.</p>
       </header>
       <div class="avatar-matrix">
-        <div class="avatar-matrix__head"><span>Размер</span><span>Не заполнено</span><span>Инициалы</span><span>Заполнено</span></div>
+        <div class="avatar-matrix__head"><span>Размер</span><span>Не заполнено</span><span>Заполнено</span></div>
         <div v-for="size in sizes" :key="size" class="avatar-matrix__row">
           <code>{{ size }}×{{ size }}</code>
           <TzAvatar :size="size" :alt="`Пустой аватар ${size}px`" />
-          <TzAvatar :size="size" initials="DN" :alt="`Аватар с инициалами ${size}px`" />
           <TzAvatar :size="size" :src="images[size]" :alt="`Заполненный аватар ${size}px`" />
         </div>
       </div>
@@ -113,7 +110,7 @@ const tokens = [
 .avatar-card > header { margin-bottom: var(--padding-spacing-20); }
 .avatar-card h2 { margin: 0 0 var(--padding-spacing-4); color: var(--text-default); font: var(--tz-text-heading-h2); }
 .avatar-matrix { overflow: hidden; border: 1px solid var(--border-default); border-radius: var(--radius-md); }
-.avatar-matrix__head, .avatar-matrix__row { display: grid; grid-template-columns: 120px repeat(3, minmax(120px, 1fr)); align-items: center; min-height: 96px; border-top: 1px solid var(--border-default); }
+.avatar-matrix__head, .avatar-matrix__row { display: grid; grid-template-columns: 120px repeat(2, minmax(160px, 1fr)); align-items: center; min-height: 96px; border-top: 1px solid var(--border-default); }
 .avatar-matrix__head { min-height: 44px; border-top: 0; background: var(--bg-page); }
 .avatar-matrix__head > *, .avatar-matrix__row > * { justify-self: center; }
 .avatar-matrix__head span { color: var(--text-muted); font: var(--tz-text-table-header); text-transform: uppercase; }
