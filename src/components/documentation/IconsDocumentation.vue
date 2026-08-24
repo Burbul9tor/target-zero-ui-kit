@@ -307,7 +307,7 @@ async function downloadIcon(item: IconEntry) {
       <div>
         <article><strong>Размер</strong><p>Базовый размер — 24×24px. В компонентах допускаются 16px и 20px.</p></article>
         <article><strong>Цвет</strong><p>По умолчанию используется <code>--icon-default</code>, состояния используют семантические токены Colors.</p></article>
-        <article><strong>Path</strong><p>Контуры преобразованы через Outline Stroke и Flatten. Каждая иконка хранится как SVG с заливкой path, без stroke.</p></article>
+        <article><strong>Path</strong><p>Контуры преобразованы через Outline Stroke и Flatten. Каждая иконка хранится как SVG ровно с одним составным path и без stroke.</p></article>
         <article><strong>Источник</strong><p>Target Zero Design System, Figma node 1:2326. Локальные SVG совпадают с компонентами в макете.</p></article>
       </div>
     </section>
