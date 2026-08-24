@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Check, Pause, Play, RotateCcw } from '@lucide/vue'
 import { ref } from 'vue'
+import TzButton from '../actions/TzButton.vue'
 import TzPreloader from '../feedback/TzPreloader.vue'
 
 type PreloaderInstance = InstanceType<typeof TzPreloader>
@@ -39,12 +40,12 @@ const sizes = [32, 48, 64, 96]
       <div class="variant-grid">
         <article>
           <div class="preview preview--light"><TzPreloader ref="brandPreloader" variant="brand" :size="140" /></div>
-          <div class="variant-info"><div><small>BRAND</small><strong>Target Zero Brand</strong></div><div class="controls"><button type="button" aria-label="Воспроизвести Brand" @click="brandPreloader?.play()"><Play :size="16" /></button><button type="button" aria-label="Пауза Brand" @click="brandPreloader?.pause()"><Pause :size="16" /></button><button type="button" aria-label="Перезапустить Brand" @click="brandPreloader?.restart()"><RotateCcw :size="16" /></button></div></div>
+          <div class="variant-info"><div><small>BRAND</small><strong>Target Zero Brand</strong></div><div class="controls"><TzButton class="control-button" color="secondary" size="medium" :icon-left="Play" aria-label="Play Brand" @click="brandPreloader?.play()" /><TzButton class="control-button" color="secondary" size="medium" :icon-left="Pause" aria-label="Pause Brand" @click="brandPreloader?.pause()" /><TzButton class="control-button" color="secondary" size="medium" :icon-left="RotateCcw" aria-label="Restart Brand" @click="brandPreloader?.restart()" /></div></div>
         </article>
 
         <article>
           <div class="preview preview--blue"><TzPreloader ref="bluePreloader" variant="blue" :size="140" /></div>
-          <div class="variant-info"><div><small>BLUE</small><strong>Target Zero Blue</strong></div><div class="controls"><button type="button" aria-label="Воспроизвести Blue" @click="bluePreloader?.play()"><Play :size="16" /></button><button type="button" aria-label="Пауза Blue" @click="bluePreloader?.pause()"><Pause :size="16" /></button><button type="button" aria-label="Перезапустить Blue" @click="bluePreloader?.restart()"><RotateCcw :size="16" /></button></div></div>
+          <div class="variant-info"><div><small>BLUE</small><strong>Target Zero Blue</strong></div><div class="controls"><TzButton class="control-button" color="secondary" size="medium" :icon-left="Play" aria-label="Play Blue" @click="bluePreloader?.play()" /><TzButton class="control-button" color="secondary" size="medium" :icon-left="Pause" aria-label="Pause Blue" @click="bluePreloader?.pause()" /><TzButton class="control-button" color="secondary" size="medium" :icon-left="RotateCcw" aria-label="Restart Blue" @click="bluePreloader?.restart()" /></div></div>
         </article>
       </div>
     </section>
@@ -96,7 +97,7 @@ const sizes = [32, 48, 64, 96]
 .variant-info small { color: var(--text-muted); font: 500 10px/14px var(--tz-font-family); letter-spacing: .06em; }
 .variant-info strong { color: var(--text-default); font: 500 13px/20px var(--tz-font-family); }
 .controls { display: flex; gap: 6px; }
-.controls button { display: grid; width: 32px; height: 32px; padding: 0; place-items: center; color: var(--brand-primary); border: 1px solid var(--border-default); border-radius: 6px; background: var(--brand-bg-accent); cursor: pointer; }
+.control-button { width: 32px; padding: 0; }
 .size-stage { display: flex; align-items: flex-end; gap: 32px; min-height: 190px; padding: 24px; border-radius: 8px; background: var(--bg-page); }
 .size-stage article { display: grid; gap: 12px; justify-items: center; }
 .size-stage article > div { display: flex; min-width: 100px; height: 145px; align-items: center; justify-content: center; }

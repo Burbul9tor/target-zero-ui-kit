@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Check } from '@lucide/vue'
 import { ref } from 'vue'
+import TzButton from '../actions/TzButton.vue'
 import TzToast, { type ToastType } from '../feedback/TzToast.vue'
 
 const variants: Array<{ type: ToastType; label: string }> = [
@@ -94,7 +95,7 @@ const tokens = [
           <div class="toast-example__preview">
             <TzToast :type="variant.type" :show-description="showSubtitle" :auto-close="false" />
           </div>
-          <button class="play-button" type="button" @click="playToast(variant.type)">Воспроизвести</button>
+          <TzButton color="secondary" size="medium" label="Воспроизвести" @click="playToast(variant.type)" />
         </div>
       </div>
     </section>
@@ -159,8 +160,6 @@ const tokens = [
 .toast-example { display: grid; grid-template-columns: 72px minmax(0, 360px) auto; align-items: center; gap: 16px; }
 .toast-example__preview { display: flex; min-height: 64px; align-items: center; }
 .toast-example small { color: var(--text-muted); font: 500 10px/14px var(--tz-font-family); letter-spacing: .06em; text-transform: uppercase; }
-.play-button { width: fit-content; padding: 8px 12px; color: var(--brand-primary); border: 1px solid var(--border-default); border-radius: 6px; background: var(--brand-bg-accent); font: 500 12px/16px var(--tz-font-family); cursor: pointer; }
-.play-button { white-space: nowrap; }
 .toast-viewport { position: fixed; z-index: 2000; top: 24px; right: 24px; display: flex; width: min(360px, calc(100vw - 32px)); flex-direction: column; align-items: flex-end; gap: 12px; pointer-events: none; }
 .toast-viewport :deep(.tz-toast) { pointer-events: auto; }
 .toast-table { overflow: hidden; border: 1px solid var(--border-default); border-radius: 8px; }
