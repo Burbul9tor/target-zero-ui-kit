@@ -113,12 +113,17 @@ import icon108 from '../../assets/icons/path/trash--493-24768.svg?no-inline'
 import icon109 from '../../assets/icons/path/inbox--505-24793.svg?no-inline'
 import icon110 from '../../assets/icons/path/lock--533-272.svg?no-inline'
 import icon111 from '../../assets/icons/path/bell-ring--556-24397.svg?no-inline'
+import icon112 from '../../assets/icons/multicolor/waste-generation-place--2345-93889.svg?no-inline'
+import icon113 from '../../assets/icons/multicolor/waste-temporary-storage--2345-94120.svg?no-inline'
+import icon114 from '../../assets/icons/multicolor/waste-treatment-place--2345-94392.svg?no-inline'
+import icon115 from '../../assets/icons/multicolor/waste-disposal-place--2345-94554.svg?no-inline'
 import TzSearch from '../forms/TzSearch.vue'
 
 type IconEntry = {
   id: string
   name: string
   asset: string
+  kind?: 'path' | 'multicolor'
 }
 
 const icons: IconEntry[] = [
@@ -234,6 +239,10 @@ const icons: IconEntry[] = [
   { id: "505:24793", name: "inbox", asset: icon109 },
   { id: "533:272", name: "Lock", asset: icon110 },
   { id: "556:24397", name: "BellRing", asset: icon111 },
+  { id: "2345:93889", name: "WasteGenerationPlace", asset: icon112, kind: 'multicolor' },
+  { id: "2345:94120", name: "WasteTemporaryStorage", asset: icon113, kind: 'multicolor' },
+  { id: "2345:94392", name: "WasteTreatmentPlace", asset: icon114, kind: 'multicolor' },
+  { id: "2345:94554", name: "WasteDisposalPlace", asset: icon115, kind: 'multicolor' },
 ]
 
 const query = ref('')
@@ -277,7 +286,7 @@ async function downloadIcon(item: IconEntry) {
 <template>
   <div class="icons-docs">
     <header class="icons-header">
-      <div><p>FOUNDATIONS · ICONS</p><h1>Icons</h1><span>Полный набор из Figma node 1:2326. Все иконки экспортированы как локальные SVG path после Outline Stroke и Flatten.</span></div>
+      <div><p>FOUNDATIONS · ICONS</p><h1>Icons</h1><span>Полный набор из Figma node 1:2326. Одноцветные иконки экспортированы как SVG path; многоцветные иллюстрации сохраняют оригинальный SVG из Figma.</span></div>
       <strong>{{ icons.length }} иконок</strong>
     </header>
 
@@ -291,10 +300,11 @@ async function downloadIcon(item: IconEntry) {
         <article v-for="item in filteredIcons" :key="item.id" class="icon-item">
           <button type="button" class="icon-copy" :aria-label="`Copy ${item.name}`" @click="copyName(item.name)">
             <span class="icon-preview">
-              <span class="path-icon" :style="{ '--icon-url': `url('${item.asset}')` }" aria-hidden="true" />
+              <img v-if="item.kind === 'multicolor'" class="multicolor-icon" :src="item.asset" alt="">
+              <span v-else class="path-icon" :style="{ '--icon-url': `url('${item.asset}')` }" aria-hidden="true" />
             </span>
             <span>{{ item.name }}</span>
-            <small>Path · Target Zero</small>
+            <small>{{ item.kind === 'multicolor' ? 'Multicolor · Target Zero' : 'Path · Target Zero' }}</small>
           </button>
           <button type="button" class="icon-download" :aria-label="`Download ${item.name} as SVG`" :title="`Download ${item.name}.svg`" @click="downloadIcon(item)">
             <Check v-if="downloaded === item.id" :size="14" />
@@ -311,7 +321,7 @@ async function downloadIcon(item: IconEntry) {
       <div>
         <article><strong>Размер</strong><p>Базовый размер — 16×16px через токен <code>--icon-size-default</code>. Для отдельных сценариев допускаются 20px и 24px.</p></article>
         <article><strong>Цвет</strong><p>По умолчанию используется <code>--icon-default</code>, состояния используют семантические токены Colors.</p></article>
-        <article><strong>Path</strong><p>Контуры преобразованы через Outline Stroke и Flatten. Каждая иконка хранится как SVG ровно с одним составным path и без stroke.</p></article>
+        <article><strong>Path</strong><p>Контуры преобразованы через Outline Stroke и Flatten. Одноцветные глифы хранятся как один составной path. Многоцветные иконки сохраняют исходные заливки и контуры Figma.</p></article>
         <article><strong>Источник</strong><p>Target Zero Design System, Figma node 1:2326. Локальные SVG совпадают с компонентами в макете.</p></article>
       </div>
     </section>
@@ -339,6 +349,7 @@ async function downloadIcon(item: IconEntry) {
 .icon-copy:focus-visible, .icon-download:focus-visible { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
 .icon-preview { display: flex; min-height: var(--icon-size-default); align-items: center; justify-content: center; gap: 4px; }
 .path-icon { display: block; width: var(--icon-size-default); height: var(--icon-size-default); color: inherit; background: currentColor; -webkit-mask: var(--icon-url) center / contain no-repeat; mask: var(--icon-url) center / contain no-repeat; }
+.multicolor-icon { display: block; width: auto; max-width: 40px; height: auto; max-height: 40px; object-fit: contain; }
 .icon-copy > span:nth-child(2) { overflow: hidden; max-width: 100%; color: var(--text-default); font: 400 10px/14px var(--tz-font-family); text-overflow: ellipsis; white-space: nowrap; }
 .icon-item small { color: var(--text-muted); font: 400 9px/13px var(--tz-font-family); }
 .icon-item b { position: absolute; right: 4px; bottom: 4px; left: 4px; padding: 3px; color: var(--text-button-fill); border-radius: 4px; background: var(--brand-primary); font: 500 9px/12px var(--tz-font-family); pointer-events: none; }
