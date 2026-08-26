@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Check, ChevronRight, Component, LogOut } from '@lucide/vue'
-import { onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import UiKitLogin from './components/auth/UiKitLogin.vue'
 import AvatarDocumentation from './components/documentation/AvatarDocumentation.vue'
 import BreadcrumbDocumentation from './components/documentation/BreadcrumbDocumentation.vue'
@@ -14,6 +14,7 @@ import SelectDocumentation from './components/documentation/SelectDocumentation.
 import TableDocumentation from './components/documentation/TableDocumentationTechnical.vue'
 import ToggleDocumentation from './components/documentation/ToggleDocumentation.vue'
 import ToastDocumentation from './components/documentation/ToastDocumentation.vue'
+import TabsDocumentation from './components/documentation/TabsDocumentation.vue'
 import TypographyDocumentation from './components/documentation/TypographyDocumentation.vue'
 import VariablesDocumentation from './components/documentation/VariablesDocumentation.vue'
 import TzBreadcrumbs from './components/navigation/TzBreadcrumbs.vue'
@@ -27,7 +28,7 @@ const isAppLoading = ref(true)
 const activeSection = ref('Navigation')
 const catalogCollapsed = ref(false)
 const sidebarCollapsed = ref(false)
-const readyItems = ['Colors', 'Typography', 'Variables', 'Navigation', 'Breadcrumbs', 'Input', 'Button', 'Toast', 'Select', 'Preloader', 'Toggle', 'Icon', 'Search', 'Avatar', 'Table']
+const readyItems = ['Colors', 'Typography', 'Variables', 'Navigation', 'Breadcrumbs', 'Input', 'Button', 'Toast', 'Select', 'Preloader', 'Toggle', 'Tabs', 'Icon', 'Search', 'Avatar', 'Table']
 
 const catalog = [
   { group: 'Основы', items: ['Colors', 'Typography', 'Variables'] },
@@ -43,6 +44,7 @@ const catalog = [
       'Toast',
       'Preloader',
       'Toggle',
+      'Tabs',
       'Search',
       'Chip',
       'Status',
@@ -55,6 +57,36 @@ const catalog = [
   },
 ]
 
+function sectionSlug(section: string) {
+  return section.toLowerCase().replace(/\s+/g, '-')
+}
+
+function sectionHref(section: string) {
+  return readyItems.includes(section) ? `#${sectionSlug(section)}` : undefined
+}
+
+function syncSectionFromUrl() {
+  const slug = decodeURIComponent(window.location.hash.slice(1)).toLowerCase()
+  if (!slug) return
+  const section = readyItems.find(item => sectionSlug(item) === slug)
+  if (section) activeSection.value = section
+}
+
+function selectSection(section: string) {
+  if (!readyItems.includes(section)) return
+  const hash = `#${sectionSlug(section)}`
+  activeSection.value = section
+  if (window.location.hash !== hash) window.location.hash = hash
+}
+
+function onCatalogClick(event: MouseEvent, section: string) {
+  if (!readyItems.includes(section)) {
+    event.preventDefault()
+    return
+  }
+  activeSection.value = section
+}
+
 function authenticate() {
   sessionStorage.setItem('target-zero-ui-kit-auth', 'authenticated')
   isAuthenticated.value = true
@@ -66,7 +98,13 @@ function logout() {
 }
 
 onMounted(() => {
+  syncSectionFromUrl()
+  window.addEventListener('hashchange', syncSectionFromUrl)
   window.setTimeout(() => { isAppLoading.value = false }, 800)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('hashchange', syncSectionFromUrl)
 })
 
 const breadcrumbItems = [
@@ -90,21 +128,21 @@ const breadcrumbItems = [
       <nav aria-label="Каталог компонентов">
         <section v-for="section in catalog" :key="section.group">
           <p>{{ section.group }}</p>
-          <button
+          <a
             v-for="item in section.items"
             :key="item"
-            type="button"
-            :class="{ 'is-active': item === activeSection }"
-            :disabled="!readyItems.includes(item)"
+            :href="sectionHref(item)"
+            :class="{ 'is-active': item === activeSection, 'is-disabled': !readyItems.includes(item) }"
+            :aria-disabled="!readyItems.includes(item) || undefined"
             :aria-label="catalogCollapsed ? item : undefined"
             :title="catalogCollapsed ? item : undefined"
-            @click="activeSection = item"
+            @click="onCatalogClick($event, item)"
           >
             <Component :size="16" :stroke-width="1.5" />
             <span>{{ item }}</span>
             <Check v-if="readyItems.includes(item)" :size="14" />
             <ChevronRight v-else :size="14" />
-          </button>
+          </a>
         </section>
       </nav>
 
@@ -129,6 +167,7 @@ const breadcrumbItems = [
       <AvatarDocumentation v-else-if="activeSection === 'Avatar'" />
       <TableDocumentation v-else-if="activeSection === 'Table'" />
       <ToggleDocumentation v-else-if="activeSection === 'Toggle'" />
+      <TabsDocumentation v-else-if="activeSection === 'Tabs'" />
 
       <template v-else>
         <header class="page-header">
@@ -174,7 +213,7 @@ const breadcrumbItems = [
               <h2>Breadcrumbs</h2>
               <p>Краткий preview. Полная спецификация вынесена в отдельный пункт слева.</p>
             </div>
-            <button class="open-docs" type="button" @click="activeSection = 'Breadcrumbs'">Открыть документацию</button>
+            <button class="open-docs" type="button" @click="selectSection('Breadcrumbs')">Открыть документацию</button>
           </div>
           <div class="breadcrumb-examples">
             <article><span>PRIMARY</span><TzBreadcrumbs :items="breadcrumbItems" variant="primary" /></article>
@@ -262,7 +301,7 @@ const breadcrumbItems = [
   text-transform: uppercase;
 }
 
-.catalog nav button {
+.catalog nav a {
   display: flex;
   align-items: center;
   gap: var(--padding-spacing-8);
@@ -275,9 +314,11 @@ const breadcrumbItems = [
   background: transparent;
   font: 400 12px/16px var(--tz-font-family);
   text-align: left;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
-.catalog nav button span {
+.catalog nav a span {
   max-width: 150px;
   flex: 1;
   overflow: hidden;
@@ -285,7 +326,7 @@ const breadcrumbItems = [
   transition: max-width 200ms ease, opacity 140ms ease;
 }
 
-.catalog nav button > svg:last-child {
+.catalog nav a > svg:last-child {
   max-width: 14px;
   overflow: hidden;
   opacity: 1;
@@ -293,8 +334,8 @@ const breadcrumbItems = [
 }
 
 
-.showcase--catalog-collapsed .catalog nav button span,
-.showcase--catalog-collapsed .catalog nav button > svg:last-child {
+.showcase--catalog-collapsed .catalog nav a span,
+.showcase--catalog-collapsed .catalog nav a > svg:last-child {
   max-width: 0;
   flex: 0 0 0;
   opacity: 0;
@@ -308,23 +349,23 @@ const breadcrumbItems = [
   opacity: 0;
 }
 
-.showcase--catalog-collapsed .catalog nav button {
+.showcase--catalog-collapsed .catalog nav a {
   gap: 0;
   justify-content: center;
 }
 
-.catalog nav button:not(:disabled) {
+.catalog nav a:not(.is-disabled) {
   color: var(--text-default);
   cursor: pointer;
 }
 
-.catalog nav button.is-active {
+.catalog nav a.is-active {
   color: var(--brand-primary);
   background: var(--brand-bg-active);
   font-weight: 500;
 }
 
-.catalog nav button:disabled {
+.catalog nav a.is-disabled {
   opacity: 0.42;
 }
 
