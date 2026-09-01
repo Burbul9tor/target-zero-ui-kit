@@ -295,7 +295,15 @@ function triggerDownload(data: Blob, name: string) {
 
 async function downloadIcon(item: IconEntry) {
   const response = await fetch(item.asset)
-  triggerDownload(await response.blob(), fileName(item.name))
+  const source = await response.text()
+  const document = new DOMParser().parseFromString(source, 'image/svg+xml')
+  const svg = document.documentElement
+
+  svg.setAttribute('width', '16')
+  svg.setAttribute('height', '16')
+
+  const serialized = new XMLSerializer().serializeToString(svg)
+  triggerDownload(new Blob([serialized], { type: 'image/svg+xml;charset=utf-8' }), fileName(item.name))
   downloaded.value = item.id
   window.setTimeout(() => { if (downloaded.value === item.id) downloaded.value = '' }, 1200)
 }
@@ -310,7 +318,7 @@ async function downloadIcon(item: IconEntry) {
 
     <section class="icons-card">
       <header>
-        <div><h2>Icon pack</h2><p>Базовый размер отображения — 16×16px. Исходный SVG сохраняет viewBox 24×24. Нажмите на карточку, чтобы скопировать имя.</p></div>
+        <div><h2>Icon pack</h2><p>Базовый размер отображения и скачиваемого SVG — 16×16px. Исходный viewBox сохраняется. Нажмите на карточку, чтобы скопировать имя.</p></div>
         <TzSearch v-model="query" class="icons-search" placeholder="Найти иконку" label="Поиск иконки" />
       </header>
 
