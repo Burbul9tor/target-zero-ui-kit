@@ -236,8 +236,4 @@ onBeforeUnmount(() => {
   to { transform: scaleX(1); }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .tz-toast { animation: none; }
-  .tz-toast__progress { animation-timing-function: steps(1, end); }
-}
 </style>
