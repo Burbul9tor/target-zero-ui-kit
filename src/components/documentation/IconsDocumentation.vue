@@ -113,6 +113,15 @@ import icon108 from '../../assets/icons/path/trash--493-24768.svg?no-inline'
 import icon109 from '../../assets/icons/path/inbox--505-24793.svg?no-inline'
 import icon110 from '../../assets/icons/path/lock--533-272.svg?no-inline'
 import icon111 from '../../assets/icons/path/bell-ring--556-24397.svg?no-inline'
+import icon116 from '../../assets/icons/path/close-modal-default--620-1527.svg?no-inline'
+import icon117 from '../../assets/icons/path/close-modal-hover--620-1533.svg?no-inline'
+import icon118 from '../../assets/icons/path/close-popover-default--623-1552.svg?no-inline'
+import icon119 from '../../assets/icons/path/close-popover-hover--623-1550.svg?no-inline'
+import icon120 from '../../assets/icons/path/empty-state-inbox--505-24799.svg?no-inline'
+import icon121 from '../../assets/icons/path/radar--711-24186.svg?no-inline'
+import icon122 from '../../assets/icons/path/check-status--627-1211.svg?no-inline'
+import icon123 from '../../assets/icons/path/history--555-5105.svg?no-inline'
+import icon124 from '../../assets/icons/path/arrow-left-to-line--493-1448.svg?no-inline'
 import icon112 from '../../assets/icons/multicolor/waste-generation-place--2345-93889.svg?no-inline'
 import icon113 from '../../assets/icons/multicolor/waste-temporary-storage--2345-94120.svg?no-inline'
 import icon114 from '../../assets/icons/multicolor/waste-treatment-place--2345-94392.svg?no-inline'
@@ -239,6 +248,15 @@ const icons: IconEntry[] = [
   { id: "505:24793", name: "inbox", asset: icon109 },
   { id: "533:272", name: "Lock", asset: icon110 },
   { id: "556:24397", name: "BellRing", asset: icon111 },
+  { id: "620:1527", name: "CloseModalDefault", asset: icon116 },
+  { id: "620:1533", name: "CloseModalHover", asset: icon117 },
+  { id: "623:1552", name: "ClosePopoverDefault", asset: icon118 },
+  { id: "623:1550", name: "ClosePopoverHover", asset: icon119 },
+  { id: "505:24799", name: "EmptyStateInbox", asset: icon120 },
+  { id: "711:24186", name: "Radar", asset: icon121 },
+  { id: "627:1211", name: "CheckStatus", asset: icon122 },
+  { id: "555:5105", name: "History", asset: icon123 },
+  { id: "493:1448", name: "ArrowLeftToLineSecondary", asset: icon124 },
   { id: "2345:93889", name: "WasteGenerationPlace", asset: icon112, kind: 'multicolor' },
   { id: "2345:94120", name: "WasteTemporaryStorage", asset: icon113, kind: 'multicolor' },
   { id: "2345:94392", name: "WasteTreatmentPlace", asset: icon114, kind: 'multicolor' },
@@ -286,7 +304,7 @@ async function downloadIcon(item: IconEntry) {
 <template>
   <div class="icons-docs">
     <header class="icons-header">
-      <div><p>FOUNDATIONS · ICONS</p><h1>Icons</h1><span>Полный набор из Figma node 1:2326. Одноцветные иконки экспортированы как SVG path; многоцветные иллюстрации сохраняют оригинальный SVG из Figma.</span></div>
+      <div><p>FOUNDATIONS · ICONS</p><h1>Icons</h1><span>Актуальный набор из Figma node 1:2211. Одноцветные иконки синхронизированы с редактируемыми Lucide-компонентами; многоцветные иллюстрации сохраняют оригинальный SVG.</span></div>
       <strong>{{ icons.length }} иконок</strong>
     </header>
 
@@ -321,8 +339,8 @@ async function downloadIcon(item: IconEntry) {
       <div>
         <article><strong>Размер</strong><p>Базовый размер — 16×16px через токен <code>--icon-size-default</code>. Для отдельных сценариев допускаются 20px и 24px.</p></article>
         <article><strong>Цвет</strong><p>По умолчанию используется <code>--icon-default</code>, состояния используют семантические токены Colors.</p></article>
-        <article><strong>Path</strong><p>Контуры преобразованы через Outline Stroke и Flatten. Одноцветные глифы хранятся как один составной path. Многоцветные иконки сохраняют исходные заливки и контуры Figma.</p></article>
-        <article><strong>Источник</strong><p>Target Zero Design System, Figma node 1:2326. Локальные SVG совпадают с компонентами в макете.</p></article>
+        <article><strong>Path</strong><p>Одноцветные SVG сохраняют актуальные редактируемые контуры Lucide из Figma. Многоцветные иконки сохраняют исходные заливки и контуры.</p></article>
+        <article><strong>Источник</strong><p>Target Zero Design System, Figma node 1:2211. Локальные SVG синхронизированы с актуальными компонентами макета.</p></article>
       </div>
     </section>
   </div>
