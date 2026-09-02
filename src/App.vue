@@ -6,6 +6,7 @@ import AvatarDocumentation from './components/documentation/AvatarDocumentation.
 import BreadcrumbDocumentation from './components/documentation/BreadcrumbDocumentation.vue'
 import ButtonDocumentation from './components/documentation/ButtonDocumentation.vue'
 import ColorsDocumentation from './components/documentation/ColorsDocumentation.vue'
+import ComplexFiltersDocumentation from './components/documentation/ComplexFiltersDocumentation.vue'
 import IconsDocumentation from './components/documentation/IconsDocumentation.vue'
 import InputDocumentation from './components/documentation/InputDocumentation.vue'
 import PreloaderDocumentation from './components/documentation/PreloaderDocumentation.vue'
@@ -28,7 +29,7 @@ const isAppLoading = ref(true)
 const activeSection = ref('Navigation')
 const catalogCollapsed = ref(false)
 const sidebarCollapsed = ref(false)
-const readyItems = ['Colors', 'Typography', 'Variables', 'Navigation', 'Breadcrumbs', 'Input', 'Button', 'Toast', 'Select', 'Preloader', 'Toggle', 'Tabs', 'Icon', 'Search', 'Avatar', 'Table']
+const readyItems = ['Colors', 'Typography', 'Variables', 'Navigation', 'Breadcrumbs', 'Input', 'Button', 'Toast', 'Select', 'Preloader', 'Toggle', 'Tabs', 'Icon', 'Search', 'Avatar', 'Table', 'Сложные фильтры']
 
 const catalog = [
   { group: 'Основы', items: ['Colors', 'Typography', 'Variables'] },
@@ -53,6 +54,7 @@ const catalog = [
       'Uploader',
       'Avatar',
       'Table',
+      'Сложные фильтры',
     ],
   },
 ]
@@ -166,6 +168,7 @@ const breadcrumbItems = [
       <SearchDocumentation v-else-if="activeSection === 'Search'" />
       <AvatarDocumentation v-else-if="activeSection === 'Avatar'" />
       <TableDocumentation v-else-if="activeSection === 'Table'" />
+      <ComplexFiltersDocumentation v-else-if="activeSection === 'Сложные фильтры'" />
       <ToggleDocumentation v-else-if="activeSection === 'Toggle'" />
       <TabsDocumentation v-else-if="activeSection === 'Tabs'" />
 
@@ -635,4 +638,3 @@ h1 {
   }
 }
 </style>
-
