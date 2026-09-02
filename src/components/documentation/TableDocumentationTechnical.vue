@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { Building2, Check, ChevronRight, Columns3, Plus, SlidersHorizontal, User, X } from '@lucide/vue'
+import { Building2, Check, ChevronRight, Columns3, ExternalLink, Plus, SlidersHorizontal, User, X } from '@lucide/vue'
 import { computed, ref } from 'vue'
 import TzTable, {
   type TableColumnFilter,
   type TableLoadParams,
   type TableRow,
+  type TableSortRule,
   type TzTableColumn,
 } from '../data/TzTable.vue'
 import TzTableFilterPanel from '../data/TzTableFilterPanel.vue'
@@ -54,6 +55,47 @@ const statuses = ['Активно', 'На согласовании', 'Приос
 const optionLoader = (items: string[]) => async () => items.map((value, index) => ({ id: index + 1, name: value, value }))
 const departmentFilter: TableColumnFilter = { filterKey: 'department', type: 'CHECKBOX', getFilters: optionLoader(departments), title: 'Подразделение', searchable: true }
 const objectFilter: TableColumnFilter = { filterKey: 'object', type: 'CHECKBOX_SELECT', getFilters: async () => objectTree, title: 'Объект', searchable: true }
+
+const wasteStatusFilter: TableColumnFilter = {
+  filterKey: 'status',
+  type: 'CHECKBOX',
+  title: 'Статус',
+  getFilters: async () => ['Заполнен', 'Закрыт', 'Действующий'].map((value, index) => ({ id: index + 1, name: value, value })),
+}
+const wasteColumns: TzTableColumn[] = [
+  { key: 'index', label: '№', type: 'index', width: 44, active: true, align: 'center' },
+  { key: 'name', label: 'Номер/наименование чека', width: 250, sortable: true, active: true },
+  { key: 'capacity', label: 'Мощность', width: 132, sortable: true, active: true },
+  { key: 'placed', label: 'Размещено', width: 132, sortable: true, active: true },
+  { key: 'remaining', label: 'Осталось', width: 132, sortable: true, active: true },
+  { key: 'used', label: 'Использовано (%)', width: 166, sortable: true, active: true },
+  { key: 'status', label: 'Статус', width: 150, filter: wasteStatusFilter, active: true },
+]
+const wasteRows: TableRow[] = [
+  { id: 1, name: 'Чек № 17 — буровой шлам', capacity: 24000, placed: 24000, remaining: 0, used: 100, status: 'Заполнен' },
+  { id: 2, name: 'Чек № 7 — асфальтовые отходы', capacity: 30000, placed: 28500, remaining: 1500, used: 95, status: 'Закрыт' },
+  { id: 3, name: 'Чек № 14 — загрязнённый грунт', capacity: 15000, placed: 13800, remaining: 1200, used: 92, status: 'Действующий' },
+  { id: 4, name: 'Чек № 4 — отходы бетона', capacity: 25000, placed: 22500, remaining: 2500, used: 90, status: 'Действующий' },
+  { id: 5, name: 'Чек № 11 — смешанные отходы', capacity: 20000, placed: 17000, remaining: 3000, used: 85, status: 'Действующий' },
+  { id: 6, name: 'Чек № 16 — изоляционные материалы', capacity: 8000, placed: 6000, remaining: 2000, used: 75, status: 'Действующий' },
+  { id: 7, name: 'Чек № 13 — вскрышные породы', capacity: 100000, placed: 72000, remaining: 28000, used: 72, status: 'Действующий' },
+  { id: 8, name: 'Чек № 3 — строительные отходы', capacity: 50000, placed: 34000, remaining: 16000, used: 68, status: 'Действующий' },
+  { id: 9, name: 'Чек № 1 — строительные отходы', capacity: 40000, placed: 12500, remaining: 27500, used: 65, status: 'Действующий' },
+  { id: 10, name: 'Чек № 9 — золошлаковые отходы', capacity: 80000, placed: 48000, remaining: 32000, used: 60, status: 'Действующий' },
+  { id: 11, name: 'Чек № 12 — металлический шлак', capacity: 32000, placed: 16000, remaining: 16000, used: 50, status: 'Действующий' },
+  { id: 12, name: 'Чек № 18 — производственные отходы', capacity: 55000, placed: 19250, remaining: 35750, used: 35, status: 'Действующий' },
+  { id: 13, name: 'Чек № 19 — минеральные отходы', capacity: 42000, placed: 10500, remaining: 31500, used: 25, status: 'Закрыт' },
+  { id: 14, name: 'Чек № 2 — строительные отходы', capacity: 35000, placed: 8750, remaining: 26250, used: 25, status: 'Действующий' },
+  { id: 15, name: 'Чек № 5 — отходы кирпича', capacity: 18000, placed: 4500, remaining: 13500, used: 25, status: 'Действующий' },
+  { id: 16, name: 'Чек № 6 — грунт и песок', capacity: 60000, placed: 15000, remaining: 45000, used: 25, status: 'Действующий' },
+  { id: 17, name: 'Чек № 15 — керамические отходы', capacity: 10000, placed: 2500, remaining: 7500, used: 25, status: 'Действующий' },
+  { id: 18, name: 'Чек № 10 — инертные отходы', capacity: 45000, placed: 9000, remaining: 36000, used: 20, status: 'Действующий' },
+  { id: 19, name: 'Чек № 8 — древесные отходы', capacity: 12000, placed: 0, remaining: 12000, used: 0, status: 'Закрыт' },
+]
+const wasteSorts = ref<TableSortRule[]>([])
+const formatTons = (value: unknown) => `${new Intl.NumberFormat('ru-RU').format(Number(value))} т`
+const usageTone = (value: unknown) => Number(value) >= 100 ? 'critical' : Number(value) >= 90 ? 'warning' : 'normal'
+const statusTone = (value: unknown) => value === 'Заполнен' ? 'full' : value === 'Закрыт' ? 'closed' : 'active'
 
 const columns = ref<TzTableColumn[]>([
   { key: 'index', label: '№', type: 'index', width: 56, active: true },
@@ -273,7 +315,9 @@ const propsApi = [
   ['data', 'Record<string, unknown>[]', '—', 'Обязательные данные таблицы'],
   ['columns', 'ITableColumn[]', '—', 'Колонки из корпоративного API'],
   ['pagination', 'ITablePaginationConfig', '{}', 'Пагинация и размер страницы'],
-  ['sort', 'ITableSortConfig', '{}', 'Сортировка'],
+  ['sort', 'ITableSortConfig', '{}', 'Одиночная сортировка'],
+  ['multiSort', 'boolean', 'false', 'Shift + клик добавляет критерии составной сортировки'],
+  ['startSorts', 'TableSortRule[]', '[]', 'Начальный порядок критериев мультисортировки'],
   ['filters', 'ITableFiltersConfig', '{}', 'Значения фильтров'],
   ['search', 'ITableSearchConfig', '{}', 'Поиск и placeholder'],
   ['selection', 'ITableSelectionConfig', '{}', 'Выбор строк'],
@@ -324,6 +368,35 @@ const methodsApi = ['resetFilter(key)', 'exposedLoadData(page?, countPerPage?)',
         <template #bar-right><div class="bar-actions"><div class="column-creator"><input v-model="newColumnTitle" type="text" placeholder="Название заголовка" @keydown.enter.prevent="addTestColumn"><button class="secondary-button" type="button" @click="addTestColumn"><Columns3 :size="16" /> Добавить заголовок</button></div><button class="primary-button" type="button" @click="addRow"><Plus :size="16" /> Добавить строку</button></div></template>
         <template #column-name="{ item }"><span class="employee"><i><User :size="18" /></i><span><strong>{{ item.name }}</strong><small>{{ item.role }}</small></span></span></template>
         <template #table-settings><div class="settings-demo"><strong>Настройки таблицы</strong><span>Содержимое передаётся через slot <code>table-settings</code>.</span></div></template>
+      </TzTable>
+    </section>
+
+    <section class="card wide waste-example">
+      <header><div><h2>Заполненность чеков · мультисортировка</h2><p>Обычный клик оставляет один критерий. Удерживайте Shift и нажимайте на другие заголовки, чтобы добавить сортировки; цифра у стрелки показывает их приоритет.</p></div></header>
+      <div class="multi-sort-summary" aria-live="polite">
+        <strong>Порядок сортировки:</strong>
+        <span v-if="!wasteSorts.length">не задан</span>
+        <ol v-else><li v-for="rule in wasteSorts" :key="rule.key">{{ wasteColumns.find(column => column.key === rule.key)?.label }} · {{ rule.order === 'ASC' ? 'по возрастанию' : 'по убыванию' }}</li></ol>
+      </div>
+      <TzTable
+        :data="wasteRows"
+        :columns="wasteColumns"
+        :columns-per-view="wasteColumns.length"
+        :count-per-page="25"
+        :count-per-page-options="[10, 25, 50]"
+        disabled-selection
+        disabled-row-click
+        multi-sort
+        show-actions
+        show-pagination
+        @sort="wasteSorts = $event.sorts"
+      >
+        <template #column-capacity="{ value }">{{ formatTons(value) }}</template>
+        <template #column-placed="{ value }">{{ formatTons(value) }}</template>
+        <template #column-remaining="{ value }">{{ formatTons(value) }}</template>
+        <template #column-used="{ value }"><span class="usage" :class="`usage--${usageTone(value)}`"><i><b :style="{ width: `${value}%` }" /></i><strong>{{ value }}%</strong></span></template>
+        <template #column-status="{ value }"><span class="waste-status" :class="`waste-status--${statusTone(value)}`">{{ value }}</span></template>
+        <template #context-menu="{ item }"><button type="button" class="open-row" :aria-label="`Открыть ${item.name}`"><ExternalLink :size="16" /></button></template>
       </TzTable>
     </section>
 
@@ -461,6 +534,7 @@ const methodsApi = ['resetFilter(key)', 'exposedLoadData(page?, countPerPage?)',
 <style scoped>
 .table-docs{display:grid;gap:var(--padding-spacing-24)}.page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--padding-spacing-32)}.eyebrow{margin:0 0 var(--padding-spacing-8);color:var(--brand-primary);font:500 10px/14px var(--tz-font-family);letter-spacing:.08em}.page-header h1{margin:0 0 var(--padding-spacing-8);color:var(--text-default);font:700 32px/40px var(--tz-font-family)}.page-header p,.card header p{margin:0;color:var(--text-muted);font:400 14px/20px var(--tz-font-family)}.ready{display:flex;align-items:center;gap:var(--padding-spacing-6);padding:7px 10px;color:var(--status-success-fg);border-radius:var(--radius-md);background:var(--status-success-bg);font:500 11px/16px var(--tz-font-family);white-space:nowrap}
 .card{min-width:0;padding:var(--padding-spacing-24);border:1px solid var(--border-default);border-radius:var(--radius-lg);background:var(--bg-surface);box-shadow:0 10px 15px -3px var(--bg-shadow)}.card>header{margin-bottom:var(--padding-spacing-20)}.card h2{margin:0 0 var(--padding-spacing-4);color:var(--text-default);font:600 18px/24px var(--tz-font-family)}
+.multi-sort-summary{display:flex;min-height:36px;margin-bottom:var(--padding-spacing-12);padding:var(--padding-spacing-8) var(--padding-spacing-12);flex-wrap:wrap;align-items:center;gap:var(--padding-spacing-8);color:var(--text-muted);border-radius:var(--radius-md);background:var(--bg-page);font:var(--tz-text-body-small)}.multi-sort-summary>strong{color:var(--text-default);font-weight:500}.multi-sort-summary ol{display:flex;margin:0;padding:0;flex-wrap:wrap;gap:var(--padding-spacing-6);list-style:none;counter-reset:sort}.multi-sort-summary li{padding:var(--padding-spacing-4) var(--padding-spacing-8);color:var(--brand-primary);border-radius:var(--radius-full);background:var(--brand-bg-active);counter-increment:sort}.multi-sort-summary li:before{margin-right:var(--padding-spacing-4);content:counter(sort) '.'}.usage{display:flex;align-items:center;gap:var(--padding-spacing-8)}.usage>i{display:block;flex:1;min-width:72px;height:4px;overflow:hidden;border-radius:var(--radius-full);background:var(--border-default)}.usage>i>b{display:block;height:100%;border-radius:inherit;background:var(--brand-primary)}.usage>strong{min-width:32px;color:var(--brand-primary);font:500 11px/16px var(--tz-font-family);text-align:right}.usage--warning>i>b{background:var(--status-warning-fg)}.usage--warning>strong{color:var(--status-warning-fg)}.usage--critical>i>b{background:var(--status-error-fg)}.usage--critical>strong{color:var(--status-error-fg)}.waste-status{display:inline-flex;min-height:24px;padding:var(--padding-spacing-4) var(--padding-spacing-8);align-items:center;border-radius:var(--radius-md);font:500 11px/16px var(--tz-font-family)}.waste-status--active{color:var(--status-success-fg);background:var(--status-success-bg)}.waste-status--closed{color:var(--text-muted);background:var(--bg-disabled)}.waste-status--full{color:var(--status-error-fg);background:var(--status-error-bg)}.open-row{display:grid;width:28px;height:28px;margin:auto;padding:0;place-items:center;color:var(--icon-default);border:0;border-radius:var(--radius-xs);background:transparent;cursor:pointer}.open-row:hover{color:var(--brand-primary);background:var(--brand-bg-hover)}
 .card>.tz-filter-panel{margin-bottom:var(--padding-spacing-12)}
 .filter-launcher-list{display:grid;grid-template-columns:repeat(5,minmax(140px,1fr));gap:var(--padding-spacing-8)}
 .filter-launcher-wrap{position:relative;min-width:0}
@@ -474,6 +548,7 @@ const methodsApi = ['resetFilter(key)', 'exposedLoadData(page?, countPerPage?)',
 .employee{display:flex;min-width:0;align-items:center;gap:var(--padding-spacing-6)}.employee>i{display:grid;flex:0 0 32px;width:32px;height:32px;place-items:center;color:var(--brand-primary);border:1px solid var(--border-default);border-radius:var(--radius-sm);background:var(--bg-surface)}.employee>span{display:flex;min-width:0;flex-direction:column}.employee strong,.employee small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.employee strong{font:400 14px/20px var(--tz-font-family)}.employee small{color:var(--text-muted);font:400 10px/14px var(--tz-font-family)}
 .settings-demo{display:flex;align-items:center;gap:var(--padding-spacing-12)}.settings-demo strong{font:500 12px/16px var(--tz-font-family)}.settings-demo span{color:var(--text-muted);font:400 12px/16px var(--tz-font-family)}code{color:var(--brand-primary);font:400 11px/16px ui-monospace,SFMono-Regular,Consolas,monospace}
 .api-table{overflow:auto;border:1px solid var(--border-default);border-radius:var(--radius-md)}.api-row{display:grid;grid-template-columns:180px 260px 100px minmax(220px,1fr);min-width:820px;min-height:44px;align-items:center;border-bottom:1px solid var(--border-default)}.api-row:last-child{border-bottom:0}.api-row>*{padding:var(--padding-spacing-8) var(--padding-spacing-12)}.api-row span{color:var(--text-muted);font:400 12px/16px var(--tz-font-family)}.api-head{background:var(--bg-row-hover)}.api-head span{color:var(--text-default);font-weight:500}.api-columns{display:grid;grid-template-columns:1fr 1fr;gap:var(--padding-spacing-24)}.chips{display:flex;flex-wrap:wrap;gap:var(--padding-spacing-8)}.chips code,.method-list code{padding:var(--padding-spacing-6) var(--padding-spacing-8);border-radius:var(--radius-sm);background:var(--brand-bg-hover)}.method-list{display:grid;gap:var(--padding-spacing-8)}
-@media(max-width:1200px){.filter-launcher-list{grid-template-columns:repeat(3,minmax(160px,1fr))}}@media(max-width:800px){.card>.tz-filter-panel{margin-bottom:var(--padding-spacing-12)}.filter-launcher-list{grid-template-columns:repeat(2,minmax(140px,1fr))}.page-header{flex-direction:column}.api-columns{grid-template-columns:1fr}.card{padding:var(--padding-spacing-16)}}
+@media(max-width:1200px){.filter-launcher-list{grid-template-columns:repeat(3,minmax(160px,1fr))}}@media(max-width:800px){.multi-sort-summary{display:flex;min-height:36px;margin-bottom:var(--padding-spacing-12);padding:var(--padding-spacing-8) var(--padding-spacing-12);flex-wrap:wrap;align-items:center;gap:var(--padding-spacing-8);color:var(--text-muted);border-radius:var(--radius-md);background:var(--bg-page);font:var(--tz-text-body-small)}.multi-sort-summary>strong{color:var(--text-default);font-weight:500}.multi-sort-summary ol{display:flex;margin:0;padding:0;flex-wrap:wrap;gap:var(--padding-spacing-6);list-style:none;counter-reset:sort}.multi-sort-summary li{padding:var(--padding-spacing-4) var(--padding-spacing-8);color:var(--brand-primary);border-radius:var(--radius-full);background:var(--brand-bg-active);counter-increment:sort}.multi-sort-summary li:before{margin-right:var(--padding-spacing-4);content:counter(sort) '.'}.usage{display:flex;align-items:center;gap:var(--padding-spacing-8)}.usage>i{display:block;flex:1;min-width:72px;height:4px;overflow:hidden;border-radius:var(--radius-full);background:var(--border-default)}.usage>i>b{display:block;height:100%;border-radius:inherit;background:var(--brand-primary)}.usage>strong{min-width:32px;color:var(--brand-primary);font:500 11px/16px var(--tz-font-family);text-align:right}.usage--warning>i>b{background:var(--status-warning-fg)}.usage--warning>strong{color:var(--status-warning-fg)}.usage--critical>i>b{background:var(--status-error-fg)}.usage--critical>strong{color:var(--status-error-fg)}.waste-status{display:inline-flex;min-height:24px;padding:var(--padding-spacing-4) var(--padding-spacing-8);align-items:center;border-radius:var(--radius-md);font:500 11px/16px var(--tz-font-family)}.waste-status--active{color:var(--status-success-fg);background:var(--status-success-bg)}.waste-status--closed{color:var(--text-muted);background:var(--bg-disabled)}.waste-status--full{color:var(--status-error-fg);background:var(--status-error-bg)}.open-row{display:grid;width:28px;height:28px;margin:auto;padding:0;place-items:center;color:var(--icon-default);border:0;border-radius:var(--radius-xs);background:transparent;cursor:pointer}.open-row:hover{color:var(--brand-primary);background:var(--brand-bg-hover)}
+.card>.tz-filter-panel{margin-bottom:var(--padding-spacing-12)}.filter-launcher-list{grid-template-columns:repeat(2,minmax(140px,1fr))}.page-header{flex-direction:column}.api-columns{grid-template-columns:1fr}.card{padding:var(--padding-spacing-16)}}
 @media(max-width:520px){.filter-launcher-list{grid-template-columns:1fr}.simple-filter-popover{right:auto;left:0;width:min(320px,calc(100vw - 48px))}}
 </style>

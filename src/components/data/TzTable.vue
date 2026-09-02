@@ -10,6 +10,7 @@ import TzTreeFilterModal from './TzTreeFilterModal.vue'
 
 export type TableRow = Record<string, unknown>
 export type TableSortOrder = 'ASC' | 'DESC' | null
+export interface TableSortRule { key: string; order: Exclude<TableSortOrder, null> }
 export type TableColumnType = 'default' | 'index' | 'selection' | 'settings'
 export type TableFixedType = 'left' | 'right'
 export type TableFilterType = 'CHECKBOX' | 'RANGE_MAX' | 'RANGE' | 'RADIO' | 'SELECT_MULTIPLE' | 'DATE' | 'TIME_RANGE' | 'CHECKBOX_SELECT'
@@ -40,6 +41,7 @@ export interface TableLoadParams {
   filters: Record<string, unknown>
   size: number
   sort: string[]
+  sorts: TableSortRule[]
   substring: string
   signal?: AbortSignal
 }
@@ -110,6 +112,8 @@ const props = withDefaults(defineProps<{
   startSortKey?: string
   startSortOrder?: TableSortOrder
   startSortValue?: string[]
+  startSorts?: TableSortRule[]
+  multiSort?: boolean
   startFiltersFullInfo?: TableFilterFullInfo[]
   tableBodyStyle?: StyleValue
   rowKey?: string
@@ -123,7 +127,7 @@ const props = withDefaults(defineProps<{
   showSettings: false, showHeader: true, showBarAlways: false, selectedItems: () => [],
   countPerPageOptions: () => [], resetAllCheckedItems: true, disabledSelection: false,
   disabledRowClick: false, startFiltersValue: () => ({}), startSearchValue: '', startSortKey: '',
-  startSortOrder: null, startSortValue: () => [], startFiltersFullInfo: () => [], rowKey: 'id',
+  startSortOrder: null, startSortValue: () => [], startSorts: () => [], multiSort: false, startFiltersFullInfo: () => [], rowKey: 'id',
   activeFilters: () => ({}), showActions: false, emptyTitle: 'Нет данных',
   emptyDescription: 'Здесь пока нет записей для отображения',
 })
@@ -135,7 +139,7 @@ const emit = defineEmits<{
   'update:filter-full-info': [filters: TableFilterFullInfo[]]
   'row-click': [row: TableRow]
   'row-double-click': [row: TableRow, event?: Event]
-  sort: [payload: { key: string; order: TableSortOrder }]
+  sort: [payload: { key: string; order: TableSortOrder; sorts: TableSortRule[] }]
   filter: [payload: { key: string }]
   'clear-filter': [key: string]
   settings: []
@@ -163,6 +167,9 @@ const searchValue = ref(props.search?.initialValue ?? props.startSearchValue)
 const sortKey = ref(props.sort?.key ?? props.startSortKey)
 const sortOrder = ref<TableSortOrder>(props.sort?.order ?? props.startSortOrder)
 const sortValue = ref([...props.startSortValue])
+const sortRules = ref<TableSortRule[]>(props.startSorts.length
+  ? [...props.startSorts]
+  : sortKey.value && sortOrder.value ? [{ key: sortKey.value, order: sortOrder.value }] : [])
 const filtersValue = ref<Record<string, unknown>>({ ...(props.filters?.value ?? props.startFiltersValue) })
 const filtersFullInfo = ref<TableFilterFullInfo[]>([...(props.filters?.fullInfo ?? props.startFiltersFullInfo)])
 const serverRows = ref<TableRow[] | null>(null)
@@ -175,8 +182,16 @@ const filterOptions = ref<Record<string, TableFilterOption[]>>({})
 const filterLoading = ref('')
 const columnWidths = ref<Record<string, number>>({})
 
-watch(() => props.sort?.key ?? props.startSortKey, value => { sortKey.value = value })
-watch(() => props.sort?.order ?? props.startSortOrder, value => { sortOrder.value = value })
+watch(() => [props.sort?.key ?? props.startSortKey, props.sort?.order ?? props.startSortOrder] as const, ([key, order]) => {
+  sortKey.value = key
+  sortOrder.value = order
+  if (!props.startSorts.length) sortRules.value = key && order ? [{ key, order }] : []
+})
+watch(() => props.startSorts, value => {
+  sortRules.value = [...value]
+  sortKey.value = value[0]?.key ?? ''
+  sortOrder.value = value[0]?.order ?? null
+}, { deep: true })
 watch(() => props.search?.initialValue ?? props.startSearchValue, value => { searchValue.value = value })
 watch(() => props.filters?.value ?? props.startFiltersValue, value => { filtersValue.value = { ...value } }, { deep: true })
 watch(() => props.data, () => { if (resetSelectionOnDataChange.value && selectedRows.value.length) emit('update:selectedItems', []) })
@@ -208,9 +223,14 @@ const locallyProcessedRows = computed(() => {
     const accepted = Array.isArray(filterValue) ? filterValue.map(String) : [String(filterValue)]
     rows = rows.filter(row => accepted.includes(String(row[key] ?? '')))
   }
-  if (sortKey.value && sortOrder.value) {
-    const direction = sortOrder.value === 'ASC' ? 1 : -1
-    rows = [...rows].sort((a, b) => String(a[sortKey.value] ?? '').localeCompare(String(b[sortKey.value] ?? ''), undefined, { numeric: true }) * direction)
+  if (sortRules.value.length) {
+    rows = [...rows].sort((a, b) => {
+      for (const rule of sortRules.value) {
+        const comparison = String(a[rule.key] ?? '').localeCompare(String(b[rule.key] ?? ''), undefined, { numeric: true })
+        if (comparison) return comparison * (rule.order === 'ASC' ? 1 : -1)
+      }
+      return 0
+    })
   }
   return rows
 })
@@ -257,14 +277,27 @@ function toggleRow(row: TableRow) {
   const id = rowId(row)
   emit('update:selectedItems', selectedIds.value.has(id) ? selectedRows.value.filter(item => rowId(item) !== id) : [...selectedRows.value, row])
 }
-function toggleSort(column: TzTableColumn) {
+function sortRuleFor(column: TzTableColumn) {
+  const key = column.sortFieldName ?? column.key
+  return sortRules.value.find(rule => rule.key === key)
+}
+function sortPriority(column: TzTableColumn) {
+  const key = column.sortFieldName ?? column.key
+  const index = sortRules.value.findIndex(rule => rule.key === key)
+  return index >= 0 ? index + 1 : 0
+}
+function toggleSort(column: TzTableColumn, event?: MouseEvent) {
   if (!column.sortable) return
   const key = column.sortFieldName ?? column.key
-  if (sortKey.value !== key) { sortKey.value = key; sortOrder.value = 'ASC' }
-  else if (sortOrder.value === 'ASC') sortOrder.value = 'DESC'
-  else { sortKey.value = ''; sortOrder.value = null }
-  sortValue.value = sortKey.value && sortOrder.value ? [sortKey.value, sortOrder.value] : []
-  emit('sort', { key: sortKey.value, order: sortOrder.value })
+  const current = sortRules.value.find(rule => rule.key === key)
+  const nextOrder: TableSortOrder = !current ? 'ASC' : current.order === 'ASC' ? 'DESC' : null
+  const additive = props.multiSort && Boolean(event?.shiftKey)
+  const remaining = additive ? sortRules.value.filter(rule => rule.key !== key) : []
+  sortRules.value = nextOrder ? [...remaining, { key, order: nextOrder }] : remaining
+  sortKey.value = sortRules.value[0]?.key ?? ''
+  sortOrder.value = sortRules.value[0]?.order ?? null
+  sortValue.value = sortRules.value.flatMap(rule => [rule.key, rule.order])
+  emit('sort', { key: sortKey.value, order: sortOrder.value, sorts: [...sortRules.value] })
   if (serverEnabled.value) exposedLoadData(0, currentCountPerPage.value)
 }
 function changePage(page: number) {
@@ -397,7 +430,8 @@ async function exposedLoadData(page = currentPage.value, countPerPage = currentC
       sortKey: sortKey.value,
       sortOrder: sortOrder.value,
       sortValue: sortValue.value,
-      sort: sortKey.value && sortOrder.value ? [`${sortKey.value},${sortOrder.value}`] : [],
+      sort: sortRules.value.map(rule => `${rule.key},${rule.order}`),
+      sorts: [...sortRules.value],
       filters: filtersValue.value,
       signal: controller.signal,
     })
@@ -420,14 +454,15 @@ function exposedResetAllFilters() {
   searchValue.value = props.search?.initialValue ?? props.startSearchValue
   sortKey.value = props.sort?.key ?? props.startSortKey
   sortOrder.value = props.sort?.order ?? props.startSortOrder
-  sortValue.value = sortKey.value && sortOrder.value ? [sortKey.value, sortOrder.value] : []
+  sortRules.value = sortKey.value && sortOrder.value ? [{ key: sortKey.value, order: sortOrder.value }] : []
+  sortValue.value = sortRules.value.flatMap(rule => [rule.key, rule.order])
   emit('update:filter-full-info', [...filtersFullInfo.value])
   keys.forEach(key => emit('clear-filter', key))
   emit('update:page', 0)
   if (serverEnabled.value) exposedLoadData(0, currentCountPerPage.value)
 }
 function clearSelection() { emit('update:selectedItems', []) }
-function resetSort() { sortKey.value = ''; sortOrder.value = null; sortValue.value = []; emit('sort', { key: '', order: null }) }
+function resetSort() { sortKey.value = ''; sortOrder.value = null; sortValue.value = []; sortRules.value = []; emit('sort', { key: '', order: null, sorts: [] }) }
 function scrollToTop() { scroll.value?.scrollTo({ top: 0, behavior: 'smooth' }) }
 function startResize(event: PointerEvent, column: TzTableColumn) {
   if (!props.resizable) return
@@ -488,7 +523,7 @@ defineExpose({ resetFilter, exposedLoadData, exposedResetAllFilters, resetSort, 
           <th v-if="hasSelection" class="selection-cell"><button type="button" class="tz-checkbox" :class="{ checked: allSelected, indeterminate: someSelected }" :aria-pressed="allSelected" aria-label="Выбрать все строки" @click="toggleAll"><span /></button></th>
           <th v-for="(column, columnIndex) in dataColumns" :key="column.key" :style="fixedCellStyle(column, columnIndex)" :class="[`is-${alignOf(column)}`, { filterable: column.filter || column.filterable, fixed: column.fixed }]" @click="(column.filter || column.filterable) && openFilter(column)">
             <div class="heading">
-              <button v-if="column.sortable" type="button" class="icon-button" :class="{ active: sortKey === (column.sortFieldName ?? column.key) && sortOrder }" @click.stop="toggleSort(column)"><ArrowUp v-if="sortKey === (column.sortFieldName ?? column.key) && sortOrder === 'ASC'" :size="12" /><ArrowDown v-else-if="sortKey === (column.sortFieldName ?? column.key) && sortOrder === 'DESC'" :size="12" /><ArrowUpDown v-else :size="12" /></button>
+              <button v-if="column.sortable" type="button" class="icon-button sort-button" :class="{ active: sortRuleFor(column) }" :aria-label="`Сортировать по ${titleOf(column)}`" :title="multiSort ? 'Клик — сортировка, Shift + клик — добавить критерий' : 'Сортировать'" @click.stop="toggleSort(column, $event)"><ArrowUp v-if="sortRuleFor(column)?.order === 'ASC'" :size="12" /><ArrowDown v-else-if="sortRuleFor(column)?.order === 'DESC'" :size="12" /><ArrowUpDown v-else :size="12" /><sup v-if="multiSort && sortPriority(column)">{{ sortPriority(column) }}</sup></button>
               <span class="heading-title">{{ titleOf(column) }}</span>
               <span v-if="column.filter || column.filterable" class="filter-wrap"><button type="button" class="icon-button filter-button" :class="{ active: activeFilterCounts[column.filter?.filterKey ?? column.key] }" @click.stop="openFilter(column)"><Filter :size="12" /><b v-if="activeFilterCounts[column.filter?.filterKey ?? column.key]">{{ activeFilterCounts[column.filter?.filterKey ?? column.key] > 99 ? '99+' : activeFilterCounts[column.filter?.filterKey ?? column.key] }}</b></button><button v-if="activeFilterCounts[column.filter?.filterKey ?? column.key]" class="clear-filter" type="button" @click.stop="resetFilter(column.filter?.filterKey ?? column.key)"><X :size="16" /></button></span>
               <i v-if="resizable" class="resize-handle" @pointerdown.stop.prevent="startResize($event, column)" />
@@ -541,6 +576,7 @@ th,td { box-sizing: border-box; border-right: 1px solid var(--border-default); b
 th { position: relative; height: 36px; padding: var(--padding-spacing-8); color: var(--brand-primary); background: var(--bg-row-hover); font: 400 12px/16px var(--tz-font-family); transition: background-color 140ms ease }thead th:hover { background: var(--brand-bg-hover) }th.filterable { cursor: pointer }
 th.fixed,td.fixed{position:sticky;z-index:3}th.fixed{z-index:5}td { height: 56px; padding: var(--padding-spacing-12) var(--padding-spacing-8); background: var(--bg-surface); font: 400 14px/20px var(--tz-font-family) }.is-stripped tbody tr:nth-child(even) td { background: var(--bg-row-hover) }tbody tr:hover td,tbody tr.selected td { background: var(--brand-bg-hover) }tr.clickable { cursor: pointer }.is-center{text-align:center}.is-right{text-align:right}
 .heading { display:flex;align-items:center;gap:var(--padding-spacing-4);min-width:0;height:100% }.heading-title{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.icon-button,.clear-filter,.row-action{position:relative;display:inline-grid;flex:0 0 auto;width:20px;height:20px;padding:2px;place-items:center;color:var(--icon-default);border:0;border-radius:var(--radius-xs);background:transparent;cursor:pointer}.heading>.icon-button,.filter-wrap>.icon-button{color:var(--brand-primary)}.icon-button:hover,.icon-button.active{color:var(--brand-primary);background:var(--brand-bg-active)}.filter-wrap{display:inline-flex;align-items:center;gap:2px}.filter-button.active{display:inline-flex;width:auto;min-width:20px;padding:2px;align-items:center;gap:var(--padding-spacing-2);border-radius:var(--radius-xs);background:var(--brand-bg-active)}.filter-button b{position:static;min-width:0;height:16px;padding:0;color:var(--brand-primary);border-radius:0;background:transparent;font:400 12px/16px var(--tz-font-family)}.clear-filter:hover,.row-action:hover{color:var(--status-error-fg);background:var(--status-error-bg)}
+.sort-button sup{position:absolute;top:-5px;right:-5px;display:grid;width:13px;height:13px;place-items:center;color:var(--text-button-fill);border:1px solid var(--bg-surface);border-radius:var(--radius-full);background:var(--brand-primary);font:600 8px/1 var(--tz-font-family)}
 .selection-cell,.settings-cell,.action-cell{width:36px;min-width:36px;padding:0!important;text-align:center!important}.selection-cell .tz-checkbox,.action-cell .row-action{margin-inline:auto}.settings-cell{position:relative;overflow:hidden}.settings-cell__inner{position:absolute;inset:0;display:grid;place-items:center}.settings-cell .icon-button{position:static;box-sizing:border-box;width:24px;height:24px;margin:0;padding:4px;color:var(--brand-primary);line-height:0;transform:none}.settings-cell .icon-button:focus-visible{outline:0;box-shadow:inset 0 0 0 2px var(--brand-primary)}.settings-cell .icon-button svg{display:block;width:16px;height:16px}.row-action{color:var(--status-error-fg)}
 .tz-checkbox{display:grid;width:20px;height:20px;padding:0;place-items:center;border:1px solid var(--border-default);border-radius:var(--radius-xs);background:var(--bg-surface);cursor:pointer}.tz-checkbox:hover{border-color:var(--brand-primary)}.tz-checkbox.checked,.tz-checkbox.indeterminate{border-color:var(--brand-primary);background:var(--brand-primary)}.tz-checkbox.checked span{width:9px;height:5px;border-bottom:1.5px solid var(--text-button-fill);border-left:1.5px solid var(--text-button-fill);transform:translateY(-1px) rotate(-45deg)}.tz-checkbox.indeterminate span{width:10px;height:1.5px;background:var(--text-button-fill)}
 .resize-handle{position:absolute;top:0;right:-5px;width:10px;height:100%;cursor:col-resize}.filter-popover{position:absolute;z-index:12;top:calc(100% + 4px);right:4px;display:grid;min-width:220px;max-height:280px;padding:var(--padding-spacing-12);overflow:auto;color:var(--text-default);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-surface);box-shadow:0 10px 24px var(--bg-shadow);cursor:default}.filter-popover header{display:flex;align-items:center;justify-content:space-between;gap:var(--padding-spacing-8);margin-bottom:var(--padding-spacing-8);font:500 12px/16px var(--tz-font-family)}.close-filter-popover{display:grid;width:24px;height:24px;padding:0;place-items:center;color:var(--icon-default);border:0;border-radius:var(--radius-xs);background:transparent;cursor:pointer}.close-filter-popover:hover{color:var(--brand-primary);background:var(--brand-bg-hover)}.close-filter-popover:focus-visible{outline:2px solid var(--brand-primary);outline-offset:1px}.filter-popover label{display:flex;align-items:center;gap:var(--padding-spacing-8);padding:var(--padding-spacing-6) 0;font:400 12px/16px var(--tz-font-family)}.filter-status{color:var(--text-muted)}.reset-filter{margin-top:var(--padding-spacing-8);padding:var(--padding-spacing-6) var(--padding-spacing-8);color:var(--brand-primary);border:0;border-radius:var(--radius-sm);background:var(--brand-bg-hover);cursor:pointer}
