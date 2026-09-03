@@ -11,6 +11,15 @@ const pickerOpen = ref(false)
 const sideOpen = ref(false)
 const sidePlacement = ref<ModalPlacement>('right')
 const activeSize = ref<ModalSize>('medium')
+const ikodProps = [
+  ['show', 'Boolean', 'false', 'Видимость; поддерживается v-model:show.'],
+  ['teleportTo', 'String', "'body'", 'CSS-селектор контейнера Teleport.'],
+  ['disabledScroll', 'Boolean', 'false', 'Блокирует прокрутку body при открытии.'],
+  ['isExpand / expandable', 'Boolean', 'false', 'Состояние и возможность разворачивания.'],
+  ['withHeader / withFooter', 'Boolean', 'true', 'Показывает системные области окна.'],
+  ['classNames', 'String[]', '[]', 'Дополнительные классы диалога.'],
+  ['closeIcon / expandIcon', 'Object', 'undefined', 'Компоненты и размеры служебных иконок.'],
+]
 
 function showSide(placement: ModalPlacement) {
   sidePlacement.value = placement
@@ -83,6 +92,23 @@ function show(size: ModalSize) {
       </div>
     </section>
 
+    <section class="state-card api-card">
+      <header>
+        <div>
+          <span>IKOD UI KIT · v0.3.0</span>
+          <h2>Совместимый технический контракт</h2>
+          <p>Компонент поддерживает API UiModal, а размеры, placement, accessibility и визуальные токены расширены в Target Zero.</p>
+        </div>
+      </header>
+      <div class="api-table">
+        <div class="api-row api-head"><strong>Prop</strong><strong>Type</strong><strong>Default</strong><strong>Назначение</strong></div>
+        <div v-for="item in ikodProps" :key="item[0]" class="api-row">
+          <code>{{ item[0] }}</code><code>{{ item[1] }}</code><code>{{ item[2] }}</code><span>{{ item[3] }}</span>
+        </div>
+      </div>
+      <p class="api-source">Emits: <code>update:show</code>, <code>update:isExpand</code>. Slots: <code>default</code>, <code>header</code>, <code>header-action</code>, <code>footer</code>. Источник: <a href="https://ui-kit.ikod.kz/components/modal" target="_blank" rel="noreferrer">IKOD UiModal</a>.</p>
+    </section>
+
     <section class="state-card guidance">
       <header><div><span>Поведение</span><h2>Правила использования</h2></div></header>
       <div class="guidance-grid">
@@ -131,6 +157,7 @@ function show(size: ModalSize) {
 .anatomy-preview{display:grid;max-width:600px;min-height:280px;margin:auto;grid-template-rows:auto 1fr auto;overflow:hidden;border:1px solid var(--border-default);border-radius:var(--radius-lg);background:var(--bg-surface);box-shadow:0 20px 48px var(--bg-shadow)}
 .anatomy-preview>div{display:flex;padding:var(--padding-spacing-12) var(--padding-spacing-16);align-items:center;gap:var(--padding-spacing-8);font:var(--tz-text-body-small)}.anatomy-preview__header{justify-content:space-between;border-bottom:1px solid var(--border-default)}.anatomy-preview__body{color:var(--text-muted)}.anatomy-preview__footer{justify-content:flex-end;border-top:1px solid var(--border-default)}.anatomy-preview i{padding:var(--padding-spacing-8) var(--padding-spacing-12);color:var(--text-muted);border-radius:var(--radius-sm);font-style:normal}.anatomy-preview__footer strong{padding:var(--padding-spacing-8) var(--padding-spacing-12);color:var(--text-button-fill);border-radius:var(--radius-sm);background:var(--brand-primary)}
 .guidance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--padding-spacing-12)}.guidance-grid article{padding:var(--padding-spacing-16);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-page)}.guidance-grid strong{color:var(--text-default);font:var(--tz-text-body-strong)}.guidance-grid p{margin:var(--padding-spacing-6) 0 0;color:var(--text-muted);font:var(--tz-text-body-small)}
+.api-table{overflow:hidden;border:1px solid var(--border-default);border-radius:var(--radius-md)}.api-row{display:grid;grid-template-columns:1.2fr .8fr .8fr 2fr;gap:var(--padding-spacing-12);padding:var(--padding-spacing-10) var(--padding-spacing-12);align-items:center;border-top:1px solid var(--border-default);font:var(--tz-text-body-small)}.api-row:first-child{border-top:0}.api-head{background:var(--bg-row-hover)}.api-row code{color:var(--brand-primary)}.api-source{margin:var(--padding-spacing-12) 0 0;color:var(--text-muted);font:var(--tz-text-body-small)}.api-source code,.api-source a{color:var(--brand-primary)}
 .example-content{display:grid;gap:var(--padding-spacing-20);min-height:220px;padding:var(--padding-spacing-16)}.info-box{display:flex;padding:var(--padding-spacing-12);align-items:flex-start;gap:var(--padding-spacing-8);color:var(--status-info-fg);border-radius:var(--radius-md);background:var(--status-info-bg)}.info-box p{margin:0;font:var(--tz-text-body-small)}.example-content label{display:grid;align-content:start;gap:var(--padding-spacing-6);color:var(--text-default);font:var(--tz-text-label-medium)}.example-content input{height:36px;padding:0 var(--padding-spacing-12);color:var(--text-default);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-surface);font:var(--tz-text-body-medium);outline:0}.example-content input:focus{border-color:var(--brand-primary);box-shadow:0 0 0 2px var(--effect-shadow)}
-@media(max-width:760px){.page-header{flex-direction:column}.state-card{padding:var(--padding-spacing-16)}.guidance-grid{grid-template-columns:1fr}}
+@media(max-width:760px){.page-header{flex-direction:column}.state-card{padding:var(--padding-spacing-16)}.guidance-grid{grid-template-columns:1fr}.api-table{overflow-x:auto}.api-row{min-width:680px}}
 </style>
