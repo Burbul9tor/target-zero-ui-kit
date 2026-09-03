@@ -9,6 +9,7 @@ import ColorsDocumentation from './components/documentation/ColorsDocumentation.
 import ComplexFiltersDocumentation from './components/documentation/ComplexFiltersDocumentation.vue'
 import IconsDocumentation from './components/documentation/IconsDocumentation.vue'
 import InputDocumentation from './components/documentation/InputDocumentation.vue'
+import ModalDocumentation from './components/documentation/ModalDocumentation.vue'
 import PreloaderDocumentation from './components/documentation/PreloaderDocumentation.vue'
 import SearchDocumentation from './components/documentation/SearchDocumentation.vue'
 import SelectDocumentation from './components/documentation/SelectDocumentation.vue'
@@ -29,7 +30,7 @@ const isAppLoading = ref(true)
 const activeSection = ref('Navigation')
 const catalogCollapsed = ref(false)
 const sidebarCollapsed = ref(false)
-const readyItems = ['Colors', 'Typography', 'Variables', 'Navigation', 'Breadcrumbs', 'Input', 'Button', 'Toast', 'Select', 'Preloader', 'Toggle', 'Tabs', 'Icon', 'Search', 'Avatar', 'Table', 'Сложные фильтры']
+const readyItems = ['Colors', 'Typography', 'Variables', 'Navigation', 'Breadcrumbs', 'Input', 'Button', 'Modal', 'Toast', 'Select', 'Preloader', 'Toggle', 'Tabs', 'Icon', 'Search', 'Avatar', 'Table', 'Сложные фильтры']
 
 const catalog = [
   { group: 'Основы', items: ['Colors', 'Typography', 'Variables'] },
@@ -42,6 +43,7 @@ const catalog = [
       'Select',
       'Icon',
       'Button',
+      'Modal',
       'Toast',
       'Preloader',
       'Toggle',
@@ -162,6 +164,7 @@ const breadcrumbItems = [
       <InputDocumentation v-else-if="activeSection === 'Input'" />
       <BreadcrumbDocumentation v-else-if="activeSection === 'Breadcrumbs'" />
       <ButtonDocumentation v-else-if="activeSection === 'Button'" />
+      <ModalDocumentation v-else-if="activeSection === 'Modal'" />
       <ToastDocumentation v-else-if="activeSection === 'Toast'" />
       <PreloaderDocumentation v-else-if="activeSection === 'Preloader'" />
       <SelectDocumentation v-else-if="activeSection === 'Select'" />

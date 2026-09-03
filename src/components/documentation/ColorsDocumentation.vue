@@ -34,10 +34,9 @@ const copied = ref('')
 const brandTokens: SemanticToken[] = [
   { name: 'brand/primary', values: { 'Client A': { value: '#407C65', alias: 'green-600' }, 'Client B': { value: '#2D9CDB', alias: 'blue-600' } } },
   { name: 'brand/primary-hover', values: { 'Client A': { value: '#386C58', alias: 'green-700' }, 'Client B': { value: '#18628B', alias: 'blue-700' } } },
-  { name: 'brand/bg-accent', values: { 'Client A': { value: '#407C654D', alias: 'green-600 30%' }, 'Client B': { value: '#2D9CDB1A', alias: 'blue-600 10%' } } },
-  { name: 'brand/bg-active', values: { 'Client A': { value: '#407C651F', alias: 'green-600 20%' }, 'Client B': { value: '#2D9CDB33', alias: 'blue-600 20%' } } },
-  { name: 'Effect/shadow', values: { 'Client A': { value: '#407C6533' }, 'Client B': { value: '#2D9CDB33' } } },
-  { name: 'brand/bg-hover', values: { 'Client A': { value: '#407C6514', alias: 'green-600 10%' }, 'Client B': { value: '#2D9CDB1A', alias: 'blue-600 10%' } } },
+  { name: 'brand/bg-accent', values: { 'Client A': { value: '#F2F8F5', alias: 'green-50' }, 'Client B': { value: '#EFF6FB', alias: 'blue-50' } } },
+  { name: 'brand/bg-active', values: { 'Client A': { value: '#E2EEEA', alias: 'green-100' }, 'Client B': { value: '#DAECF6', alias: 'blue-100' } } },
+  { name: 'brand/shadow', values: { 'Client A': { value: '#407C6533', alias: 'green-600 20%' }, 'Client B': { value: '#2D9CDB33', alias: 'blue-600 20%' } } },
 ]
 
 const appearanceTokens: SemanticToken[] = [
