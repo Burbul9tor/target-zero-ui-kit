@@ -11,10 +11,10 @@ function getInitialTheme(): UiKitTheme {
     const savedTheme = window.localStorage.getItem(storageKey)
     if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme
   } catch {
-    // Storage may be unavailable in private browsing; system preference still works.
+    // Storage may be unavailable in private browsing; use the product default.
   }
 
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+  return 'light'
 }
 
 const theme = ref<UiKitTheme>(getInitialTheme())

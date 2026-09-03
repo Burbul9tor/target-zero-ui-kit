@@ -34,7 +34,7 @@ const props = withDefaults(defineProps<{
 }>(), {
   modelValue: undefined, show: false, title: '', description: undefined, size: 'medium', placement: 'center',
   width: undefined, height: undefined, closeOnBackdrop: true, closeOnEscape: true, showClose: true,
-  initialFocus: undefined, teleportTo: 'body', disabledScroll: false, isExpand: false, withHeader: true,
+  initialFocus: undefined, teleportTo: 'body', disabledScroll: true, isExpand: false, withHeader: true,
   withFooter: true, expandable: false, classNames: () => [], closeIcon: undefined, expandIcon: undefined,
 })
 
