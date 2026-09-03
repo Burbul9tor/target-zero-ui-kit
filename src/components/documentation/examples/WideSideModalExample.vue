@@ -76,6 +76,7 @@ const rows = [
           :page="page"
           :count-per-page="countPerPage"
           :total-count="rows.length"
+          :columns-per-view="6"
           :count-per-page-options="[10, 25, 50]"
           show-pagination
           disabled-row-click
