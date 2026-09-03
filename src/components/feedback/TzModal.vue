@@ -4,12 +4,14 @@ import closeDefault from '../../assets/icons/path/close-modal-default--620-1527.
 import closeHover from '../../assets/icons/path/close-modal-hover--620-1533.svg?no-inline'
 
 export type ModalSize = 'small' | 'medium' | 'large' | 'fullscreen'
+export type ModalPlacement = 'center' | 'left' | 'right'
 
 const props = withDefaults(defineProps<{
   modelValue: boolean
   title: string
   description?: string
   size?: ModalSize
+  placement?: ModalPlacement
   width?: string
   height?: string
   closeOnBackdrop?: boolean
@@ -19,6 +21,7 @@ const props = withDefaults(defineProps<{
 }>(), {
   description: undefined,
   size: 'medium',
+  placement: 'center',
   width: undefined,
   height: undefined,
   closeOnBackdrop: true,
@@ -128,7 +131,7 @@ defineExpose({ close, focus: focusInitialElement })
 <template>
   <Teleport to="body">
     <Transition name="tz-modal">
-      <div v-if="modelValue" class="tz-modal" role="presentation" @mousedown.self="closeOnBackdrop && close()">
+      <div v-if="modelValue" class="tz-modal" :class="`tz-modal--${placement}`" role="presentation" @mousedown.self="closeOnBackdrop && close()">
         <section
           ref="dialog"
           class="tz-modal__dialog"
@@ -142,6 +145,9 @@ defineExpose({ close, focus: focusInitialElement })
           @keydown="onKeydown"
         >
           <header class="tz-modal__header">
+            <span v-if="$slots.icon" class="tz-modal__header-icon" aria-hidden="true">
+              <slot name="icon" />
+            </span>
             <div class="tz-modal__heading">
               <h2 :id="titleId">{{ title }}</h2>
               <p v-if="description" :id="descriptionId">{{ description }}</p>
@@ -161,13 +167,16 @@ defineExpose({ close, focus: focusInitialElement })
 
 <style scoped>
 .tz-modal{position:fixed;z-index:1000;inset:0;display:grid;padding:var(--padding-spacing-16);place-items:center;background:var(--bg-overlay)}
+.tz-modal--left{place-items:center start}.tz-modal--right{place-items:center end}
 .tz-modal__dialog{display:grid;width:min(var(--tz-modal-width,600px),100%);height:var(--tz-modal-height,auto);max-height:calc(100dvh - 32px);grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;color:var(--text-default);border:1px solid var(--border-default);border-radius:var(--radius-lg);background:var(--bg-surface);box-shadow:0 20px 48px var(--bg-shadow);outline:0}
+.tz-modal--left .tz-modal__dialog,.tz-modal--right .tz-modal__dialog{height:calc(100dvh - 32px)}
 .tz-modal__dialog--small{--tz-modal-width:400px}.tz-modal__dialog--medium{--tz-modal-width:600px}.tz-modal__dialog--large{--tz-modal-width:880px}.tz-modal__dialog--fullscreen{width:calc(100vw - 32px);height:calc(100dvh - 32px)}
 .tz-modal__header{display:flex;min-height:55px;padding:var(--padding-spacing-12) var(--padding-spacing-16);align-items:center;justify-content:space-between;gap:var(--padding-spacing-12);border-bottom:1px solid var(--border-default);background:var(--bg-surface)}
-.tz-modal__heading{min-width:0}.tz-modal__heading h2{margin:0;color:var(--text-default);font:var(--tz-text-heading-h3)}.tz-modal__heading p{margin:var(--padding-spacing-4) 0 0;color:var(--text-muted);font:var(--tz-text-body-small)}
+.tz-modal__header-icon{display:grid;flex:0 0 36px;width:36px;height:36px;place-items:center;color:var(--brand-primary);border-radius:var(--radius-md);background:var(--brand-bg-active)}.tz-modal__heading{min-width:0;flex:1}.tz-modal__heading h2{margin:0;color:var(--text-default);font:var(--tz-text-heading-h3)}.tz-modal__heading p{margin:var(--padding-spacing-4) 0 0;color:var(--text-muted);font:var(--tz-text-body-small)}
 .tz-modal__close{position:relative;display:grid;flex:0 0 32px;width:32px;height:32px;padding:var(--padding-spacing-4);place-items:center;border:0;border-radius:var(--radius-xs);background:transparent;cursor:pointer}.tz-modal__close img{position:absolute;width:24px;height:24px}.tz-modal__close-hover{opacity:0}.tz-modal__close:hover .tz-modal__close-default{opacity:0}.tz-modal__close:hover .tz-modal__close-hover{opacity:1}.tz-modal__close:focus-visible{outline:2px solid var(--brand-primary);outline-offset:1px}
 .tz-modal__body{min-height:0;overflow:auto;background:var(--bg-surface)}.tz-modal__footer{display:flex;min-height:49px;padding:var(--padding-spacing-8);align-items:center;justify-content:flex-end;gap:var(--padding-spacing-8);border-top:1px solid var(--border-default);background:var(--bg-surface)}
 .tz-modal-enter-active,.tz-modal-leave-active{transition:opacity 140ms ease}.tz-modal-enter-active .tz-modal__dialog,.tz-modal-leave-active .tz-modal__dialog{transition:transform 140ms ease,opacity 140ms ease}.tz-modal-enter-from,.tz-modal-leave-to{opacity:0}.tz-modal-enter-from .tz-modal__dialog,.tz-modal-leave-to .tz-modal__dialog{opacity:0;transform:translateY(4px) scale(.99)}
+.tz-modal-enter-from.tz-modal--left .tz-modal__dialog,.tz-modal-leave-to.tz-modal--left .tz-modal__dialog{transform:translateX(-8px)}.tz-modal-enter-from.tz-modal--right .tz-modal__dialog,.tz-modal-leave-to.tz-modal--right .tz-modal__dialog{transform:translateX(8px)}
 @media(max-width:620px){.tz-modal{padding:0}.tz-modal__dialog,.tz-modal__dialog--fullscreen{width:100%;height:100dvh;max-height:none;border:0;border-radius:0}.tz-modal__header{padding-inline:var(--padding-spacing-16)}}
 @media(prefers-reduced-motion:reduce){.tz-modal-enter-active,.tz-modal-leave-active,.tz-modal-enter-active .tz-modal__dialog,.tz-modal-leave-active .tz-modal__dialog{transition:none}}
 </style>

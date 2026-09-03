@@ -2,12 +2,20 @@
 import { Check, Info } from '@lucide/vue'
 import { ref } from 'vue'
 import TzButton from '../actions/TzButton.vue'
-import TzModal, { type ModalSize } from '../feedback/TzModal.vue'
+import TzModal, { type ModalPlacement, type ModalSize } from '../feedback/TzModal.vue'
+import DashboardSettingsModalExample from './examples/DashboardSettingsModalExample.vue'
 import ObjectPickerModalExample from './examples/ObjectPickerModalExample.vue'
 
 const open = ref(false)
 const pickerOpen = ref(false)
+const sideOpen = ref(false)
+const sidePlacement = ref<ModalPlacement>('right')
 const activeSize = ref<ModalSize>('medium')
+
+function showSide(placement: ModalPlacement) {
+  sidePlacement.value = placement
+  sideOpen.value = true
+}
 
 function show(size: ModalSize) {
   activeSize.value = size
@@ -52,6 +60,20 @@ function show(size: ModalSize) {
       <div class="state-stage"><TzButton size="medium" @click="pickerOpen = true">Открыть список объектов</TzButton></div>
     </section>
 
+    <section class="state-card">
+      <header>
+        <div>
+          <span>Side modal</span>
+          <h2>Настройка дашборда</h2>
+          <p>Плавающее окно почти на всю высоту с отступом 16 px от краёв экрана.</p>
+        </div>
+      </header>
+      <div class="state-stage">
+        <TzButton size="medium" @click="showSide('left')">Открыть слева</TzButton>
+        <TzButton size="medium" @click="showSide('right')">Открыть справа</TzButton>
+      </div>
+    </section>
+
     <section class="state-card anatomy">
       <header><div><span>Анатомия</span><h2>Структура</h2></div></header>
       <div class="anatomy-preview">
@@ -72,6 +94,7 @@ function show(size: ModalSize) {
     </section>
 
     <ObjectPickerModalExample v-model="pickerOpen" />
+    <DashboardSettingsModalExample v-model="sideOpen" :placement="sidePlacement" />
 
     <TzModal
       v-model="open"
