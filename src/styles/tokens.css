@@ -109,9 +109,9 @@
   /* Brand / Client A */
   --brand-primary: var(--green-600);
   --brand-primary-hover: var(--green-700);
-  --brand-bg-accent: var(--green-600-30);
-  --brand-bg-active: var(--green-600-20);
   --brand-bg-hover: var(--green-600-10);
+  --brand-bg-active: var(--green-600-20);
+  --brand-bg-accent: var(--green-600-30);
   --effect-shadow: #407c6533;
 
   /* Appearance / Light */
@@ -178,9 +178,9 @@
 [data-brand='client-b'] {
   --brand-primary: var(--blue-600);
   --brand-primary-hover: var(--blue-700);
-  --brand-bg-accent: var(--blue-600-10);
-  --brand-bg-active: var(--blue-600-20);
   --brand-bg-hover: var(--blue-600-10);
+  --brand-bg-active: var(--blue-600-20);
+  --brand-bg-accent: var(--blue-600-10);
   --brand-bg-chip: var(--blue-600-30);
   --effect-shadow: var(--blue-600-20);
   --effect-hover: var(--blue-600-20);
