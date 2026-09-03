@@ -3,8 +3,10 @@ import { Check, Info } from '@lucide/vue'
 import { ref } from 'vue'
 import TzButton from '../actions/TzButton.vue'
 import TzModal, { type ModalSize } from '../feedback/TzModal.vue'
+import ObjectPickerModalExample from './examples/ObjectPickerModalExample.vue'
 
 const open = ref(false)
+const pickerOpen = ref(false)
 const activeSize = ref<ModalSize>('medium')
 
 function show(size: ModalSize) {
@@ -39,6 +41,17 @@ function show(size: ModalSize) {
       </div>
     </section>
 
+    <section class="state-card">
+      <header>
+        <div>
+          <span>Data list</span>
+          <h2>Выбор объекта</h2>
+          <p>Пример с поиском, множественным выбором и длинным прокручиваемым списком.</p>
+        </div>
+      </header>
+      <div class="state-stage"><TzButton size="medium" @click="pickerOpen = true">Открыть список объектов</TzButton></div>
+    </section>
+
     <section class="state-card anatomy">
       <header><div><span>Анатомия</span><h2>Структура</h2></div></header>
       <div class="anatomy-preview">
@@ -53,10 +66,12 @@ function show(size: ModalSize) {
       <div class="guidance-grid">
         <article><strong>Фокус</strong><p>При открытии фокус перемещается внутрь окна и удерживается там.</p></article>
         <article><strong>Закрытие</strong><p>Поддерживаются Escape, кнопка-крестик и нажатие на фон.</p></article>
-        <article><strong>Прокрутка</strong><p>Страница блокируется, а длинный контент прокручивается внутри body.</p></article>
+        <article><strong>Максимальная высота</strong><p>На desktop — min(760px, 100dvh − 32px). Прокручивается только список.</p></article>
         <article><strong>Адаптивность</strong><p>До 620 px модальное окно занимает весь экран.</p></article>
       </div>
     </section>
+
+    <ObjectPickerModalExample v-model="pickerOpen" />
 
     <TzModal
       v-model="open"
