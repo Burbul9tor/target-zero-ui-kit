@@ -17,7 +17,7 @@ const primitiveGroups: Array<{ name: string; colors: Swatch[] }> = [
   ].map(([name, value]) => ({ name, value })) },
   { name: 'gray', colors: [
     ['0', '#FFFFFF'], ['50', '#F8F9F9'], ['100', '#F2F3F3'], ['200', '#E4E7E6'], ['300', '#CFD3D3'], ['400', '#9AA2A2'],
-    ['500', '#717A7A'], ['600', '#5F5F5F'], ['700', '#404040'], ['800', '#2B2B2B'], ['900', '#161616'], ['950', '#0C0C0C'],
+    ['500', '#717A7A'], ['600', '#5F5F5F'], ['700', '#404040'], ['800', '#2B2B2B'], ['850', '#212121'], ['900', '#161616'], ['950', '#0C0C0C'],
   ].map(([name, value]) => ({ name, value })) },
   { name: 'red', colors: [['100', '#FEE2E2'], ['600', '#DC2626'], ['700', '#B91C1C']].map(([name, value]) => ({ name, value })) },
   { name: 'amber', colors: [['100', '#FEF3C7'], ['600', '#D97706'], ['700', '#B45309']].map(([name, value]) => ({ name, value })) },

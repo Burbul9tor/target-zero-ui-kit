@@ -12,8 +12,10 @@ import InputDocumentation from './components/documentation/InputDocumentation.vu
 import ModalDocumentation from './components/documentation/ModalDocumentation.vue'
 import PreloaderDocumentation from './components/documentation/PreloaderDocumentation.vue'
 import SearchDocumentation from './components/documentation/SearchDocumentation.vue'
+import SegmentedControlDocumentation from './components/documentation/SegmentedControlDocumentation.vue'
 import SelectDocumentation from './components/documentation/SelectDocumentation.vue'
 import TableDocumentation from './components/documentation/TableDocumentationTechnical.vue'
+import TreeDocumentation from './components/documentation/TreeDocumentation.vue'
 import ToggleDocumentation from './components/documentation/ToggleDocumentation.vue'
 import ToastDocumentation from './components/documentation/ToastDocumentation.vue'
 import TabsDocumentation from './components/documentation/TabsDocumentation.vue'
@@ -30,7 +32,7 @@ const isAppLoading = ref(true)
 const activeSection = ref('Navigation')
 const catalogCollapsed = ref(false)
 const sidebarCollapsed = ref(false)
-const readyItems = ['Colors', 'Typography', 'Variables', 'Navigation', 'Breadcrumbs', 'Input', 'Button', 'Modal', 'Toast', 'Select', 'Preloader', 'Toggle', 'Tabs', 'Icon', 'Search', 'Avatar', 'Table', 'Сложные фильтры']
+const readyItems = ['Colors', 'Typography', 'Variables', 'Navigation', 'Breadcrumbs', 'Input', 'Button', 'Modal', 'Toast', 'Select', 'Preloader', 'Toggle', 'Tabs', 'Segmented Control', 'Icon', 'Search', 'Avatar', 'Tree', 'Table', 'Сложные фильтры']
 
 const catalog = [
   { group: 'Основы', items: ['Colors', 'Typography', 'Variables'] },
@@ -48,6 +50,7 @@ const catalog = [
       'Preloader',
       'Toggle',
       'Tabs',
+      'Segmented Control',
       'Search',
       'Chip',
       'Status',
@@ -55,6 +58,7 @@ const catalog = [
       'Checkbox',
       'Uploader',
       'Avatar',
+      'Tree',
       'Table',
       'Сложные фильтры',
     ],
@@ -170,10 +174,12 @@ const breadcrumbItems = [
       <SelectDocumentation v-else-if="activeSection === 'Select'" />
       <SearchDocumentation v-else-if="activeSection === 'Search'" />
       <AvatarDocumentation v-else-if="activeSection === 'Avatar'" />
+      <TreeDocumentation v-else-if="activeSection === 'Tree'" />
       <TableDocumentation v-else-if="activeSection === 'Table'" />
       <ComplexFiltersDocumentation v-else-if="activeSection === 'Сложные фильтры'" />
       <ToggleDocumentation v-else-if="activeSection === 'Toggle'" />
       <TabsDocumentation v-else-if="activeSection === 'Tabs'" />
+      <SegmentedControlDocumentation v-else-if="activeSection === 'Segmented Control'" />
 
       <template v-else>
         <header class="page-header">

@@ -8,6 +8,7 @@ const activeTwo = ref<TabValue>('first')
 const activeThree = ref<TabValue>('first')
 const activeFour = ref<TabValue>('first')
 const counterActive = ref<TabValue>('info')
+const indicatorActive = ref<TabValue>('success')
 
 const counterItems: TabItem[] = [
   { value: 'zero', label: 'Пусто', count: 0, badgeTone: 'neutral' },
@@ -24,6 +25,11 @@ const demoItems: TabItem[] = [
   { value: 'disabled', label: 'Недоступно', count: 0, disabled: true },
 ]
 
+const indicatorItems: TabItem[] = [
+  { value: 'warning', label: 'Требует внимания', indicator: 'warning', indicatorLabel: 'Есть замечания' },
+  { value: 'success', label: 'Проверено', indicator: 'success', indicatorLabel: 'Проверка завершена' },
+]
+
 const makeItems = (length: number): TabItem[] => Array.from({ length }, (_, index) => ({
   value: index === 0 ? 'first' : `tab-${index + 1}`,
   label: `Название ${index + 1}`,
@@ -36,6 +42,8 @@ const tokens = [
   ['Активный текст', '--text-button-fill', 'gray-0'],
   ['Неактивный текст', '--text-muted', 'gray-500'],
   ['Info badge', '--status-info-bg / fg', 'blue-100 / blue-700'],
+  ['Warning indicator', '--orange-bg / fg', 'orange semantic'],
+  ['Success indicator', '--status-success-bg / fg', 'green-100 / green-700'],
   ['Радиусы', '--radius-md / --radius-sm', '8px / 6px'],
 ]
 </script>
@@ -56,6 +64,14 @@ const tokens = [
       <div class="demo-canvas">
         <TzTabs v-model="activeDemo" :items="demoItems" aria-label="Разделы карточки" />
         <p>Активное значение: <code>{{ activeDemo }}</code></p>
+      </div>
+    </section>
+
+    <section class="tabs-card">
+      <header><h2>Статусная индикация</h2><p>Небольшая иконка сообщает о состоянии раздела. Оранжевая означает, что вкладка требует внимания, зелёная — что действие успешно завершено.</p></header>
+      <div class="indicator-showcase">
+        <TzTabs v-model="indicatorActive" :items="indicatorItems" aria-label="Статусы разделов" />
+        <p><code>indicator="warning"</code> · <code>indicator="success"</code></p>
       </div>
     </section>
 
@@ -86,11 +102,12 @@ const tokens = [
       <header><h2>Интерфейс и поведение</h2><p>API компонента и обязательные правила взаимодействия.</p></header>
       <div class="requirements">
         <article><strong>v-model</strong><p>При выборе обновляется <code>modelValue</code>. Дополнительно отправляется <code>change(value, item)</code>.</p></article>
-        <article><strong>items</strong><p>Поля: <code>value</code>, <code>label</code>, опциональные <code>count</code>, <code>badgeTone</code>, <code>countLabel</code> и <code>disabled</code>.</p></article>
+        <article><strong>items</strong><p>Поля: <code>value</code>, <code>label</code>, опциональные <code>count</code>, <code>badgeTone</code>, <code>indicator</code>, <code>indicatorLabel</code> и <code>disabled</code>.</p></article>
         <article><strong>Большие значения</strong><p>По умолчанию число показывается полностью. Проп <code>countMax</code> включает компактный формат, например <code>99+</code>.</p></article>
         <article><strong>Клавиатура</strong><p>Стрелки переключают вкладки, Home и End переходят к первой и последней доступной вкладке.</p></article>
         <article><strong>Доступность</strong><p>Роли <code>tablist</code> и <code>tab</code>, <code>aria-selected</code> и roving tabindex.</p></article>
-        <article><strong>Слоты</strong><p><code>#label</code> и <code>#badge</code> позволяют переопределить содержимое.</p></article>
+        <article><strong>Слоты</strong><p><code>#label</code>, <code>#badge</code> и <code>#indicator</code> позволяют переопределить содержимое.</p></article>
+        <article><strong>Индикация</strong><p><code>warning</code> обозначает внимание, <code>success</code> — успешное состояние. Для количества используйте <code>count</code>.</p></article>
         <article><strong>Размер</strong><p>Контейнер — 4px, вкладка — 4×16px, текст 14/20, радиусы 8px и 6px.</p></article>
       </div>
     </section>
@@ -116,6 +133,8 @@ const tokens = [
 .tabs-card h2 { margin: 0 0 var(--padding-spacing-4); color: var(--text-default); font: 600 18px/24px var(--tz-font-family); }
 .demo-canvas { display: flex; min-height: 128px; padding: var(--padding-spacing-24); flex-direction: column; align-items: flex-start; justify-content: center; gap: var(--padding-spacing-16); border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--bg-page); }
 .demo-canvas p { margin: 0; color: var(--text-muted); font: 400 12px/18px var(--tz-font-family); }
+.indicator-showcase { display: flex; min-height: 112px; padding: var(--padding-spacing-24); flex-direction: column; align-items: flex-start; justify-content: center; gap: var(--padding-spacing-12); border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--bg-page); }
+.indicator-showcase p { margin: 0; color: var(--text-muted); font: var(--tz-text-body-small); }
 .counter-showcase { display: grid; gap: var(--padding-spacing-16); padding: var(--padding-spacing-20); overflow-x: auto; border: 1px solid var(--border-default); border-radius: var(--radius-md); background: var(--bg-page); }
 .counter-showcase > div { display: flex; min-width: max-content; flex-direction: column; align-items: flex-start; gap: var(--padding-spacing-8); }
 .counter-showcase small { color: var(--text-muted); font: 500 10px/14px var(--tz-font-family); letter-spacing: .05em; }

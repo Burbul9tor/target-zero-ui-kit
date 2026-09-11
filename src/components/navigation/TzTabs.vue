@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { CircleCheck, Info } from '@lucide/vue'
 import { computed, nextTick, ref } from 'vue'
 
 export type TabValue = string | number
 export type TabBadgeTone = 'neutral' | 'info' | 'success' | 'warning' | 'error'
+export type TabIndicatorTone = 'warning' | 'success'
 
 export interface TabItem {
   value: TabValue
@@ -11,6 +13,8 @@ export interface TabItem {
   count?: number
   badgeTone?: TabBadgeTone
   countLabel?: string
+  indicator?: TabIndicatorTone
+  indicatorLabel?: string
 }
 
 const props = withDefaults(defineProps<{
@@ -34,6 +38,7 @@ const emit = defineEmits<{
 defineSlots<{
   label(props: { item: TabItem; active: boolean }): unknown
   badge(props: { item: TabItem; active: boolean }): unknown
+  indicator(props: { item: TabItem; active: boolean }): unknown
 }>()
 
 const tabRefs = ref<Array<HTMLButtonElement | null>>([])
@@ -118,6 +123,19 @@ function onKeydown(event: KeyboardEvent, index: number) {
       >
         <slot name="badge" :item="item" :active="item.value === activeValue">{{ displayCount(item.count) }}</slot>
       </span>
+      <span
+        v-if="item.indicator"
+        class="tz-tabs__indicator"
+        :class="`tz-tabs__indicator--${item.indicator}`"
+        role="img"
+        :aria-label="item.indicatorLabel ?? (item.indicator === 'success' ? 'Успешно' : 'Требует внимания')"
+        :title="item.indicatorLabel ?? (item.indicator === 'success' ? 'Успешно' : 'Требует внимания')"
+      >
+        <slot name="indicator" :item="item" :active="item.value === activeValue">
+          <CircleCheck v-if="item.indicator === 'success'" aria-hidden="true" />
+          <Info v-else aria-hidden="true" />
+        </slot>
+      </span>
     </button>
   </div>
 </template>
@@ -184,9 +202,25 @@ function onKeydown(event: KeyboardEvent, index: number) {
 .tz-tabs__badge--empty { color: var(--text-muted); background: var(--text-disabled); }
 .tz-tabs__tab.is-active .tz-tabs__badge { color: var(--brand-primary); background: var(--text-button-fill); }
 
+.tz-tabs__indicator {
+  display: inline-grid;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  padding: 2px;
+  place-items: center;
+  border-radius: var(--radius-full);
+}
+
+.tz-tabs__indicator svg { width: 12px; height: 12px; stroke-width: 1.75; }
+.tz-tabs__indicator--warning { color: var(--orange-fg); background: var(--orange-bg); }
+.tz-tabs__indicator--success { color: var(--status-success-fg); background: var(--status-success-bg); }
+.tz-tabs__tab:disabled .tz-tabs__indicator { opacity: .5; }
+
 @keyframes tz-tab-counter-in { from { opacity: .35; transform: scale(.86); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .tz-tabs__tab, .tz-tabs__badge { transition: none; animation: none; }
+  .tz-tabs__tab, .tz-tabs__badge, .tz-tabs__indicator { transition: none; animation: none; }
 }
 </style>
