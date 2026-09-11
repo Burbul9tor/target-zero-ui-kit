@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { Building2, Check, HardHat, LayoutDashboard, Network, Recycle, Search, User, X } from '@lucide/vue'
-import { computed, ref } from 'vue'
+import { Building2, Check, HardHat, LayoutDashboard, Network, Recycle, User, X } from '@lucide/vue'
+import { ref } from 'vue'
 import TzButton from '../actions/TzButton.vue'
 import TzTree from '../data/TzTree.vue'
 import type { TreeDropPayload, TreeKey, TreeNodeBase, TreeNodeItem } from '../data/TzTree.vue'
 import TzModal from '../feedback/TzModal.vue'
-import TzInput from '../forms/TzInput.vue'
+
 
 const treeItems: TreeNodeBase[] = [
   { id: 'besafe', title: 'BeSafe', icon: Building2, code: 'Головная организация' },
@@ -27,6 +27,23 @@ const treeItems: TreeNodeBase[] = [
   { id: 'target-zero', title: 'ТОО Target Zero', icon: LayoutDashboard, code: 'Дочерняя зависимая организация' },
   { id: 'hse', title: 'HSE', icon: Recycle, code: 'Структурное подразделение' },
 ]
+const pageTreeLevels: TreeNodeBase[] = [
+  { id: 'page-besafe', title: 'BeSafe', icon: Building2, code: 'Головная организация' },
+  { id: 'page-ikod', title: 'IKOD', icon: HardHat, code: 'Подрядная организация' },
+  { id: 'page-tac', title: 'TAC', icon: Network, code: 'Подразделение' },
+  { id: 'page-support', title: 'Support', icon: Network, code: 'Подразделение' },
+  { id: 'page-hse-directorate', title: 'Управление HSE', icon: Network, code: 'Управление' },
+  { id: 'page-ecology-department', title: 'Департамент экологии', icon: Network, code: 'Департамент' },
+  { id: 'page-control-division', title: 'Производственный контроль', icon: Network, code: 'Отдел' },
+  { id: 'page-monitoring-group', title: 'Экологический мониторинг', icon: Network, code: 'Группа' },
+  { id: 'page-pavlodar-site', title: 'Площадка Павлодар', icon: LayoutDashboard, code: 'Объект' },
+  { id: 'page-lead-ecologist', title: 'Ведущий эколог', icon: User, code: 'Должность' },
+]
+const pageTreeItems = pageTreeLevels.reduceRight<TreeNodeBase[]>(
+  (children, node) => [{ ...node, ...(children.length ? { children } : {}) }],
+  [],
+)
+const pageExpandedItems = ref<TreeKey[]>([])
 const checkedItems = ref<TreeKey[]>(['lead-ecologist'])
 const expandedItems = ref<TreeKey[]>(['ikod-contractor', 'tac', 'ikod-department'])
 const searchableExpanded = ref<TreeKey[]>(['ikod-contractor'])
@@ -34,30 +51,10 @@ const draggableItems = ref<TreeNodeItem[]>(JSON.parse(JSON.stringify(treeItems))
 const draggableExpanded = ref<TreeKey[]>(['ikod-contractor', 'tac', 'ikod-department'])
 const lastDrop = ref('Перетащите узел на новую родительскую ветку')
 const lastAction = ref('Нажмите меню у любого узла')
-const pageSearch = ref('')
+
 const treeModalOpen = ref(false)
 const modalCheckedItems = ref<TreeKey[]>(['lead-ecologist'])
 const modalExpandedItems = ref<TreeKey[]>(['ikod-contractor', 'tac', 'ikod-department'])
-
-function filterTree(nodes: TreeNodeBase[], query: string): TreeNodeBase[] {
-  const normalized = query.trim().toLocaleLowerCase()
-  if (!normalized) return nodes
-  return nodes.flatMap(node => {
-    const children = filterTree(node.children ?? [], normalized)
-    const haystack = `${node.title ?? ''} ${node.code ?? ''}`.toLocaleLowerCase()
-    return haystack.includes(normalized) || children.length
-      ? [{ ...node, ...(children.length ? { children } : {}) }]
-      : []
-  })
-}
-function collectBranchKeys(nodes: TreeNodeBase[]): TreeKey[] {
-  return nodes.flatMap(node => [
-    ...(node.children?.length ? [node.id] : []),
-    ...collectBranchKeys(node.children ?? []),
-  ])
-}
-const pageItems = computed(() => filterTree(treeItems, pageSearch.value))
-const pageExpandedItems = computed(() => pageSearch.value ? collectBranchKeys(pageItems.value) : expandedItems.value)
 
 function describeDrop(payload: TreeDropPayload) {
   lastDrop.value = payload.parent
@@ -200,25 +197,18 @@ const expandedItems = ref<TreeKey[]>(['ikod', 'tac', 'ikod-department'])
     </section>
 
     <section class="card">
-      <header><h2>Пример страницы</h2><p>Рабочий сценарий справочника: заголовок, поиск, основное действие и организационное дерево.</p></header>
+      <header><h2>Пример страницы</h2><p>Справочник организационной структуры с деревом глубиной 10 уровней. Каждый уровень открывается и закрывается независимо своей стрелкой.</p></header>
       <div class="organization-page">
         <nav class="breadcrumbs" aria-label="Хлебные крошки"><span>Справочники</span><i>/</i><strong>Организационная структура</strong></nav>
         <h3>Организационная структура</h3>
-        <div class="organization-toolbar">
-          <TzInput v-model="pageSearch" :icon-left="Search" placeholder="Поиск" clearable size="large" :show-label="false" />
-          <TzButton size="large">Создать организацию</TzButton>
-        </div>
         <TzTree
-          :expanded-items="pageExpandedItems"
-          :items="pageItems"
+          v-model:expanded-items="pageExpandedItems"
+          :items="pageTreeItems"
           description-key="code"
           show-lines
           show-actions
-          aria-label="Организационная структура"
-          @update:expanded-items="expandedItems = $event"
-          @action="lastAction = `Действия: ${String($event.title)}`"
+          aria-label="Организационная структура, 10 уровней"
         />
-        <p v-if="!pageItems.length" class="page-empty">По запросу ничего не найдено</p>
       </div>
     </section>
 
@@ -236,6 +226,27 @@ const expandedItems = ref<TreeKey[]>(['ikod', 'tac', 'ikod-department'])
       </div>
     </section>
 
+    <section class="card handoff-card">
+      <header><h2>Как перенести IKOD Tree в стилизацию Target Zero</h2><p>Сохраняем контракт и поведение IKOD, а разметку узла и визуальный слой оформляем через адаптер <code>TzTree</code>.</p></header>
+      <div class="migration-map">
+        <div><strong>Данные и API IKOD</strong><span><code>items</code>, ключи полей, загрузка, поиск, выбор и drag-and-drop остаются без изменения бизнес-логики.</span></div>
+        <div><strong>Состояние</strong><span><code>checkedItems</code> и события IKOD сохраняются; раскрытие контролируется через дополнительный <code>expandedItems</code>.</span></div>
+        <div><strong>Разметка узла</strong><span>Каждый элемент получает строку высотой 40 px, иконку, основную и вторичную подпись, стрелку и опциональное меню действий.</span></div>
+        <div><strong>Соединительные линии</strong><span><code>showLines</code> включает псевдоэлементы: вертикаль строится на дочернем wrapper, горизонталь — на строке узла, последний потомок закрывает ветку.</span></div>
+        <div><strong>Тема и состояния</strong><span>Все цвета, отступы, радиусы, hover, focus и disabled берутся из CSS-токенов Target Zero — без локальных HEX-значений.</span></div>
+      </div>
+      <div class="handoff-grid">
+        <article>
+          <h3>Что делать фронтенду</h3>
+          <ol><li>Передать существующий массив IKOD в <code>items</code>.</li><li>Сопоставить ключи через <code>itemKey</code>, <code>displayKey</code> и <code>childrenKey</code>.</li><li>Подключить управляемые значения через <code>v-model</code>.</li><li>Включить нужные расширения: <code>descriptionKey</code>, <code>showLines</code> и <code>showActions</code>.</li><li>Обрабатывать API-загрузку и бизнес-действия снаружи компонента.</li></ol>
+        </article>
+        <article>
+          <h3>Граница ответственности</h3>
+          <p><code>TzTree</code> отвечает за рекурсивный UI, доступность, выбор, раскрытие и стили. Страница отвечает за получение данных, права доступа, сохранение результата и обработку меню.</p>
+          <p class="technical-note">В текущем стенде пакет IKOD напрямую не подключён: воспроизведён его компонентный контракт. Если исходный <code>UiTree</code> появится в зависимостях продукта, его можно разместить внутри адаптера, не меняя API страниц.</p>
+        </article>
+      </div>
+    </section>
     <TzModal v-model="treeModalOpen" title="Выберите элементы структуры" description="Используйте поиск или выберите всю ветку" size="large" height="min(760px, calc(100dvh - 32px))">
       <div class="tree-modal-body">
         <TzTree
@@ -265,7 +276,7 @@ const expandedItems = ref<TreeKey[]>(['ikod', 'tac', 'ikod-department'])
 .card{min-width:0;padding:var(--padding-spacing-24);border:1px solid var(--border-default);border-radius:var(--radius-lg);background:var(--bg-surface);box-shadow:0 10px 15px -3px var(--bg-shadow)}.card>header{margin-bottom:var(--padding-spacing-20)}.card h2{margin:0 0 var(--padding-spacing-4);color:var(--text-default);font:600 18px/24px var(--tz-font-family)}.example-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(240px,1fr);gap:var(--padding-spacing-16)}.stage,.notes{min-width:0;padding:var(--padding-spacing-20);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-page)}.stage.narrow{max-width:680px}.notes strong{color:var(--text-default);font:var(--tz-text-body-strong)}.notes p{margin:var(--padding-spacing-8) 0 0;color:var(--text-muted);font:var(--tz-text-body-small)}.custom-node{display:flex;min-width:0;flex-direction:column}.custom-node strong{overflow:hidden;font:var(--tz-text-body-medium);text-overflow:ellipsis}.custom-node small{color:var(--text-muted);font:var(--tz-text-label-small)}.result{margin:var(--padding-spacing-12) 0 0;color:var(--text-muted);font:var(--tz-text-body-small)}code{color:var(--brand-primary);font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
 .api{overflow:hidden;border:1px solid var(--border-default);border-radius:var(--radius-md)}.api>div{display:grid;grid-template-columns:1fr 1.35fr 2.2fr;gap:var(--padding-spacing-12);padding:var(--padding-spacing-12);border-top:1px solid var(--border-default);font:var(--tz-text-body-small)}.api>div:first-child{border-top:0}.api-note{margin:var(--padding-spacing-12) 0 0;color:var(--text-muted);font:var(--tz-text-body-small)}.api-note code{margin-right:var(--padding-spacing-4)}
 .modal-demo{display:flex;align-items:center;gap:var(--padding-spacing-16)}.modal-demo p{margin:0;color:var(--text-muted);font:var(--tz-text-body-small)}.modal-demo strong{color:var(--text-default)}.tree-modal-body{box-sizing:border-box;min-height:100%;padding:var(--padding-spacing-20)}.modal-selection-count{margin-right:auto;color:var(--text-muted);font:var(--tz-text-body-small)}
-.organization-page{min-width:0;padding:var(--padding-spacing-24);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-page)}.breadcrumbs{display:flex;align-items:center;gap:var(--padding-spacing-8);color:var(--text-muted);font:var(--tz-text-body-small)}.breadcrumbs i{font-style:normal}.breadcrumbs strong{color:var(--text-default);font-weight:600}.organization-page>h3{margin:var(--padding-spacing-20) 0 var(--padding-spacing-32);color:var(--text-default);font:var(--tz-text-heading-display)}.organization-toolbar{display:flex;align-items:center;justify-content:space-between;gap:var(--padding-spacing-16);margin-bottom:var(--padding-spacing-24)}.organization-toolbar :deep(.tz-input){max-width:480px}.page-empty{margin:var(--padding-spacing-24) 0;text-align:center;color:var(--text-muted);font:var(--tz-text-body-medium)}
+.organization-page{min-width:0;padding:var(--padding-spacing-24);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-page)}.breadcrumbs{display:flex;align-items:center;gap:var(--padding-spacing-8);color:var(--text-muted);font:var(--tz-text-body-small)}.breadcrumbs i{font-style:normal}.breadcrumbs strong{color:var(--text-default);font-weight:600}.organization-page>h3{margin:var(--padding-spacing-20) 0 var(--padding-spacing-32);color:var(--text-default);font:var(--tz-text-heading-display)}
 .implementation-grid{display:grid;grid-template-columns:minmax(300px,.85fr) minmax(0,1.15fr);gap:var(--padding-spacing-20);align-items:start}.implementation-notes{display:grid;gap:var(--padding-spacing-12)}.implementation-notes article{display:flex;gap:var(--padding-spacing-12);padding:var(--padding-spacing-12);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-page)}.implementation-notes article>span{display:grid;flex:0 0 24px;width:24px;height:24px;place-items:center;color:var(--brand-primary);border-radius:var(--radius-full);background:var(--brand-bg-active);font:var(--tz-text-label-small)}.implementation-notes h3{margin:0 0 var(--padding-spacing-4);color:var(--text-default);font:var(--tz-text-body-strong)}.implementation-notes p{margin:0;color:var(--text-muted);font:var(--tz-text-body-small)}.lines-note{border-color:color-mix(in srgb,var(--brand-primary) 28%,var(--border-default))!important}.line-diagram{position:relative;height:48px;margin-top:var(--padding-spacing-12);padding-left:32px;color:var(--text-muted);font:var(--tz-text-label-small)}.line-diagram i{position:absolute;top:0;bottom:8px;left:8px;border-left:1px solid var(--brand-primary)}.line-diagram b{position:absolute;top:22px;left:8px;width:16px;border-top:1px solid var(--brand-primary)}.line-diagram span{display:inline-flex;margin-top:11px;padding:6px 10px;border:1px solid var(--border-default);border-radius:var(--radius-xs);background:var(--bg-surface)}.code-block{box-sizing:border-box;max-height:680px;margin:0;padding:var(--padding-spacing-20);overflow:auto;color:var(--gray-100);border:1px solid var(--gray-800);border-radius:var(--radius-md);background:var(--gray-950);font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}.code-block code{color:inherit}
-@media(max-width:1000px){.implementation-grid{grid-template-columns:1fr}.code-block{max-height:520px}}@media(max-width:800px){.example-grid{grid-template-columns:1fr}.api{overflow-x:auto}.api>div{min-width:660px}.organization-toolbar{align-items:stretch;flex-direction:column}.organization-toolbar :deep(.tz-input){max-width:none}.organization-toolbar :deep(.tz-button){align-self:flex-start}}@media(max-width:620px){.page-header{flex-direction:column}.card{padding:var(--padding-spacing-16)}.stage,.notes,.organization-page{padding:var(--padding-spacing-12)}.organization-page>h3{margin-bottom:var(--padding-spacing-20);font-size:24px;line-height:32px}.organization-toolbar :deep(.tz-button){width:100%}}
+.migration-map{overflow:hidden;border:1px solid var(--border-default);border-radius:var(--radius-md)}.migration-map>div{display:grid;grid-template-columns:minmax(180px,.75fr) minmax(0,2fr);gap:var(--padding-spacing-16);padding:var(--padding-spacing-12) var(--padding-spacing-16);border-top:1px solid var(--border-default);background:var(--bg-page);font:var(--tz-text-body-small)}.migration-map>div:first-child{border-top:0}.migration-map strong{color:var(--text-default)}.migration-map span{color:var(--text-muted)}.handoff-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--padding-spacing-16);margin-top:var(--padding-spacing-16)}.handoff-grid article{padding:var(--padding-spacing-16);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-page)}.handoff-grid h3{margin:0 0 var(--padding-spacing-8);color:var(--text-default);font:var(--tz-text-body-strong)}.handoff-grid ol{margin:0;padding-left:var(--padding-spacing-20);color:var(--text-muted);font:var(--tz-text-body-small)}.handoff-grid li+li{margin-top:var(--padding-spacing-6)}.handoff-grid p{margin:0;color:var(--text-muted);font:var(--tz-text-body-small)}.handoff-grid p+p{margin-top:var(--padding-spacing-12)}.technical-note{padding:var(--padding-spacing-12);border-radius:var(--radius-sm);background:var(--brand-bg-hover)}@media(max-width:1000px){.implementation-grid,.handoff-grid{grid-template-columns:1fr}.code-block{max-height:520px}}@media(max-width:800px){.example-grid{grid-template-columns:1fr}.api{overflow-x:auto}.api>div{min-width:660px}}@media(max-width:620px){.migration-map>div{grid-template-columns:1fr;gap:var(--padding-spacing-4)}.page-header{flex-direction:column}.card{padding:var(--padding-spacing-16)}.stage,.notes,.organization-page{padding:var(--padding-spacing-12)}.organization-page>h3{margin-bottom:var(--padding-spacing-20);font-size:24px;line-height:32px}}
 </style>

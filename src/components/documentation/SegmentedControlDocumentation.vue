@@ -39,7 +39,7 @@ const api = [
 <template>
   <div class="segmented-docs">
     <header class="page-header">
-      <div><p class="eyebrow">SELECTION · SINGLE VALUE</p><h1>Segmented Control</h1><p>Компактный выбор одного значения из небольшого набора взаимно исключающих вариантов.</p></div>
+      <div><p class="eyebrow">SELECTION · SINGLE VALUE</p><h1>Segmented Control</h1><p>Сегментированный переключатель — элемент управления для выбора одного значения из небольшого набора взаимно исключающих вариантов. Все варианты видны сразу, а выбранный сегмент выделяется цветом.</p></div>
       <span class="ready"><Check :size="14" /> Готово</span>
     </header>
 
