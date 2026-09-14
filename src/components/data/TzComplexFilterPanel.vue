@@ -4,6 +4,7 @@ import TzTableFilterPanel from './TzTableFilterPanel.vue'
 import TzInput from '../forms/TzInput.vue'
 import TzSearch from '../forms/TzSearch.vue'
 import TzSelect from '../forms/TzSelect.vue'
+import TzSegmentedControl, { type SegmentedItem, type SegmentedValue } from '../forms/TzSegmentedControl.vue'
 
 export interface ComplexFilterValue {
   place: string | null
@@ -72,8 +73,26 @@ const placeOptions = [
   { label: 'Площадка Костанай', value: 'Площадка Костанай' },
 ]
 const yearOptions = ['2026', '2025', '2024'].map(value => ({ label: value, value }))
-const statusOptions = ['В пределах нормы', 'Близко к лимиту', 'Лимит превышен']
-const placeTypeOptions = ['Накопление', 'Размещение']
+const allOptionValue = '__all__'
+const statusOptions: SegmentedItem[] = [
+  { value: allOptionValue, label: 'Все' },
+  { value: 'В пределах нормы', label: 'В пределах нормы' },
+  { value: 'Близко к лимиту', label: 'Близко к лимиту' },
+  { value: 'Лимит превышен', label: 'Лимит превышен' },
+]
+const placeTypeOptions: SegmentedItem[] = [
+  { value: allOptionValue, label: 'Все' },
+  { value: 'Накопление', label: 'Накопление' },
+  { value: 'Размещение', label: 'Размещение' },
+]
+const statusValue = computed<SegmentedValue>({
+  get: () => draft.statuses[0] ?? allOptionValue,
+  set: value => { draft.statuses = value === allOptionValue ? [] : [String(value)] },
+})
+const placeTypeValue = computed<SegmentedValue>({
+  get: () => draft.placeTypes[0] ?? allOptionValue,
+  set: value => { draft.placeTypes = value === allOptionValue ? [] : [String(value)] },
+})
 const ranges = [
   { keyFrom: 'limitFrom', keyTo: 'limitTo', label: 'Лимит (т)' },
   { keyFrom: 'factFrom', keyTo: 'factTo', label: 'Факт (т)' },
@@ -100,9 +119,7 @@ watch(() => props.modelValue, value => Object.assign(draft, normalize(value)), {
 watch(() => props.appliedValue, value => { applied.value = normalize(value) }, { deep: true })
 watch(draft, value => emit('update:modelValue', normalize(value)), { deep: true })
 
-function toggleList(field: 'statuses' | 'placeTypes', value: string) {
-  draft[field] = draft[field].includes(value) ? draft[field].filter(item => item !== value) : [...draft[field], value]
-}
+
 function applyFilters() {
   applied.value = normalize(draft)
   emit('apply', normalize(applied.value))
@@ -172,19 +189,8 @@ function updateQuery(value: string) {
           <TzSelect v-model="draft.year" :options="yearOptions" label="Год" placeholder="Выберите год" size="medium" :required="false" :show-leading-icon="false" />
         </div>
 
-        <fieldset>
-          <legend>Статус</legend>
-          <div class="tz-complex-filter__options">
-            <button v-for="option in statusOptions" :key="option" type="button" :class="{ selected: draft.statuses.includes(option) }" :aria-pressed="draft.statuses.includes(option)" @click="toggleList('statuses', option)">{{ option }}</button>
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>Тип места</legend>
-          <div class="tz-complex-filter__options">
-            <button v-for="option in placeTypeOptions" :key="option" type="button" :class="{ selected: draft.placeTypes.includes(option) }" :aria-pressed="draft.placeTypes.includes(option)" @click="toggleList('placeTypes', option)">{{ option }}</button>
-          </div>
-        </fieldset>
+        <TzSegmentedControl v-model="statusValue" :items="statusOptions" label="Статус" size="medium" fluid />
+        <TzSegmentedControl v-model="placeTypeValue" :items="placeTypeOptions" label="Тип места" size="medium" fluid />
       </div>
 
       <div class="tz-complex-filter__ranges">
@@ -211,11 +217,9 @@ function updateQuery(value: string) {
 .tz-complex-filter__primary{display:grid;align-content:start;gap:var(--padding-spacing-16)}
 .tz-complex-filter__selects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--padding-spacing-8)}
 fieldset{min-width:0;margin:0;padding:0;border:0}legend{margin-bottom:var(--padding-spacing-4);color:var(--text-default);font:var(--tz-text-body-small)}
-.tz-complex-filter__options{display:flex;flex-wrap:wrap;gap:var(--padding-spacing-4)}
-.tz-complex-filter__options button{min-height:30px;padding:var(--padding-spacing-4) var(--padding-spacing-16);color:var(--text-default);border:1px solid transparent;border-radius:var(--radius-sm);background:var(--bg-disabled);font:400 14px/20px var(--tz-font-family);cursor:pointer;transition:background-color 140ms ease,border-color 140ms ease,color 140ms ease}
-.tz-complex-filter__options button:hover{border-color:var(--brand-primary)}.tz-complex-filter__options button.selected{color:var(--brand-primary);border-color:var(--brand-primary);background:var(--brand-bg-active)}
+
 .tz-complex-filter__ranges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:var(--padding-spacing-16)}
 .tz-complex-filter__ranges field>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--padding-spacing-8)}
 @media(max-width:900px){.tz-complex-filter__form{grid-template-columns:1fr;gap:var(--padding-spacing-24)}}
-@media(max-width:600px){.tz-complex-filter__selects,.tz-complex-filter__ranges{grid-template-columns:1fr}.tz-complex-filter__options button{width:100%}}
+@media(max-width:600px){.tz-complex-filter__selects,.tz-complex-filter__ranges{grid-template-columns:1fr}}
 </style>

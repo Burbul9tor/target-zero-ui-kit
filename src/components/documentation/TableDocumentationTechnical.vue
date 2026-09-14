@@ -10,6 +10,7 @@ import TzTable, {
 } from '../data/TzTable.vue'
 import TzTableFilterPanel from '../data/TzTableFilterPanel.vue'
 import TzTreeFilterModal from '../data/TzTreeFilterModal.vue'
+import TableColumnSettingsSideModal, { type ColumnSettingsItem } from './examples/TableColumnSettingsSideModal.vue'
 
 const departments = ['Экологический контроль', 'Охрана окружающей среды', 'Управление отходами', 'Экологическая экспертиза']
 const objectTree = [
@@ -103,6 +104,18 @@ const columns = ref<TzTableColumn[]>([
   { key: 'department', label: 'Подразделение', filter: departmentFilter, active: true },
   { key: 'object', label: 'Объект', filter: objectFilter, active: true },
 ])
+
+const utilitySettingsOpen = ref(false)
+const utilityColumnSettings = ref<ColumnSettingsItem[]>(columns.value.slice(0, 4).map(column => ({
+  key: column.key,
+  label: column.label ?? column.key,
+  active: column.active !== false,
+  locked: column.key === 'index',
+})))
+
+function applyUtilityColumns(next: ColumnSettingsItem[]) {
+  utilityColumnSettings.value = next
+}
 
 const names = ['Ержан Касымов', 'Айсулу Токтарова', 'Бекзат Нурмагамбетов', 'Диана Мухамедова', 'Мухтар Садыков', 'Жанна Абдрахманова']
 const roles = ['Главный эколог', 'Эколог-аналитик', 'Инженер-эколог', 'Эколог по мониторингу', 'Специалист по отходам', 'Эколог-аудитор']
@@ -256,7 +269,15 @@ const technicalTable = ref<InstanceType<typeof TzTable> | null>(null)
 const methodStatus = ref('Методы готовы к проверке')
 const isServerTechnical = computed(() => ['server-data','server-search','server-pagination','server-sort','server-filter'].includes(technicalVariant.value))
 const technicalColumns = computed<TzTableColumn[]>(() => {
-  const result: TzTableColumn[] = columns.value.slice(0, 4).map(column => ({ ...column, filter: undefined, filterable: false }))
+  const source = technicalVariant.value === 'utility'
+    ? utilityColumnSettings.value
+      .filter(setting => setting.active)
+      .flatMap(setting => {
+        const column = columns.value.find(item => item.key === setting.key)
+        return column ? [{ ...column, filter: undefined, filterable: false }] : []
+      })
+    : columns.value.slice(0, 4).map(column => ({ ...column, filter: undefined, filterable: false }))
+  const result: TzTableColumn[] = source
   if (technicalVariant.value === 'fixed') result[1] = { ...result[1], fixed: 'left' }
   if (technicalVariant.value === 'server-filter') {
     result[2] = { ...result[2], filter: departmentFilter, filterable: true }
@@ -271,7 +292,7 @@ const technicalDescription = computed(() => ({
   stripped: 'Чередование фона строк.',
   fixed: 'Контентная колонка закрепляется при горизонтальном скролле.',
   resizable: 'Ширина колонок меняется перетаскиванием границы.',
-  utility: 'Выбор строк, настройки и контекстные действия.',
+  utility: 'Выбор строк и контекстные действия. Шестерёнка открывает Side modal для настройки видимости и порядка столбцов.',
   'client-pagination': 'Локальная пагинация без запроса к серверу.',
   'server-data': 'Загрузка данных через getData.',
   'server-search': 'Серверный поиск через substring.',
@@ -505,13 +526,18 @@ const methodsApi = ['resetFilter(key)', 'exposedLoadData(page?, countPerPage?)',
         :resizable="technicalVariant === 'resizable'"
         :show-settings="technicalVariant === 'utility'"
         :show-actions="technicalVariant === 'utility'"
+        @settings="utilitySettingsOpen = true"
         @update:page="technicalPage = $event"
         @update:count-per-page="technicalCount = $event; technicalPage = 0"
       >
         <template #column-name="{ item }"><span class="employee"><i><User :size="18" /></i><span><strong>{{ item.name }}</strong><small>{{ item.role }}</small></span></span></template>
-        <template #table-settings><div class="settings-demo"><strong>Настройки таблицы</strong><span>Utility slot из технического API.</span></div></template>
         <template #load-error="{ loadError }"><strong>Ошибка загрузки</strong><span>{{ loadError.message }}</span></template>
       </TzTable>
+      <TableColumnSettingsSideModal
+        v-model="utilitySettingsOpen"
+        :columns="utilityColumnSettings"
+        @apply="applyUtilityColumns"
+      />
     </section>
 
     <section class="card">

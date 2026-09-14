@@ -1,5 +1,34 @@
 <script setup lang="ts">
-import { Check, ChevronRight, Component, LogOut } from '@lucide/vue'
+import {
+  Activity,
+  Bell,
+  Braces,
+  Check,
+  ChevronRight,
+  CircleDot,
+  CircleUserRound,
+  CloudUpload,
+  GitBranch,
+  ListFilter,
+  LoaderCircle,
+  LogOut,
+  MousePointerClick,
+  Palette,
+  PanelLeft,
+  PanelsTopLeft,
+  PanelTop,
+  Route,
+  Rows3,
+  Search,
+  Shapes,
+  SlidersHorizontal,
+  SquareCheck,
+  Table2,
+  Tags,
+  TextCursorInput,
+  ToggleLeft,
+  Type,
+} from '@lucide/vue'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import UiKitLogin from './components/auth/UiKitLogin.vue'
 import AvatarDocumentation from './components/documentation/AvatarDocumentation.vue'
@@ -65,6 +94,33 @@ const catalog = [
   },
 ]
 
+const catalogIcons: Record<string, typeof Palette> = {
+  Colors: Palette,
+  Typography: Type,
+  Variables: Braces,
+  Navigation: PanelLeft,
+  Breadcrumbs: Route,
+  Input: TextCursorInput,
+  Select: ListFilter,
+  Icon: Shapes,
+  Button: MousePointerClick,
+  Modal: PanelsTopLeft,
+  Toast: Bell,
+  Preloader: LoaderCircle,
+  Toggle: ToggleLeft,
+  Tabs: PanelTop,
+  'Segmented Control': Rows3,
+  Search,
+  Chip: Tags,
+  Status: Activity,
+  'Radio Button': CircleDot,
+  Checkbox: SquareCheck,
+  Uploader: CloudUpload,
+  Avatar: CircleUserRound,
+  Tree: GitBranch,
+  Table: Table2,
+  'Сложные фильтры': SlidersHorizontal,
+}
 function sectionSlug(section: string) {
   return section.toLowerCase().replace(/\s+/g, '-')
 }
@@ -146,7 +202,7 @@ const breadcrumbItems = [
             :title="catalogCollapsed ? item : undefined"
             @click="onCatalogClick($event, item)"
           >
-            <Component :size="16" :stroke-width="1.5" />
+            <component :is="catalogIcons[item]" :size="16" :stroke-width="1.5" />
             <span>{{ item }}</span>
             <Check v-if="readyItems.includes(item)" :size="14" />
             <ChevronRight v-else :size="14" />
