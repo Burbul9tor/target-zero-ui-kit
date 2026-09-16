@@ -22,6 +22,7 @@ const props = withDefaults(defineProps<{
   appearance?: SegmentedAppearance
   fluid?: boolean
   disabled?: boolean
+  allowEmpty?: boolean
   ariaLabel?: string
 }>(), {
   modelValue: undefined,
@@ -30,6 +31,7 @@ const props = withDefaults(defineProps<{
   appearance: 'filled',
   fluid: false,
   disabled: false,
+  allowEmpty: false,
   ariaLabel: 'Выберите вариант',
 })
 
@@ -44,7 +46,7 @@ defineSlots<{
 }>()
 
 const controls = ref<Array<HTMLButtonElement | null>>([])
-const selectedValue = computed(() => props.modelValue ?? props.items.find(item => !item.disabled)?.value)
+const selectedValue = computed(() => props.modelValue ?? (props.allowEmpty ? undefined : props.items.find(item => !item.disabled)?.value))
 
 function isDisabled(item: SegmentedItem) { return props.disabled || item.disabled }
 function select(item: SegmentedItem) {
@@ -111,11 +113,11 @@ function onKeydown(event: KeyboardEvent, index: number) {
 </template>
 
 <style scoped>
-.tz-segmented-field{display:inline-flex;max-width:100%;flex-direction:column;align-items:flex-start;gap:var(--padding-spacing-8)}.tz-segmented-field:has(.is-fluid){display:flex;width:100%}.tz-segmented-field__label{color:var(--text-default);font:var(--tz-text-body-medium)}
-.tz-segmented{display:inline-flex;box-sizing:border-box;max-width:100%;align-items:stretch;gap:var(--padding-spacing-8)}.tz-segmented.is-fluid{display:flex;width:100%}.tz-segmented__item{display:inline-flex;min-width:0;align-items:center;justify-content:center;gap:var(--padding-spacing-6);color:var(--text-default);border:0;border-radius:var(--radius-md);background:var(--bg-disabled);font-family:var(--tz-font-family);font-weight:400;white-space:nowrap;cursor:pointer;transition:color 140ms ease,background-color 140ms ease,box-shadow 140ms ease}.tz-segmented.is-fluid .tz-segmented__item{flex:1 1 0}
+.tz-segmented-field{display:inline-flex;max-width:100%;flex-direction:column;align-items:flex-start;gap:var(--padding-spacing-4)}.tz-segmented-field:has(.is-fluid){display:flex;width:100%}.tz-segmented-field__label{color:var(--text-default);font:var(--tz-text-body-small)}
+.tz-segmented{display:inline-flex;box-sizing:border-box;max-width:100%;align-items:stretch;gap:var(--padding-spacing-4)}.tz-segmented.is-fluid{display:flex;width:100%}.tz-segmented__item{display:inline-flex;min-width:0;align-items:center;justify-content:center;gap:var(--padding-spacing-4);padding-right:var(--padding-spacing-16);padding-left:var(--padding-spacing-16);color:var(--text-default);border:0;border-radius:6px;background:var(--bg-track-off);font:400 14px/20px var(--tz-font-family);white-space:nowrap;cursor:pointer;transition:color 140ms ease,background-color 140ms ease,box-shadow 140ms ease}.tz-segmented.is-fluid .tz-segmented__item{flex:1 1 0}
 .tz-segmented--surface{padding:var(--padding-spacing-2);gap:var(--padding-spacing-2);border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--bg-page)}.tz-segmented--surface .tz-segmented__item{border-radius:var(--radius-sm);background:transparent}
-.tz-segmented--compact .tz-segmented__item{min-height:24px;padding:var(--padding-spacing-2) var(--padding-spacing-16);border-radius:var(--radius-sm);font:var(--tz-text-body-medium)}.tz-segmented--small .tz-segmented__item{min-height:28px;padding:var(--padding-spacing-4) var(--padding-spacing-8);font-size:10px;line-height:14px}.tz-segmented--medium .tz-segmented__item{min-height:36px;padding:var(--padding-spacing-8) var(--padding-spacing-12);font-size:12px;line-height:16px}.tz-segmented--large .tz-segmented__item{min-height:44px;padding:var(--padding-spacing-12) var(--padding-spacing-20);font-size:16px;line-height:20px}
-.tz-segmented__item:hover:not(:disabled):not(.is-selected){background:var(--brand-bg-active)}.tz-segmented__item.is-selected{color:var(--text-button-fill);background:var(--brand-primary);font-weight:500;box-shadow:none}.tz-segmented--surface .tz-segmented__item.is-selected{color:var(--text-button-fill);background:var(--brand-primary);box-shadow:none}.tz-segmented__item:focus-visible{z-index:1;outline:2px solid var(--brand-primary);outline-offset:2px}.tz-segmented__item:disabled{color:var(--text-disabled);background:var(--bg-disabled);cursor:not-allowed}.tz-segmented__item.is-selected:disabled{color:var(--text-disabled);background:var(--brand-bg-hover);box-shadow:none}
+.tz-segmented--compact .tz-segmented__item,.tz-segmented--small .tz-segmented__item{min-height:24px;padding-top:var(--padding-spacing-2);padding-bottom:var(--padding-spacing-2)}.tz-segmented--medium .tz-segmented__item{min-height:32px;padding-top:var(--padding-spacing-6);padding-bottom:var(--padding-spacing-6)}.tz-segmented--large .tz-segmented__item{min-height:40px;padding-top:10px;padding-bottom:10px}
+.tz-segmented__item:hover:not(:disabled):not(.is-selected){background:var(--brand-bg-hover)}.tz-segmented__item.is-selected{color:var(--text-button-fill);background:var(--brand-primary);font-weight:400;box-shadow:none}.tz-segmented--surface .tz-segmented__item.is-selected{color:var(--text-button-fill);background:var(--brand-primary);box-shadow:none}.tz-segmented__item:focus-visible{z-index:1;outline:2px solid var(--brand-primary);outline-offset:2px}.tz-segmented__item:disabled{color:var(--text-placeholder);background:var(--bg-disabled);cursor:not-allowed}.tz-segmented__item.is-selected:disabled{color:var(--text-placeholder);background:var(--bg-disabled);box-shadow:none}
 .tz-segmented__icon{display:grid;flex:0 0 auto;width:16px;height:16px;place-items:center}.tz-segmented__icon :deep(svg){width:16px;height:16px}.tz-segmented__label{min-width:0;overflow:hidden;text-overflow:ellipsis}.tz-segmented__count{display:grid;min-width:18px;height:18px;padding:0 var(--padding-spacing-4);place-items:center;color:var(--text-muted);border-radius:var(--radius-full);background:var(--bg-surface);font-size:11px;line-height:18px}.tz-segmented__item.is-selected .tz-segmented__count{color:var(--brand-primary);background:var(--text-button-fill)}
 @media(prefers-reduced-motion:reduce){.tz-segmented__item{transition:none}}
 </style>

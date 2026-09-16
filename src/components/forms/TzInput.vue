@@ -11,7 +11,7 @@ export type InputChip = { id: string | number; value?: string; label?: string; d
 export type InputMultipleItem = InputChip
 
 const props = withDefaults(defineProps<{
-  id?: string; name?: string; value?: InputValue; modelValue?: InputValue; placeholder?: string; type?: string
+  id?: string; name?: string; value?: InputValue; modelValue?: InputValue; placeholder?: string; type?: string; inputmode?: 'none' | 'text' | 'decimal' | 'numeric' | 'tel' | 'search' | 'email' | 'url'
   label?: string; labelPosition?: InputLabelPosition; errorMessage?: string; error?: string; resize?: InputResize
   iconLeft?: Component; iconRight?: Component; iconColor?: string; borderColor?: string; autocomplete?: string
   cols?: number; rows?: number; disabled?: boolean; isTextarea?: boolean; required?: boolean; multiple?: boolean
@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<{
   onBlur?: (event: FocusEvent) => void; prohibitedKeys?: string[]; onFieldClick?: (event?: Event) => void
   state?: InputState; showLabel?: boolean
 }>(), {
-  id: undefined, name: '', value: undefined, modelValue: undefined, placeholder: '', type: 'text', label: '',
+  id: undefined, name: '', value: undefined, modelValue: undefined, placeholder: '', type: 'text', inputmode: undefined, label: '',
   labelPosition: 'left', errorMessage: '', error: '', resize: 'both', iconLeft: undefined, iconRight: undefined,
   iconColor: 'default', borderColor: 'default', autocomplete: 'on', cols: 10, rows: 10, disabled: false,
   isTextarea: false, required: false, multiple: false, clearable: false, loading: false, readonly: false,
@@ -123,14 +123,14 @@ defineExpose({ focus, blur: () => field.value?.blur(), select: () => field.value
       </span>
       <textarea
         v-if="isTextarea" :id="inputId" ref="field" class="tz-input__native" :value="currentValue ?? ''"
-        :name="name" :autocomplete="autocomplete" :placeholder="items.length ? undefined : placeholder"
+        :name="name" :autocomplete="autocomplete" :inputmode="inputmode" :placeholder="items.length ? undefined : placeholder"
         :required="required" :disabled="isDisabled" :readonly="readonly" :maxlength="maxLengthValue"
         :cols="cols" :rows="rows" :aria-invalid="hasError || undefined" :aria-describedby="hasError ? errorId : undefined"
         @input="update" @change="change" @focus="emit('focus', $event)" @blur="handleBlur" @keydown="handleKeydown"
       />
       <input
         v-else :id="inputId" ref="field" class="tz-input__native" :value="currentValue ?? ''" :type="nativeType"
-        :name="name" :autocomplete="autocomplete" :placeholder="items.length ? undefined : placeholder"
+        :name="name" :autocomplete="autocomplete" :inputmode="inputmode" :placeholder="items.length ? undefined : placeholder"
         :required="required" :disabled="isDisabled" :readonly="readonly" :maxlength="maxLengthValue"
         :aria-invalid="hasError || undefined" :aria-describedby="hasError ? errorId : undefined"
         @input="update" @change="change" @focus="emit('focus', $event)" @blur="handleBlur" @keydown="handleKeydown"

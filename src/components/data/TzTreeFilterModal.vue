@@ -9,7 +9,9 @@ const props = withDefaults(defineProps<{
   options: TreeFilterOption[]
   modelValue?: string[]
   loading?: boolean
-}>(), { title: 'Выберите объект', modelValue: () => [], loading: false })
+  selectionMode?: 'multiple' | 'single'
+  searchPlaceholder?: string
+}>(), { title: 'Выберите объект', modelValue: () => [], loading: false, selectionMode: 'multiple', searchPlaceholder: 'Поиск по объектам' })
 
 const emit = defineEmits<{
   close: []
@@ -45,6 +47,10 @@ function toggleExpanded(value: string) {
     : [...expanded.value, value]
 }
 function toggleSelected(payload: { values: string[]; checked: boolean }) {
+  if (props.selectionMode === 'single') {
+    selected.value = payload.checked ? [payload.values[0]] : []
+    return
+  }
   const next = new Set(selected.value)
   payload.values.forEach(value => payload.checked ? next.add(value) : next.delete(value))
   selected.value = [...next]
@@ -73,7 +79,7 @@ onBeforeUnmount(() => {
           <button type="button" aria-label="Закрыть окно" @click="emit('close')"><X :size="20" /></button>
         </header>
         <div class="tree-filter-modal__search">
-          <TzSearch v-model="query" placeholder="Поиск по объектам" label="Поиск объектов" />
+          <TzSearch v-model="query" :placeholder="searchPlaceholder" :label="searchPlaceholder" />
         </div>
         <div class="tree-filter-modal__body">
           <span v-if="loading" class="tree-filter-modal__status">Загрузка объектов…</span>
@@ -86,6 +92,7 @@ onBeforeUnmount(() => {
             :selected="selected"
             :expanded="expanded"
             :force-expanded="Boolean(query)"
+            :selection-mode="selectionMode"
             @toggle-expanded="toggleExpanded"
             @toggle-selected="toggleSelected"
           />

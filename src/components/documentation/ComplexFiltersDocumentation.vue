@@ -4,9 +4,9 @@ import { ref } from 'vue'
 import TzComplexFilterPanel, { type ComplexFilterValue } from '../data/TzComplexFilterPanel.vue'
 
 const appliedExample: Partial<ComplexFilterValue> = {
-  place: 'Шламонакопитель Алматы',
-  year: '2026',
-  placeTypes: ['Накопление'],
+  checkTypes: ['Плановая', 'Внеплановая'],
+  inspectorUnit: 'Отдел эксплуатации производства',
+  status: 'completed',
 }
 const firstOpen = ref(true)
 const secondOpen = ref(false)
@@ -19,9 +19,9 @@ const thirdOpen = ref(false)
       <div>
         <p class="eyebrow">PATTERN · DATA FILTERING</p>
         <h1>Сложные фильтры</h1>
-        <p>Композиционный паттерн для поиска, нескольких групп фильтров, диапазонов и применённых значений.</p>
+        <p>Композиционный паттерн для поиска, параметров проверки, оргструктуры, статуса и применённых значений.</p>
       </div>
-      <span class="ready"><Check :size="14" /> Figma 2679:122246</span>
+      <span class="ready"><Check :size="14" /> Figma 4068:366952</span>
     </header>
 
     <section class="state-card">
@@ -51,7 +51,8 @@ const thirdOpen = ref(false)
         <article><strong>Черновик</strong><p>Изменения в полях не влияют на результаты до нажатия «Применить фильтр».</p></article>
         <article><strong>Применённые значения</strong><p>После применения фильтры отображаются чипами и доступны даже при свернутой форме.</p></article>
         <article><strong>Сброс</strong><p>Чип удаляет одно условие; «Сбросить всё» очищает весь набор; нижняя кнопка очищает форму.</p></article>
-        <article><strong>Адаптивность</strong><p>На узких экранах две колонки формы и диапазонов перестраиваются в одну.</p></article>
+        <article><strong>Tree Picker</strong><p>Поля объекта и оргструктур открывают единое дерево с поиском и одиночным подтверждаемым выбором.</p></article>
+        <article><strong>Адаптивность</strong><p>Сетка из четырёх и трёх полей перестраивается сначала в две колонки, затем в одну.</p></article>
       </div>
     </section>
   </div>

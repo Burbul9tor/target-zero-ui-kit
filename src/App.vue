@@ -34,21 +34,26 @@ import UiKitLogin from './components/auth/UiKitLogin.vue'
 import AvatarDocumentation from './components/documentation/AvatarDocumentation.vue'
 import BreadcrumbDocumentation from './components/documentation/BreadcrumbDocumentation.vue'
 import ButtonDocumentation from './components/documentation/ButtonDocumentation.vue'
+import ChipDocumentation from './components/documentation/ChipDocumentation.vue'
+import CheckboxDocumentation from './components/documentation/CheckboxDocumentation.vue'
 import ColorsDocumentation from './components/documentation/ColorsDocumentation.vue'
 import ComplexFiltersDocumentation from './components/documentation/ComplexFiltersDocumentation.vue'
 import IconsDocumentation from './components/documentation/IconsDocumentation.vue'
 import InputDocumentation from './components/documentation/InputDocumentation.vue'
 import ModalDocumentation from './components/documentation/ModalDocumentation.vue'
 import PreloaderDocumentation from './components/documentation/PreloaderDocumentation.vue'
+import RadioButtonDocumentation from './components/documentation/RadioButtonDocumentation.vue'
 import SearchDocumentation from './components/documentation/SearchDocumentation.vue'
 import SegmentedControlDocumentation from './components/documentation/SegmentedControlDocumentation.vue'
 import SelectDocumentation from './components/documentation/SelectDocumentation.vue'
+import StatusDocumentation from './components/documentation/StatusDocumentation.vue'
 import TableDocumentation from './components/documentation/TableDocumentationTechnical.vue'
 import TreeDocumentation from './components/documentation/TreeDocumentation.vue'
 import ToggleDocumentation from './components/documentation/ToggleDocumentation.vue'
 import ToastDocumentation from './components/documentation/ToastDocumentation.vue'
 import TabsDocumentation from './components/documentation/TabsDocumentation.vue'
 import TypographyDocumentation from './components/documentation/TypographyDocumentation.vue'
+import UploadDocumentation from './components/documentation/UploadDocumentation.vue'
 import VariablesDocumentation from './components/documentation/VariablesDocumentation.vue'
 import TzBreadcrumbs from './components/navigation/TzBreadcrumbs.vue'
 import TzFooter from './components/navigation/TzFooter.vue'
@@ -61,7 +66,7 @@ const isAppLoading = ref(true)
 const activeSection = ref('Navigation')
 const catalogCollapsed = ref(false)
 const sidebarCollapsed = ref(false)
-const readyItems = ['Colors', 'Typography', 'Variables', 'Navigation', 'Breadcrumbs', 'Input', 'Button', 'Modal', 'Toast', 'Select', 'Preloader', 'Toggle', 'Tabs', 'Segmented Control', 'Icon', 'Search', 'Avatar', 'Tree', 'Table', 'Сложные фильтры']
+const readyItems = ['Colors', 'Typography', 'Variables', 'Navigation', 'Breadcrumbs', 'Input', 'Button', 'Modal', 'Toast', 'Select', 'Preloader', 'Toggle', 'Tabs', 'Segmented Control', 'Icon', 'Search', 'Chip', 'Status', 'Radio Button', 'Checkbox', 'Uploader', 'Avatar', 'Tree', 'Table', 'Сложные фильтры']
 
 const catalog = [
   { group: 'Основы', items: ['Colors', 'Typography', 'Variables'] },
@@ -229,6 +234,11 @@ const breadcrumbItems = [
       <PreloaderDocumentation v-else-if="activeSection === 'Preloader'" />
       <SelectDocumentation v-else-if="activeSection === 'Select'" />
       <SearchDocumentation v-else-if="activeSection === 'Search'" />
+      <ChipDocumentation v-else-if="activeSection === 'Chip'" />
+      <StatusDocumentation v-else-if="activeSection === 'Status'" />
+      <RadioButtonDocumentation v-else-if="activeSection === 'Radio Button'" />
+      <CheckboxDocumentation v-else-if="activeSection === 'Checkbox'" />
+      <UploadDocumentation v-else-if="activeSection === 'Uploader'" />
       <AvatarDocumentation v-else-if="activeSection === 'Avatar'" />
       <TreeDocumentation v-else-if="activeSection === 'Tree'" />
       <TableDocumentation v-else-if="activeSection === 'Table'" />
