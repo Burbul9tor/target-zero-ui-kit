@@ -189,7 +189,7 @@
 
 [data-theme='dark'] {
   color-scheme: dark;
-  --bg-surface: var(--gray-800);
+  --bg-surface: var(--gray-850);
   --bg-page: var(--gray-900);
   --text-default: var(--gray-50);
   --text-muted: var(--gray-400);
@@ -202,5 +202,5 @@
   --bg-row-hover: var(--gray-800);
   --bg-overlay: #00000099;
   --bg-shadow: #ffffff1a;
-  --bg-background-card: var(--gray-800);
+  --bg-background-card: var(--gray-850);
 }

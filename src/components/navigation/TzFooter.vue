@@ -44,7 +44,7 @@ const { dark, toggleTheme } = useUiKitTheme()
   width: 100%;
   min-height: 30px;
   padding: 6px 16px;
-  background: var(--bg-surface);
+  background: var(--bg-background-card);
   border-top: 1px solid var(--border-default);
   color: var(--text-default);
   font: 500 10px/14px var(--tz-font-family);

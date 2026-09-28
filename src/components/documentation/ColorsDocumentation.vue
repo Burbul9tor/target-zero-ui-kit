@@ -40,14 +40,14 @@ const brandTokens: SemanticToken[] = [
 ]
 
 const appearanceTokens: SemanticToken[] = [
-  ['bg/Surface', '#FFFFFF', '#2B2B2B', 'gray-0', 'gray-800'], ['bg/page', '#F8F9F9', '#161616', 'gray-50', 'gray-900'],
+  ['bg/Surface', '#FFFFFF', '#212121', 'gray-0', 'gray-850'], ['bg/page', '#F8F9F9', '#161616', 'gray-50', 'gray-900'],
   ['text/default', '#161616', '#F8F9F9', 'gray-900', 'gray-50'], ['text/muted', '#717A7A', '#9AA2A2', 'gray-500', 'gray-400'],
   ['text/placeholder', '#9AA2A2', '#717A7A', 'gray-400', 'gray-500'], ['text/inverse', '#FFFFFF', '#161616', 'gray-0', 'gray-900'],
   ['text/disabled', '#CFD3D3', '#5F5F5F', 'gray-300', 'gray-600'], ['border/default', '#E4E7E6', '#404040', 'gray-200', 'gray-700'],
   ['bg/disabled', '#F2F3F3', '#2B2B2B', 'gray-100', 'gray-800'], ['bg/track-off', '#E4E7E6', '#404040', 'gray-200', 'gray-700'],
   ['bg/row-hover', '#F8F9F9', '#2B2B2B', 'gray-50', 'gray-800'], ['bg/overlay', '#00000066', '#00000099', '', ''],
   ['Icon/default', '#404040', '#CFD3D3', 'gray-700', 'gray-300'], ['text/Button-fill', '#FFFFFF', '#FFFFFF', 'gray-0', 'gray-0'],
-  ['bg/Shadow', '#0000001A', '#FFFFFF1A', '', ''], ['bg/Background card', '#FFFFFF', '#2B2B2B', 'gray-0', 'gray-800'],
+  ['bg/Shadow', '#0000001A', '#FFFFFF1A', '', ''], ['bg/Background card', '#FFFFFF', '#212121', 'gray-0', 'gray-850'],
 ].map(([name, light, dark, lightAlias, darkAlias]) => ({ name, values: { Light: { value: light, alias: lightAlias || undefined }, Dark: { value: dark, alias: darkAlias || undefined } } }))
 
 const statusTokens: SemanticToken[] = [
